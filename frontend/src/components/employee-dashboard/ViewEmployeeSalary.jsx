@@ -17,7 +17,7 @@ const ViewEmployeeSalary = () => {
     const fetchSalary = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/employees/salary/${user._id}`,
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/salary/${user._id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

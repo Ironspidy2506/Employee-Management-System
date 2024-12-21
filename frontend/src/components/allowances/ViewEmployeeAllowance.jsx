@@ -17,7 +17,7 @@ const ViewEmployeeAllowance = () => {
     const fetchAllowanceData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/allowances/history/${user._id}`,
+          `https://employee-management-system-backend-objq.onrender.com/api/allowances/history/${user._id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -92,7 +92,7 @@ const ViewEmployeeAllowance = () => {
     // Confirm deletion action
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/allowances/delete/${_id}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/allowances/delete/${_id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

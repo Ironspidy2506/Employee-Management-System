@@ -19,7 +19,7 @@ const EmployeeList = () => {
       setEmpLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/employees",
+          "https://employee-management-system-backend-objq.onrender.com/api/employees",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -125,7 +125,7 @@ const EmployeeList = () => {
                   </td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     <img
-                      src={`http://localhost:5000/${emp.profileImage}`}
+                      src={`https://employee-management-system-backend-objq.onrender.com/${emp.profileImage}`}
                       alt="Employee"
                       className="w-10 h-10 rounded-full object-cover mx-auto"
                     />

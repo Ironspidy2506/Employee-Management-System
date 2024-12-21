@@ -70,7 +70,7 @@ const ApplyLeave = () => {
     try {
       // Send the data to the backend API
       const response = await axios.post(
-        `http://localhost:5000/api/leaves/apply/${userId}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/leaves/apply/${userId}`,
         leaveData,
         {
           headers: {

@@ -14,7 +14,7 @@ const ViewEmployee = () => {
       setEmpLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/employees/${_id}`,
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -57,7 +57,7 @@ const ViewEmployee = () => {
         {/* Employee Photo */}
         <div className="flex-shrink-0">
           <img
-            src={`http://localhost:5000/${employee.userId.profileImage}`}
+            src={`https://employee-management-system-backend-objq.onrender.com/${employee.userId.profileImage}`}
             alt={`${employee.name}'s profile`}
             className="w-56 h-56 rounded-full object-cover border-4 border-blue-500 shadow-lg"
           />

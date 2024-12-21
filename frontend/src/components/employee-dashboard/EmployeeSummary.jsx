@@ -13,7 +13,7 @@ const EmployeeSummary = () => {
     const fetchEmployeeData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/employees/summary/${user._id}`, // Fetching employee data by logged-in user's ID
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/summary/${user._id}`, // Fetching employee data by logged-in user's ID
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -54,7 +54,7 @@ const EmployeeSummary = () => {
           {/* Employee Photo */}
           <div className="flex-shrink-0">
             <img
-              src={`http://localhost:5000/${employee.userId.profileImage}`}
+              src={`https://employee-management-system-backend-objq.onrender.com/${employee.userId.profileImage}`}
               alt={`${employee.name}'s profile`}
               className="w-56 h-56 rounded-full object-cover border-4 border-blue-500 shadow-lg"
             />

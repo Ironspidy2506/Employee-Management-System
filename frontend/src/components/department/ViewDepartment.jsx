@@ -12,7 +12,7 @@ const ViewDepartment = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/employees/department/${_id}`,
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/department/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

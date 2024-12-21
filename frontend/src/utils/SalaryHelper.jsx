@@ -3,7 +3,7 @@ import axios from "axios";
 export const fetchDepartments = async () => {
   let departments;
   try {
-    const response = await axios.get("http://localhost:5000/api/department", {
+    const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/department", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -24,7 +24,7 @@ export const fetchEmployees = async (_id) => {
   let employees;
   try {
     const response = await axios.get(
-      `http://localhost:5000/api/employees/department/${_id}`,
+      `https://employee-management-system-backend-objq.onrender.com/api/employees/department/${_id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -46,7 +46,7 @@ export const fetchEmployees = async (_id) => {
 export const addSalaries = async (payload) => {
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/salary/add",
+      "https://employee-management-system-backend-objq.onrender.com/api/salary/add",
       payload,
       {
         headers: {
@@ -64,7 +64,7 @@ export const addSalaries = async (payload) => {
 export const getSalaryDetails = async (_id) => {
   try {
     const response = await axios.get(
-      `http://localhost:5000/api/salary/${_id}`,
+      `https://employee-management-system-backend-objq.onrender.com/api/salary/${_id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -82,7 +82,7 @@ export const getSalaryDetails = async (_id) => {
 export const updateSalary = async (employeeId, payload) => {
   try {
     const response = await axios.put(
-      `http://localhost:5000/api/salary/${employeeId}`,
+      `https://employee-management-system-backend-objq.onrender.com/api/salary/${employeeId}`,
       payload,
       {
         headers: {
@@ -99,7 +99,7 @@ export const updateSalary = async (employeeId, payload) => {
 
 export const getAllSalaries = async () => {
   try {
-    const response = await axios.get("http://localhost:5000/api/salary", {
+    const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/salary", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -114,7 +114,7 @@ export const getAllSalaries = async () => {
 export const getRecentSalaryDetails = async (employeeId) => {
   try {
     const response = await axios.get(
-      `http://localhost:5000/api/salary/edit/${employeeId}`,
+      `https://employee-management-system-backend-objq.onrender.com/api/salary/edit/${employeeId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

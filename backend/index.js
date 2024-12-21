@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 config({ path: ".env" }); 
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://employee-management-system-roan-pi.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
 }));

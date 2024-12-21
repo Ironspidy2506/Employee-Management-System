@@ -11,6 +11,7 @@ import {
   FaWallet,
 } from "react-icons/fa";
 import { useAuth } from "../../context/authContext";
+import KorusImage from "./../../assets/Korus.png";
 
 const AdminSidebar = ({ isOpen, toggleSidebar }) => {
   const { logout } = useAuth();
@@ -25,7 +26,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
         {/* Sidebar Header */}
         <div className="py-4 px-6 bg-gray-900 shadow-md flex items-center space-x-3">
           <img
-            src="http://korus.co.in/Kimg/Korus.png"
+            src={KorusImage}
             alt="Company Logo"
             className="w-10 h-10 rounded-full object-cover lg:block hidden"
           />

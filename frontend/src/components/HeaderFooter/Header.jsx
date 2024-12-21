@@ -1,13 +1,10 @@
 import React from "react";
+import KorusImage from "./../../assets/Korus.png";
 
 const Header = () => {
   return (
     <div className="flex flex-col items-center space-y-4 mb-4">
-      <img
-        src="http://korus.co.in/Kimg/Korus.png"
-        alt="Company Logo"
-        className="w-20 h-20"
-      />
+      <img src={KorusImage} alt="Company Logo" className="w-20 h-20" />
       <h1 className="text-2xl md:text-4xl font-bold text-center">
         Korus Engineering Solutions Pvt. Ltd.
       </h1>

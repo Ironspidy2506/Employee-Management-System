@@ -4,11 +4,14 @@ import axios from "axios";
 export const fetchDepartments = async () => {
   let departments;
   try {
-    const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/department", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    const response = await axios.get(
+      "https://employee-management-system-backend-objq.onrender.com/api/department",
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
 
     if (response.data.success) {
       departments = response.data.departments;
@@ -49,7 +52,7 @@ export const EmployeeButtons = ({ _id, onEmployeeDelete }) => {
   };
 
   return (
-    <div className="flex flex-wrap gap-2 m-1">
+    <div className="flex sm:flex-wrap gap-2 m-1">
       <button
         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-gray-300 transition duration-200 w-full sm:w-auto"
         onClick={() => navigate(`/admin-dashboard/employees/${_id}`)}
@@ -79,8 +82,8 @@ export const EmployeeButtons = ({ _id, onEmployeeDelete }) => {
       </button>
 
       <button
-        onClick={() => handleDelete(_id)} // Trigger the delete function
-        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+        onClick={() => handleDelete(_id)}
+        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300 w-full sm:w-auto"
       >
         Delete
       </button>

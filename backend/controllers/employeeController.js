@@ -53,18 +53,10 @@ const addEmployee = async (req, res) => {
 
     // Hash the password before saving
     const hashPassword = await bcrypt.hash(password, 10);
-    function toCamelCase(name) {
-      if (!name) return "";
-      return name
-        .toLowerCase()
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-    }
-
+    
     // Create new User
     const newUser = new User({
-      name: toCamelCase(name),
+      name,
       email,
       password: hashPassword,
       role: role.toLowerCase(),
@@ -77,7 +69,7 @@ const addEmployee = async (req, res) => {
     const newEmployee = new Employee({
       userId: savedUser._id,
       employeeId,
-      name: toCamelCase(name),
+      name,
       email,
       dob,
       gender,

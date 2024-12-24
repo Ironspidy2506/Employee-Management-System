@@ -30,6 +30,8 @@ const addEmployee = async (req, res) => {
       maritalStatus,
       designation,
       department,
+      qualification,
+      contactNo,
       password,
       role,
       aadharNo,
@@ -53,7 +55,7 @@ const addEmployee = async (req, res) => {
 
     // Hash the password before saving
     const hashPassword = await bcrypt.hash(password, 10);
-    
+
     // Create new User
     const newUser = new User({
       name,
@@ -76,6 +78,8 @@ const addEmployee = async (req, res) => {
       maritalStatus,
       designation,
       department,
+      qualification,
+      contactNo,
       aadharNo,
       pan,
       uan,
@@ -162,6 +166,8 @@ const updateEmployee = async (req, res) => {
       maritalStatus,
       designation,
       department,
+      qualification,
+      contactNo,
       role,
       aadharNo,
       pan,
@@ -195,6 +201,7 @@ const updateEmployee = async (req, res) => {
       ...(name && { name }),
       ...(profileImage && { profileImage }),
     };
+    
     if (Object.keys(updatedUserFields).length > 0) {
       await User.findByIdAndUpdate(employee.userId, updatedUserFields);
     }
@@ -209,6 +216,8 @@ const updateEmployee = async (req, res) => {
       ...(maritalStatus && { maritalStatus }),
       ...(designation && { designation }),
       ...(department && { department }),
+      ...(qualification && { qualification }),
+      ...(contactNo && { contactNo }),
       ...(role && { role }),
       ...(aadharNo && { aadharNo }),
       ...(pan && { pan }),

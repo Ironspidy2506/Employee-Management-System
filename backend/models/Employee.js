@@ -49,6 +49,15 @@ const employeeSchema = new mongoose.Schema({
     ref: "department",
     required: true,
   },
+  qualification: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  contactNo: {
+    type: Number,
+    required: true,
+  },
   aadharNo: {
     type: String,
     trim: true,

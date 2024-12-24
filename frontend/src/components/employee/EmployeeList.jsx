@@ -102,47 +102,55 @@ const EmployeeList = () => {
           <table className="w-full mt-6 border-collapse border border-gray-300">
             <thead>
               <tr className="bg-gray-200">
-                <th className="border border-gray-300 px-4 py-2">S.No.</th>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 px-2 py-1 text-sm">
+                  S.No.
+                </th>
+                <th className="border border-gray-300 px-2 py-1 text-sm">
                   Profile Image
                 </th>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 px-2 py-1 text-sm">
                   Employee ID
                 </th>
-                <th className="border border-gray-300 px-4 py-2">Name</th>
-                <th className="border border-gray-300 px-4 py-2">
+                <th className="border border-gray-300 px-2 py-1 text-sm">
+                  Name
+                </th>
+                <th className="border border-gray-300 px-2 py-1 text-sm">
                   Date of Birth
                 </th>
-                <th className="border border-gray-300 px-4 py-2">Department</th>
-                <th className="border border-gray-300 px-4 py-2">Actions</th>
+                <th className="border border-gray-300 px-2 py-1 text-sm">
+                  Department
+                </th>
+                <th className="border border-gray-300 px-2 py-1 text-sm">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {filteredEmployees.map((emp) => (
                 <tr key={emp._id} className="odd:bg-white even:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2 text-center">
+                  <td className="border border-gray-300 px-2 py-1 text-sm text-center">
                     {emp.sno}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
+                  <td className="border border-gray-300 px-2 py-1 text-sm text-center">
                     <img
                       src={`https://employee-management-system-backend-objq.onrender.com/${emp.profileImage}`}
                       alt="Employee"
                       className="w-10 h-10 rounded-full object-cover mx-auto"
                     />
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
+                  <td className="border border-gray-300 px-2 py-1 text-sm text-center">
                     {emp.employeeId}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
+                  <td className="border border-gray-300 px-2 py-1 text-sm text-center">
                     {emp.name}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
+                  <td className="border border-gray-300 px-2 py-1 text-sm text-center">
                     {formatDate(emp.dob)}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
+                  <td className="border border-gray-300 px-2 py-1 text-sm text-center">
                     {emp.department}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center flex justify-center">
+                  <td className="border border-gray-300 px-2 py-1 text-sm text-center flex justify-center">
                     <EmployeeButtons
                       _id={emp._id}
                       onEmployeeDelete={onEmployeeDelete}

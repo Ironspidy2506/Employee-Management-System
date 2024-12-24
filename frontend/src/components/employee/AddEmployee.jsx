@@ -177,6 +177,7 @@ const AddEmployee = () => {
                 <option value="Single">Single</option>
                 <option value="Married">Married</option>
                 <option value="Divorced">Divorced</option>
+                <option value="Others">Others</option>
               </select>
             </div>
 
@@ -222,6 +223,23 @@ const AddEmployee = () => {
             </div>
 
             {/* New Fields Before Profile Image */}
+            <div>
+              <label
+                className="block text-gray-700 font-medium mb-2"
+                htmlFor="aadharNo"
+              >
+                Aadhar No.
+              </label>
+              <input
+                type="text"
+                name="aadharNo"
+                id="aadharNo"
+                placeholder="Enter Aadhar No."
+                className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                onChange={handleChange}
+              />
+            </div>
+
             <div>
               <label
                 className="block text-gray-700 font-medium mb-2"
@@ -374,6 +392,23 @@ const AddEmployee = () => {
                 name="profileImage"
                 id="profileImage"
                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label
+                className="block text-gray-700 font-medium mb-2"
+                htmlFor="doj"
+              >
+                Date of Joining
+              </label>
+              <input
+                type="date"
+                name="doj"
+                id="doj"
+                className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                required
                 onChange={handleChange}
               />
             </div>

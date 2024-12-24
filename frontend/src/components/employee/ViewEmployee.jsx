@@ -122,6 +122,20 @@ const ViewEmployee = () => {
             <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
               <p className="text-sm text-gray-500">UAN</p>
               <p className="text-xl font-semibold text-gray-700">
+                {employee.aadharNo || "N/A"}
+              </p>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+              <p className="text-sm text-gray-500">UAN</p>
+              <p className="text-xl font-semibold text-gray-700">
+                {employee.pan || "N/A"}
+              </p>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+              <p className="text-sm text-gray-500">UAN</p>
+              <p className="text-xl font-semibold text-gray-700">
                 {employee.uan || "N/A"}
               </p>
             </div>
@@ -151,6 +165,13 @@ const ViewEmployee = () => {
               <p className="text-sm text-gray-500">Account No.</p>
               <p className="text-xl font-semibold text-gray-700">
                 {employee.accountNo || "N/A"}
+              </p>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+              <p className="text-sm text-gray-500">Date of Joining</p>
+              <p className="text-xl font-semibold text-gray-700">
+                {new Date(employee.doj).toDateString() || "N/A"}
               </p>
             </div>
           </div>

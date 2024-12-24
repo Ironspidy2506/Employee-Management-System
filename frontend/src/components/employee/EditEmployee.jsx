@@ -16,6 +16,7 @@ const EditEmployee = () => {
     dob: "",
     gender: "",
     maritalStatus: "",
+    aadharNo: "",
     designation: "",
     department: "",
     password: "",
@@ -176,6 +177,24 @@ const EditEmployee = () => {
                 <div>
                   <label
                     className="block text-gray-700 font-medium mb-2"
+                    htmlFor="dob"
+                  >
+                    Date of Birth
+                  </label>
+                  <input
+                    type="date"
+                    name="dob"
+                    id="dob"
+                    value={new Date(employee.dob).toISOString().split("T")[0]}
+                    className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                    required
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    className="block text-gray-700 font-medium mb-2"
                     htmlFor="gender"
                   >
                     Gender
@@ -214,6 +233,7 @@ const EditEmployee = () => {
                     <option value="Single">Single</option>
                     <option value="Married">Married</option>
                     <option value="Divorced">Divorced</option>
+                    <option value="Others">Others</option>
                   </select>
                 </div>
 
@@ -258,6 +278,24 @@ const EditEmployee = () => {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label
+                    className="block text-gray-700 font-medium mb-2"
+                    htmlFor="aadharNo"
+                  >
+                    Aadhar No.
+                  </label>
+                  <input
+                    type="text"
+                    name="aadharNo"
+                    id="aadharNo"
+                    value={employee.aadharNo || ""}
+                    placeholder="Enter Aadhar No."
+                    className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                    onChange={handleChange}
+                  />
                 </div>
 
                 <div>
@@ -336,14 +374,14 @@ const EditEmployee = () => {
                 <div>
                   <label
                     className="block text-gray-700 font-medium mb-2"
-                    htmlFor="bankName"
+                    htmlFor="bank"
                   >
                     Bank Name
                   </label>
                   <input
                     type="text"
-                    name="bankName"
-                    id="bankName"
+                    name="bank"
+                    id="bank"
                     value={employee.bank}
                     placeholder="Enter Bank Name"
                     className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
@@ -388,6 +426,24 @@ const EditEmployee = () => {
                     <option value="Admin">Admin</option>
                     <option value="Employee">Employee</option>
                   </select>
+                </div>
+
+                <div>
+                  <label
+                    className="block text-gray-700 font-medium mb-2"
+                    htmlFor="doj"
+                  >
+                    Date of Joining
+                  </label>
+                  <input
+                    type="date"
+                    name="doj"
+                    id="doj"
+                    value={new Date(employee.doj).toISOString().split("T")[0] || ""}
+                    className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                    required
+                    onChange={handleChange}
+                  />
                 </div>
               </div>
 

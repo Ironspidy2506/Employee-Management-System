@@ -185,7 +185,7 @@ const EditEmployee = () => {
                     type="date"
                     name="dob"
                     id="dob"
-                    value={new Date(employee.dob).toISOString().split("T")[0]}
+                    value={employee.dob || ""}
                     className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                     required
                     onChange={handleChange}
@@ -439,7 +439,7 @@ const EditEmployee = () => {
                     type="date"
                     name="doj"
                     id="doj"
-                    value={new Date(employee.doj).toISOString().split("T")[0] || ""}
+                    value={employee.doj || ""}
                     className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                     required
                     onChange={handleChange}

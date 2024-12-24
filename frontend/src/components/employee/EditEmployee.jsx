@@ -283,6 +283,42 @@ const EditEmployee = () => {
                 <div>
                   <label
                     className="block text-gray-700 font-medium mb-2"
+                    htmlFor="qualification"
+                  >
+                    Qualification
+                  </label>
+                  <input
+                    type="text"
+                    name="qualification"
+                    id="qualification"
+                    value={employee.qualification || ""}
+                    placeholder="Enter Qualification"
+                    className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    className="block text-gray-700 font-medium mb-2"
+                    htmlFor="contactNo"
+                  >
+                    Contact No.
+                  </label>
+                  <input
+                    type="number"
+                    name="contactNo"
+                    id="contactNo"
+                    value={employee.contactNo || ""}
+                    placeholder="Enter Contact No."
+                    className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    className="block text-gray-700 font-medium mb-2"
                     htmlFor="aadharNo"
                   >
                     Aadhar No.

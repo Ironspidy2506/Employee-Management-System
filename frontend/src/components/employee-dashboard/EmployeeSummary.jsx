@@ -123,6 +123,20 @@ const EmployeeSummary = () => {
 
               {/* New Fields */}
               <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+                <p className="text-sm text-gray-500">Qualification</p>
+                <p className="text-xl font-semibold text-gray-700">
+                  {employee.qualification || "N/A"}
+                </p>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+                <p className="text-sm text-gray-500">Contact No.</p>
+                <p className="text-xl font-semibold text-gray-700">
+                  {employee.contactNo || "N/A"}
+                </p>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
                 <p className="text-sm text-gray-500">Aadhar No.</p>
                 <p className="text-xl font-semibold text-gray-700">
                   {employee.aadharNo || "N/A"}

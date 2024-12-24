@@ -120,14 +120,14 @@ const ViewEmployee = () => {
 
             {/* New Fields */}
             <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
-              <p className="text-sm text-gray-500">UAN</p>
+              <p className="text-sm text-gray-500">Aadhar No.</p>
               <p className="text-xl font-semibold text-gray-700">
                 {employee.aadharNo || "N/A"}
               </p>
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
-              <p className="text-sm text-gray-500">UAN</p>
+              <p className="text-sm text-gray-500">PAN No.</p>
               <p className="text-xl font-semibold text-gray-700">
                 {employee.pan || "N/A"}
               </p>

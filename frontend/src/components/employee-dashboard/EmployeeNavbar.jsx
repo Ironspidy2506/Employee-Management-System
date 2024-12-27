@@ -4,6 +4,8 @@ import { useAuth } from "../../context/authContext.jsx";
 
 const EmployeeNavbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
+  console.log(user);
+  
 
   return (
     <div className="flex justify-between items-center bg-gray-900 text-white px-6 py-4 shadow-md">

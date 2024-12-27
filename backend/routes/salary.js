@@ -1,6 +1,6 @@
 import express from 'express';
 import authMiddleware from '../middleware/authMiddleware.js'
-import { addSalary, getAllSalaries, getMostRecentSalaryDetails, getSalaryDetails, updateSalary } from '../controllers/salaryController.js';
+import { addSalary, getAllSalaries, getEmployeeSalaryDetails, getSalaryDetails, updateSalary } from '../controllers/salaryController.js';
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router.post('/add', authMiddleware, addSalary);
 
 router.get('/:_id', authMiddleware, getSalaryDetails);
 
-router.get('/edit/:employeeId', authMiddleware, getMostRecentSalaryDetails);
+router.get('/employee/:employeeId', authMiddleware, getEmployeeSalaryDetails);
 
 router.put('/:_id', authMiddleware, updateSalary);
 

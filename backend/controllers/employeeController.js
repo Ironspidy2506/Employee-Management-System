@@ -201,7 +201,7 @@ const updateEmployee = async (req, res) => {
       ...(name && { name }),
       ...(profileImage && { profileImage }),
     };
-    
+
     if (Object.keys(updatedUserFields).length > 0) {
       await User.findByIdAndUpdate(employee.userId, updatedUserFields);
     }
@@ -290,27 +290,33 @@ const fetchEmployeesByDepId = async (req, res) => {
 
 const getSalaryDetailsOfEmployee = async (req, res) => {
   const { userId } = req.params; // Extract userId from request parameters
+  const { paymentMonth, paymentYear } = req.query; // Access from query instead of body
 
   try {
-    const employee = await Employee.findOne({ userId });
-
+    // Find employee by userId (adjust query if needed)
+    const employee = await Employee.findOne({ userId: userId });
     if (!employee) {
-      return res.status(404).json({ message: "Employee not found" });
+      return res.status(404).json({ message: "Employee not found." });
     }
 
-    const salary = await Salary.findOne({ employeeId: employee._id })
-      .populate("employeeId")
-      .sort({ paymentDate: -1 }) // Sort by paymentDate in descending order
-      .limit(1);
+    const empId = employee._id;
+
+    // Find the salary record based on employeeId, paymentMonth, and paymentYear
+    const salary = await Salary.findOne({
+      employeeId: empId,
+      paymentMonth,
+      paymentYear,
+    }).populate("employeeId"); // Optional: populate employee details if needed
 
     if (!salary) {
-      return res.status(404).json({ message: "Salary details not found" });
+      return res.status(404).json({ message: "Salary record not found." });
     }
 
-    res.json({ salary });
+    // Return salary details
+    return res.json(salary);
   } catch (error) {
     console.error("Error fetching salary details:", error);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Error fetching salary details." });
   }
 };
 

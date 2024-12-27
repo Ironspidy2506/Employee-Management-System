@@ -7,10 +7,9 @@ const salarySchema = new mongoose.Schema({
     ref: "employee",
     required: true,
   },
-  workingDays: {
+  grossSalary: {
     type: Number,
     required: true,
-    min: 0,
   },
   basicSalary: {
     type: Number,
@@ -28,8 +27,12 @@ const salarySchema = new mongoose.Schema({
       amount: { type: Number, required: true },
     },
   ],
-  paymentDate: {
-    type: Date,
+  paymentMonth: {
+    type: String,
+    required: true,
+  },
+  paymentYear: {
+    type: String,
     required: true,
   },
   createdAt: {

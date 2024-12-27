@@ -1,6 +1,6 @@
 import React from "react";
 import { FaBars, FaSignOutAlt } from "react-icons/fa";
-import { useAuth } from "../../context/authContext";
+import { useAuth } from "../../context/authContext.jsx";
 
 const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();

@@ -1,37 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/authContext.jsx";
 import AdminSidebar from "../components/dashboard/AdminSidebar.jsx";
 import Navbar from "../components/dashboard/Navbar.jsx";
-import AdminSummary from "../components/dashboard/AdminSummary.jsx";
 import { Outlet } from "react-router-dom";
 
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Create a ref for the sidebar to detect clicks outside it
+  const sidebarRef = useRef(null);
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  useEffect(() => {
+    // Function to handle outside clicks
+    const handleClickOutside = (event) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    // Add event listener for outside clicks
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
-      <AdminSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      {/* Sidebar with ref */}
+      <AdminSidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        sidebarRef={sidebarRef} // Pass ref to sidebar
+      />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-0 lg:ml-64">
-        {" "}
-        {/* Adjust content area margin */}
+      <div className="flex-1 flex flex-col">
         {/* Navbar */}
-        <Navbar user={user} toggleSidebar={toggleSidebar} />
+        <Navbar toggleSidebar={toggleSidebar} />
+
         {/* Dashboard Content */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6 ml-0 lg:ml-64">
+          {/* Adjust content area margin to make room for sidebar on large screens */}
           <h1 className="text-2xl font-bold text-gray-800">
             Welcome to the Admin Dashboard, {user?.name || "User"}!
           </h1>
 
+          {/* Render nested route content */}
           <Outlet />
-          {/* <AdminSummary /> */}
         </div>
       </div>
     </div>

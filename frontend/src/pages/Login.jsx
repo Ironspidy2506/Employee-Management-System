@@ -33,8 +33,12 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
-      
-      if (error.response && !error.response.data && !error.response.data.success) {
+
+      if (
+        error.response &&
+        !error.response.data &&
+        !error.response.data.success
+      ) {
         setError(error.response.data.message);
       } else {
         setError("Server error");
@@ -43,7 +47,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-2 sm:px-2 lg:px-8">
       <div className="w-full max-w-md bg-white shadow-md shadow-gray-400 rounded-lg p-6">
         {/* Company Logo and Name */}
         <div className="text-center mb-8">

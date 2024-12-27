@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import axios from "axios";
 
@@ -9,258 +9,260 @@ const ViewEmployeeSalary = () => {
     allowances: [],
     deductions: [],
     totalSalary: 0,
+    paymentDate: "",
+    employeeId: {},
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [paymentMonth, setPaymentMonth] = useState("");
+  const [paymentYear, setPaymentYear] = useState("");
+  const [showSalaryDetails, setShowSalaryDetails] = useState(false);
 
-  useEffect(() => {
-    const fetchSalary = async () => {
-      try {
-        const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/salary/${user._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 21 }, (_, i) => currentYear + i);
 
-        setSalary(response.data.salary);
-      } catch (err) {
-        setError("No salary details found!");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
-    fetchSalary();
-  }, [user._id]);
-
-  const calculateTotalSalary = () => {
-    const totalAllowances = salary.allowances.reduce(
-      (acc, allowance) => acc + allowance.amount,
-      0
-    );
-
-    const totalDeductions = salary.deductions.reduce(
-      (acc, deduction) => acc + deduction.amount,
-      0
-    );
-    const totalSalary = salary.basicSalary + totalAllowances - totalDeductions;
-    let netSalary = (totalSalary * salary.workingDays) / 26;
-
-    if (netSalary % 1 > 0.5) {
-      netSalary = Math.ceil(netSalary); // Round up
-    } else if (netSalary % 1 > 0 && netSalary % 1 <= 0.5) {
-      netSalary = Math.floor(netSalary); // Round down to .5
+  const fetchSalary = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `https://employee-management-system-backend-objq.onrender.com/api/employees/salary/${user._id}?paymentMonth=${paymentMonth}&paymentYear=${paymentYear}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setSalary(response.data);
+      setShowSalaryDetails(true);
+    } catch (err) {
+      setError("No salary details found!");
+      setShowSalaryDetails(false);
+    } finally {
+      setLoading(false);
     }
-
-    return netSalary;
   };
 
-  if (loading)
-    return <div className="text-center text-xl mt-5">Loading...</div>;
-  if (error)
-    return (
-      <div className="text-center mt-5">
-        <h2 className="text-2xl font-semibold mb-6 text-red-600">{error}</h2>
-      </div>
+  const calculateTotalSalary = () => {
+    const hra = salary.allowances[0]?.amount || 0;
+    const foodAllowance = salary.allowances[1]?.amount || 0;
+    const medicalAllowance = salary.allowances[2]?.amount || 0;
+    const transportAllowance = salary.allowances[3]?.amount || 0;
+    const otherAllowances = salary.allowances.reduce(
+      (total, allowance, index) =>
+        index > 3 ? total + (allowance?.amount || 0) : total,
+      0
     );
 
+    const epf = salary.deductions[0]?.amount || 0;
+    const esi = salary.deductions[1]?.amount || 0;
+    const advance = salary.deductions[2]?.amount || 0;
+    const tax = salary.deductions[3]?.amount || 0;
+    const otherDeductions = salary.deductions.reduce(
+      (total, deduction, index) =>
+        index > 3 ? total + (deduction?.amount || 0) : total,
+      0
+    );
+
+    const totalAllowances =
+      hra +
+      foodAllowance +
+      medicalAllowance +
+      transportAllowance +
+      otherAllowances;
+    const totalDeductions = epf + esi + advance + tax + otherDeductions;
+
+    return salary.basicSalary + totalAllowances - totalDeductions;
+  };
+
   return (
-    <div className="max-w-full mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
-      {/* Header */}
-      <div className="flex flex-col items-center space-y-4">
-        <img
-          src="http://korus.co.in/Kimg/Korus.png"
-          alt="Company Logo"
-          className="w-28 h-28"
-        />
-        <h1 className="text-2xl md:text-4xl font-bold text-center">
-          Korus Engineering Solutions Pvt. Ltd.
-        </h1>
-        <h4 className="text-center text-gray-700 text-sm md:text-base leading-relaxed">
-          <span className="block">
-            912, Pearls Best Heights-II, 9th Floor, Plot No. C-9, Netaji Subhash
-            Place, Pitampura, Delhi - 110034
-          </span>
-          <span className="block">
-            Web: www.korus.co.in | MSME Registration No.: DL06E0006843 | CIN:
-            U74210DL2005PTC134637
-          </span>
-        </h4>
+    <div className="max-w-full mx-auto mt-10 p-8 bg-white shadow-xl rounded-lg">
+      {/* Month and Year Selector */}
+      <div className="flex space-x-4 mb-6">
+        <div className="w-1/2">
+          <label className="block font-medium mb-2">Payment Month</label>
+          <select
+            value={paymentMonth}
+            onChange={(e) => setPaymentMonth(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+            required
+          >
+            <option value="">Select Month</option>
+            {months.map((month, index) => (
+              <option key={index} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <p className="text-lg text-gray-600">
-          Pay Slip for{" "}
-          {new Date(salary.paymentDate).toLocaleDateString("default", {
-            month: "long",
-            year: "numeric",
-          })}
-        </p>
-      </div>
-
-      {/* Employee Details */}
-      <div className="mt-8 border-b pb-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-800">
-        <div className="p-4 bg-gray-50 rounded-lg shadow-md">
-          <span className="text-lg font-bold">Employee ID:</span>{" "}
-          <span className="text-lg font-medium">
-            {salary.employeeId.employeeId}
-          </span>
-        </div>
-        <div className="p-4 bg-gray-50 rounded-lg shadow-md">
-          <span className="text-lg font-bold">UAN:</span>{" "}
-          <span className="text-lg font-medium">
-            {salary.employeeId.uan || "Not Available"}
-          </span>
-        </div>
-        <div className="p-4 bg-gray-50 rounded-lg shadow-md">
-          <span className="text-lg font-bold">Employee Name:</span>{" "}
-          <span className="text-lg font-medium">{salary.employeeId.name}</span>
-        </div>
-        <div className="p-4 bg-gray-50 rounded-lg shadow-md">
-          <span className="text-lg font-bold">PF No.:</span>{" "}
-          <span className="text-lg font-medium">
-            {salary.employeeId.pfNo || "Not Available"}
-          </span>
-        </div>
-        <div className="p-4 bg-gray-50 rounded-lg shadow-md">
-          <span className="text-lg font-bold">Designation:</span>{" "}
-          <span className="text-lg font-medium">
-            {salary.employeeId.designation || "Not Available"}
-          </span>
-        </div>
-        <div className="p-4 bg-gray-50 rounded-lg shadow-md">
-          <span className="text-lg font-bold">ESI No.:</span>{" "}
-          <span className="text-lg font-medium">
-            {salary.employeeId.esiNo || "Not Available"}
-          </span>
-        </div>
-        <div className="p-4 bg-gray-50 rounded-lg shadow-md">
-          <span className="text-lg font-bold">Bank:</span>{" "}
-          <span className="text-lg font-medium">
-            {salary.employeeId.bank || "Not Available"}
-          </span>
-        </div>
-        <div className="p-4 bg-gray-50 rounded-lg shadow-md">
-          <span className="text-lg font-bold">Account No.:</span>{" "}
-          <span className="text-lg font-medium">
-            {salary.employeeId.accountNo || "Not Available"}
-          </span>
+        <div className="w-1/2">
+          <label className="block font-medium mb-2">Payment Year</label>
+          <select
+            value={paymentYear}
+            onChange={(e) => setPaymentYear(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+            required
+          >
+            <option value="">Select Year</option>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {/* Salary Summary */}
-      <div className="mt-8 text-gray-700">
-        <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-          <p className="mb-4 text-lg">
-            <span className="font-bold">Gross Salary:</span>{" "}
-            <span className="font-medium">
-              ₹
-              {salary.basicSalary +
-                salary.allowances.reduce(
-                  (acc, allowance) => acc + allowance.amount,
-                  0
-                )}
-            </span>
-          </p>
-          <p className="mb-4 text-lg">
-            <span className="font-bold">Basic Salary:</span>{" "}
-            <span className="font-medium">₹{salary.basicSalary}</span>
-          </p>
-          <p className="text-lg">
-            <span className="font-bold">Total Working Days:</span>{" "}
-            <span className="font-medium">{salary.workingDays || 30}</span>
-          </p>
-        </div>
-      </div>
+      <button
+        onClick={fetchSalary}
+        className="w-full mt-3 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+      >
+        Fetch Salary
+      </button>
 
-      {/* Earnings and Deductions */}
-      <div className="mt-8 p-6 bg-gray-50 rounded-lg shadow-inner">
-        <div className="grid grid-cols-2 gap-6 text-white">
-          <div className="bg-blue-600 text-center py-2 rounded-lg font-semibold">
-            Earnings
-          </div>
-          <div className="bg-red-600 text-center py-2 rounded-lg font-semibold">
-            Deductions
-          </div>
+      {loading && <div className="text-center text-xl mt-5">Loading...</div>}
+      {error && (
+        <div className="text-center mt-5">
+          <h2 className="text-2xl font-semibold mb-6 text-red-600">{error}</h2>
         </div>
+      )}
 
-        <div className="grid grid-cols-4 mt-6 gap-4 text-gray-800">
-          {/* Column Headers */}
-          <div className="text-center font-semibold bg-gray-200 p-2">
-            Details
+      {showSalaryDetails && (
+        <div>
+          {/* Header */}
+          <div className="mt-8 text-center space-y-4">
+            <img
+              src="http://korus.co.in/Kimg/Korus.png"
+              alt="Company Logo"
+              className="w-28 h-28 mx-auto"
+            />
+            <h1 className="text-3xl font-bold">
+              Korus Engineering Solutions Pvt. Ltd.
+            </h1>
+            <p className="text-sm text-gray-700">
+              912, Pearls Best Heights-II, 9th Floor, Plot No. C-9, Netaji
+              Subhash Place, Pitampura, Delhi - 110034
+              <br />
+              Web: www.korus.co.in | MSME Registration No.: DL06E0006843 | CIN:
+              U74210DL2005PTC134637
+            </p>
+            <p className="text-lg text-gray-600 mt-2">
+              Pay Slip for {`${salary.paymentMonth} ${salary.paymentYear}`}
+            </p>
           </div>
-          <div className="text-center font-semibold bg-gray-200 p-2">
-            Amount
-          </div>
-          <div className="text-center font-semibold bg-gray-200 p-2">
-            Details
-          </div>
-          <div className="text-center font-semibold bg-gray-200 p-2">
-            Amount
-          </div>
-        </div>
 
-        {/* Earnings */}
-        <div className="grid grid-cols-4 max-w-full gap-3 mt-2">
-          {salary.allowances.map((allowance, index) => (
-            <React.Fragment key={index}>
-              <div className="text-center border p-2">{allowance.name}</div>
-              <div className="text-center border p-2">₹{allowance.amount}</div>
-            </React.Fragment>
-          ))}
+          {/* Employee Details */}
+          <div className="mt-8 border-b pb-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-800">
+            {[
+              { label: "Employee ID", value: salary.employeeId?.employeeId },
+              { label: "UAN", value: salary.employeeId?.uan },
+              { label: "Employee Name", value: salary.employeeId?.name },
+              { label: "PF No.", value: salary.employeeId?.pfNo },
+              { label: "Designation", value: salary.employeeId?.designation },
+              { label: "ESI No.", value: salary.employeeId?.esiNo },
+              { label: "Bank", value: salary.employeeId?.bank },
+              { label: "Account No.", value: salary.employeeId?.accountNo },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="p-4 bg-gray-50 rounded-lg shadow-md border"
+              >
+                <span className="font-semibold">{item.label}:</span>{" "}
+                <span className="font-medium">
+                  {item.value || "Not Available"}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Salary Summary */}
+          <div className="mt-8 text-gray-700">
+            <div className="p-6 bg-gray-100 rounded-lg shadow-md">
+              <p className="mb-4 text-lg">
+                <span className="font-bold">Gross Salary:</span>{" "}
+                <span className="font-medium">₹{salary.grossSalary}</span>
+              </p>
+              <p className="mb-4 text-lg">
+                <span className="font-bold">Basic Salary:</span>{" "}
+                <span className="font-medium">₹{salary.basicSalary}</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Allowances */}
+          <div className="mt-8 text-gray-700">
+            <h3 className="text-xl font-semibold mb-4">Allowances</h3>
+            {salary.allowances.length === 0 ? (
+              <p>No allowances available</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {salary.allowances.map((allowance, index) => (
+                  <React.Fragment key={index}>
+                    <div className="text-center font-semibold bg-blue-200 p-2 rounded-lg shadow-sm">
+                      {allowance.name}
+                    </div>
+                    <div className="text-center font-bold text-blue-700 bg-blue-100 p-2 rounded-lg shadow-sm">
+                      ₹{allowance.amount}
+                    </div>
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Deductions */}
-          {salary.deductions.map((deduction, index) => (
-            <React.Fragment key={index}>
-              <div className="text-center border p-2">{deduction.name}</div>
-              <div className="text-center border p-2">₹{deduction.amount}</div>
-            </React.Fragment>
-          ))}
-        </div>
+          <div className="mt-8 text-gray-700">
+            <h3 className="text-xl font-semibold mb-4">Deductions</h3>
+            {salary.deductions.length === 0 ? (
+              <p>No deductions available</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {salary.deductions.map((deduction, index) => (
+                  <React.Fragment key={index}>
+                    <div className="text-center font-semibold bg-red-200 p-2 rounded-lg shadow-sm">
+                      {deduction.name}
+                    </div>
+                    <div className="text-center font-bold text-red-700 bg-red-100 p-2 rounded-lg shadow-sm">
+                      ₹{deduction.amount}
+                    </div>
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
+          </div>
 
-        <div className="col-span-2 grid grid-cols-2 mt-6 gap-4">
-          <div className="grid grid-cols-2">
-            <div className="text-center font-semibold bg-blue-100 p-2">
-              Total Allowances
+          {/* Net Salary */}
+          <div className="mt-8 grid grid-cols-2 gap-4 text-gray-800 text-lg">
+            <div className="text-center font-semibold bg-gray-200 p-2 rounded-lg shadow-sm">
+              Total Salary
             </div>
-            <div className="text-center font-semibold bg-blue-100 p-2">
-              ₹
-              {salary.allowances.reduce(
-                (acc, allowance) => acc + allowance.amount,
-                0
-              )}
+            <div className="text-center font-bold text-green-700 bg-green-100 p-2 rounded-lg shadow-sm">
+              ₹{calculateTotalSalary(salary)}
             </div>
           </div>
-          <div className="grid grid-cols-2">
-            <div className="text-center font-semibold bg-red-100 p-2">
-              Total Deductions
-            </div>
-            <div className="text-center font-semibold bg-red-100 p-2">
-              ₹
-              {salary.deductions.reduce(
-                (acc, deduction) => acc + deduction.amount,
-                0
-              )}
-            </div>
+
+          <div className="text-center mt-8 pt-4 border-t border-gray-300 text-gray-700 text-sm md:text-base">
+            Korus Design & Skill Forum: Plot No. 32, Sector-4B, HSIIDC,
+            Bahadurgarh, Haryana - 124507
           </div>
         </div>
-      </div>
-
-      {/* Net Salary */}
-      <div className="mt-8 grid grid-cols-2 gap-4 text-gray-800 text-lg">
-        <div className="text-center font-semibold bg-gray-200 p-2">
-          Net Salary
-        </div>
-        <div className="text-center font-bold text-green-700 bg-green-100 p-2">
-          ₹{calculateTotalSalary()}
-        </div>
-      </div>
-
-      <div className="text-center mt-8 pt-4 border-t border-gray-300 text-gray-700 text-sm md:text-base leading-relaxed">
-        Korus Design & Skill Forum: Plot No. 32, Sector-4B, HSIIDC, Bahadurgarh,
-        Haryana - 124507
-      </div>
+      )}
     </div>
   );
 };

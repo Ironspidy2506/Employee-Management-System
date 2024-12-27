@@ -91,7 +91,7 @@ export const fetchLeaveBalance = async (userId) => {
         },
       }
     );
-    console.log(response);
+    
     return response.data.leaveBalance;
   } catch (error) {
     console.error("Error fetching leave balance:", error);

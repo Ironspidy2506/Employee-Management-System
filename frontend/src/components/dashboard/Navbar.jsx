@@ -2,8 +2,8 @@ import React from "react";
 import { FaBars, FaSignOutAlt } from "react-icons/fa";
 import { useAuth } from "../../context/authContext";
 
-const Navbar = ({toggleSidebar }) => {
-  const {user, logout} = useAuth();
+const Navbar = ({ toggleSidebar }) => {
+  const { user, logout } = useAuth();
   return (
     <div className="flex justify-between items-center bg-gray-900 text-white px-6 py-4 shadow-md">
       {/* Welcome Message */}
@@ -15,8 +15,10 @@ const Navbar = ({toggleSidebar }) => {
 
       {/* Logout Button */}
       <div className="flex items-center space-x-4">
-        <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded transition hidden lg:block"
-        onClick={logout}>
+        <button
+          className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded transition hidden lg:block"
+          onClick={logout}
+        >
           <FaSignOutAlt className="mr-2 inline-block" />
           Logout
         </button>

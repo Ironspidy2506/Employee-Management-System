@@ -3,24 +3,26 @@ import { NavLink } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaCalendarAlt,
-  FaBuilding,
   FaMoneyBillWave,
-  FaSignOutAlt,
   FaWallet,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { useAuth } from "../../context/authContext";
-import KorusImage from './../../assets/Korus.png'
+import KorusImage from "./../../assets/Korus.png";
 
-const EmployeeSidebar = ({ isOpen, toggleSidebar }) => {
+const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
   const { logout } = useAuth();
+
 
   return (
     <div className="relative">
       {/* Sidebar */}
       <div
+        ref={sidebarRef} // Attach the ref here
         className={`fixed top-0 left-0 h-full bg-gray-800 text-white shadow-lg transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 transition-transform duration-300 z-50 w-64 flex flex-col justify-between`}
+        onClick={(e) => e.stopPropagation()} // Prevent click inside the sidebar from closing it
       >
         {/* Sidebar Header */}
         <div className="py-4 px-6 bg-gray-900 shadow-md flex items-center space-x-3">
@@ -44,6 +46,7 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar }) => {
               }`
             }
             end
+            onClick={toggleSidebar} // Close sidebar when link is clicked
           >
             <FaTachometerAlt className="mr-3 text-xl" />
             <span>Dashboard</span>
@@ -58,6 +61,7 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar }) => {
                   : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
+            onClick={toggleSidebar}
           >
             <FaCalendarAlt className="mr-3 text-xl" />
             <span>Leave</span>
@@ -72,6 +76,7 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar }) => {
                   : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
+            onClick={toggleSidebar}
           >
             <FaMoneyBillWave className="mr-3 text-xl" />
             <span>Salary</span>
@@ -86,13 +91,12 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar }) => {
                   : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
+            onClick={toggleSidebar}
           >
             <FaWallet className="mr-3 text-xl" />
             <span>Allowances</span>
           </NavLink>
         </div>
-
-
 
         {/* Logout Button (At the bottom of sidebar) */}
         <div className="px-4 py-6 lg:hidden">

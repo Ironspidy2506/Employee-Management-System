@@ -188,7 +188,7 @@ const EmployeeSummary = () => {
               <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
                 <p className="text-sm text-gray-500">Date of Joining</p>
                 <p className="text-xl font-semibold text-gray-700">
-                  {employee.doj || "N/A"}
+                  {formatDate(employee.doj) || "N/A"}
                 </p>
               </div>
             </div>

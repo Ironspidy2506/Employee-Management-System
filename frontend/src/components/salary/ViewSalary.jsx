@@ -12,61 +12,80 @@ const ViewSalary = () => {
     const fetchSalaries = async () => {
       try {
         const data = await getAllSalaries();
-
         setSalaries(data);
         setFilteredSalaries(data);
       } catch (error) {
         console.error("Error fetching salaries:", error);
       }
     };
-
     fetchSalaries();
   }, []);
 
   const calculateTotalSalary = (salary) => {
-    const totalAllowances = salary.allowances.reduce(
-      (acc, allowance) => acc + allowance.amount,
+    // Get standard allowances
+    const hra = salary.allowances[0]?.amount || 0;
+    const foodAllowance = salary.allowances[1]?.amount || 0;
+    const medicalAllowance = salary.allowances[2]?.amount || 0;
+    const transportAllowance = salary.allowances[3]?.amount || 0;
+
+    // Calculate other allowances (sum of all allowances except the standard ones)
+    const otherAllowances = salary.allowances.reduce(
+      (total, allowance, index) => {
+        // Skip HRA, food, medical, and transport allowances
+        if (index !== 0 && index !== 1 && index !== 2 && index !== 3) {
+          return total + (allowance?.amount || 0);
+        }
+        return total;
+      },
       0
     );
-    const totalDeductions = salary.deductions.reduce(
-      (acc, deduction) => acc + deduction.amount,
+
+    // Get standard deductions
+    const epf = salary.deductions[0]?.amount || 0;
+    const esi = salary.deductions[1]?.amount || 0;
+    const advance = salary.deductions[2]?.amount || 0;
+    const tax = salary.deductions[3]?.amount || 0;
+
+    // Calculate other deductions (sum of all deductions except the standard ones)
+    const otherDeductions = salary.deductions.reduce(
+      (total, deduction, index) => {
+        // Skip EPF, ESI, advance, and tax deductions
+        if (index !== 0 && index !== 1 && index !== 2 && index !== 3) {
+          return total + (deduction?.amount || 0);
+        }
+        return total;
+      },
       0
     );
+
+    // Calculate total allowances and deductions
+    const totalAllowances =
+      hra +
+      foodAllowance +
+      medicalAllowance +
+      transportAllowance +
+      otherAllowances;
+    const totalDeductions = epf + esi + advance + tax + otherDeductions;
+
+    // Calculate total salary
     const totalSalary = salary.basicSalary + totalAllowances - totalDeductions;
-    let netSalary = (totalSalary * salary.workingDays) / 26;
 
-    if (netSalary % 1 > 0.5) {
-      netSalary = Math.ceil(netSalary); // Round up
-    } else if (netSalary % 1 > 0 && netSalary % 1 <= 0.5) {
-      netSalary = Math.floor(netSalary); // Round down to .5
-    }
-
-    return netSalary;
+    return totalSalary;
   };
 
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-
-    const filtered = salaries.filter(
-      (salary) => salary.employeeName.toLowerCase().includes(query) // Assuming employeeName is the correct property
+    const filtered = salaries.filter((salary) =>
+      salary.employeeId?.employeeId?.toLowerCase().includes(query)
     );
     setFilteredSalaries(filtered);
-  };
-
-  const formatDate = (date) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, "0"); // Ensure two digits
-    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
   };
 
   return (
     <div className="p-4 space-y-6">
       {/* Search and Buttons Section */}
       <div className="flex flex-wrap items-center justify-between bg-gray-100 p-4 rounded-lg shadow-md gap-4">
-        {/* Search Bar */}
         <input
           type="text"
           value={searchQuery}
@@ -74,8 +93,6 @@ const ViewSalary = () => {
           placeholder="Search by Employee Id"
           className="flex-grow px-3 py-2 text-base text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
-
-        {/* Buttons */}
         <div className="flex space-x-4">
           <button
             onClick={() => navigate("/admin-dashboard/salary/add")}
@@ -97,112 +114,100 @@ const ViewSalary = () => {
         <table className="min-w-full table-auto border-collapse border border-gray-300 text-sm">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border px-4 py-2">Emp ID</th>
-              <th className="border px-4 py-2">Emp Name</th>
-              <th className="border px-4 py-2">Working Days</th>
-              <th className="border px-4 py-2">Basic Salary</th>
-
-              <th className="border px-4 py-2">
-                Allowances
-                <table className="w-full mt-2">
-                  <thead>
-                    <tr className="flex justify-between bg-gray-200">
-                      <th className="border px-2 py-1">HRA</th>
-                      <th className="border px-2 py-1">MA</th>
-                      <th className="border px-2 py-1">CA</th>
-                      <th className="border px-2 py-1">Incent.</th>
-                      <th className="border px-2 py-1">Others</th>
-                    </tr>
-                  </thead>
-                </table>
+              <th className="border text-center px-4 py-2">Emp ID</th>
+              <th className="border text-center px-4 py-2">Emp Name</th>
+              <th className="border text-center px-4 py-2">Gross Salary</th>
+              <th className="border text-center px-4 py-2">Basic Salary</th>
+              <th className="border text-center bg-blue-100 px-4 py-2">HRA</th>
+              <th className="border text-center bg-blue-100 px-4 py-2">Food Allowance</th>
+              <th className="border text-center bg-blue-100 px-4 py-2">
+                Medical Allowance
               </th>
-
-              <th className="border px-4 py-2">
-                Deductions
-                <table className="min-w-full mt-2">
-                  <thead>
-                    <tr className="flex justify-between bg-gray-200">
-                      <th className="border px-2 py-1">EPF</th>
-                      <th className="border px-2 py-1">ESIF</th>
-                      <th className="border px-2 py-1">Prof.Tax</th>
-                      <th className="border px-2 py-1">TDS</th>
-                      <th className="border px-2 py-1">Others</th>
-                    </tr>
-                  </thead>
-                </table>
+              <th className="border text-center bg-blue-100 px-4 py-2">
+                Transport Allowance
               </th>
-
-              <th className="border px-4 py-2">Payment Date</th>
-              <th className="border px-4 py-2">Total Salary</th>
+              <th className="border text-center bg-blue-100 px-2 py-2">Other Allowances</th>
+              <th className="border text-center bg-red-100 px-2 py-1">EPF</th>
+              <th className="border text-center bg-red-100 px-2 py-1">ESI</th>
+              <th className="border text-center bg-red-100 px-2 py-1">Adv. Deductions</th>
+              <th className="border text-center bg-red-100 px-2 py-1">Tax Deductions</th>
+              <th className="border text-center bg-red-100 px-2 py-1">Other Deductions</th>
+              <th className="border text-center px-4 py-2">Payment Month</th>
+              <th className="border text-center px-4 py-2">Payment Year</th>
+              <th className="border text-center bg-green-100 px-4 py-2">Total Salary</th>
             </tr>
           </thead>
           <tbody>
             {filteredSalaries.map((salary) => (
               <tr key={salary._id} className="border-b">
-                {/* Employee ID and Name */}
                 <td className="border px-4 py-2 text-center">
                   {salary.employeeId?.employeeId || "NA"}
                 </td>
-                <td className="border px-4 py-2 text-center" text-center>
+                <td className="border px-4 py-2 text-center">
                   {salary.employeeId?.name || "NA"}
                 </td>
-
-                {/* Basic Salary */}
                 <td className="border px-4 py-2 text-center">
-                  {salary.workingDays}
+                  {salary.grossSalary}
                 </td>
                 <td className="border px-4 py-2 text-center">
                   {salary.basicSalary}
                 </td>
-
-                {/* Allowances */}
-                <td className="border px-4 py-2">
-                  <div className="grid grid-cols-5 gap-1">
-                    <div className="border px-2 py-1">
-                      {salary.allowances[0]?.amount || 0}
-                    </div>
-                    <div className="border px-2 py-1">
-                      {salary.allowances[1]?.amount || 0}
-                    </div>
-                    <div className="border px-2 py-1">
-                      {salary.allowances[2]?.amount || 0}
-                    </div>
-                    <div className="border px-2 py-1">
-                      {salary.allowances[3]?.amount || 0}
-                    </div>
-                    <div className="border px-2 py-1">
-                      {salary.allowances[4]?.amount || 0}
-                    </div>
-                  </div>
-                </td>
-
-                {/* Deductions */}
-                <td className="border px-4 py-2">
-                  <div className="grid grid-cols-5 gap-2">
-                    <div className="border px-2 py-1">
-                      {salary.deductions[0]?.amount || 0}
-                    </div>
-                    <div className="border px-2 py-1">
-                      {salary.deductions[1]?.amount || 0}
-                    </div>
-                    <div className="border px-2 py-1">
-                      {salary.deductions[2]?.amount || 0}
-                    </div>
-                    <div className="border px-2 py-1">
-                      {salary.deductions[3]?.amount || 0}
-                    </div>
-                    <div className="border px-2 py-1">
-                      {salary.deductions[4]?.amount || 0}
-                    </div>
-                  </div>
-                </td>
-
-                {/* Payment Date */}
                 <td className="border px-4 py-2 text-center">
-                  {formatDate(salary.paymentDate)}
+                  {salary.allowances[0]?.amount || 0}
                 </td>
-
-                {/* Total Salary */}
+                <td className="border px-4 py-2 text-center">
+                  {salary.allowances[1]?.amount || 0}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {salary.allowances[2]?.amount || 0}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {salary.allowances[3]?.amount || 0}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {salary.allowances.reduce((total, allowance, index) => {
+                    if (
+                      index !== 0 &&
+                      index !== 1 &&
+                      index !== 2 &&
+                      index !== 3
+                    ) {
+                      return total + (allowance?.amount || 0);
+                    }
+                    return total;
+                  }, 0)}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {salary.deductions[0]?.amount || 0}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {salary.deductions[1]?.amount || 0}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {salary.deductions[2]?.amount || 0}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {salary.deductions[3]?.amount || 0}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {salary.deductions.reduce((total, deduction, index) => {
+                    if (
+                      index !== 0 &&
+                      index !== 1 &&
+                      index !== 2 &&
+                      index !== 3
+                    ) {
+                      return total + (deduction?.amount || 0);
+                    }
+                    return total;
+                  }, 0)}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {salary.paymentMonth}
+                </td>
+                <td className="border px-4 py-2 text-center">
+                  {salary.paymentYear}
+                </td>
                 <td className="border px-4 py-2 text-center">
                   {calculateTotalSalary(salary)}
                 </td>

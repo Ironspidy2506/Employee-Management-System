@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { EmployeeButtons } from "../../utils/EmployeeHelper";
 
@@ -7,6 +7,7 @@ const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
   const [empLoading, setEmpLoading] = useState(false);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc"); // Default sorting in ascending order
 
   const onEmployeeDelete = async (_id) => {
     const data = employees.filter((emp) => emp._id !== _id);
@@ -36,11 +37,13 @@ const EmployeeList = () => {
             name: emp.name,
             dob: new Date(emp.dob).toLocaleDateString(),
             department: emp.department.departmentName,
-            profileImage: emp.userId?.profileImage || "N/A",
+            contactNo: emp.contactNo,
           }));
 
-          setEmployees(data);
-          setFilteredEmployees(data);
+          // Sort the data by employeeId initially
+          const sortedData = sortEmployees(data);
+          setEmployees(sortedData);
+          setFilteredEmployees(sortedData);
         }
       } catch (error) {
         if (error.response && error.response.data.error) {
@@ -54,13 +57,30 @@ const EmployeeList = () => {
     fetchEmployees();
   }, []);
 
-  // Filter employees by employeeId
+  // Sort employees by employeeId and toggle between ascending and descending order
+  const sortEmployees = (data) => {
+    return data.sort((a, b) => {
+      if (a.employeeId < b.employeeId) return sortOrder === "asc" ? -1 : 1;
+      if (a.employeeId > b.employeeId) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+  };
+
+  // Handle search filter by employeeId
   const handleFilter = (e) => {
     const searchValue = e.target.value.toLowerCase();
     const records = employees.filter((emp) =>
       emp.employeeId.toString().toLowerCase().includes(searchValue)
     );
     setFilteredEmployees(records);
+  };
+
+  // Toggle sort order when Employee ID header is clicked
+  const handleSort = () => {
+    const newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+    setSortOrder(newSortOrder);
+    const sortedData = sortEmployees(filteredEmployees);
+    setFilteredEmployees(sortedData);
   };
 
   // Format date
@@ -105,10 +125,11 @@ const EmployeeList = () => {
                 <th className="border border-gray-300 px-2 py-1 text-sm">
                   S.No.
                 </th>
-                <th className="border border-gray-300 px-2 py-1 text-sm">
-                  Profile Image
-                </th>
-                <th className="border border-gray-300 px-2 py-1 text-sm">
+
+                <th
+                  className="border border-gray-300 px-2 py-1 text-sm cursor-pointer"
+                  onClick={handleSort}
+                >
                   Employee ID
                 </th>
                 <th className="border border-gray-300 px-2 py-1 text-sm">
@@ -121,6 +142,9 @@ const EmployeeList = () => {
                   Department
                 </th>
                 <th className="border border-gray-300 px-2 py-1 text-sm">
+                  Contact No
+                </th>
+                <th className="border border-gray-300 px-2 py-1 text-sm">
                   Actions
                 </th>
               </tr>
@@ -131,13 +155,7 @@ const EmployeeList = () => {
                   <td className="border border-gray-300 px-2 py-1 text-sm text-center">
                     {emp.sno}
                   </td>
-                  <td className="border border-gray-300 px-2 py-1 text-sm text-center">
-                    <img
-                      src={`https://employee-management-system-backend-objq.onrender.com/${emp.profileImage}`}
-                      alt="Employee"
-                      className="w-10 h-10 rounded-full object-cover mx-auto"
-                    />
-                  </td>
+
                   <td className="border border-gray-300 px-2 py-1 text-sm text-center">
                     {emp.employeeId}
                   </td>
@@ -149,6 +167,9 @@ const EmployeeList = () => {
                   </td>
                   <td className="border border-gray-300 px-2 py-1 text-sm text-center">
                     {emp.department}
+                  </td>
+                  <td className="border border-gray-300 px-2 py-1 text-sm text-center">
+                    {emp.contactNo}
                   </td>
                   <td className="border border-gray-300 px-2 py-1 text-sm text-center flex justify-center">
                     <EmployeeButtons

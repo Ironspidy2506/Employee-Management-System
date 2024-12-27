@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaCalendarAlt,
-  FaCogs,
   FaBuilding,
   FaMoneyBillWave,
   FaUsers,
@@ -13,15 +12,18 @@ import {
 import { useAuth } from "../../context/authContext";
 import KorusImage from "./../../assets/Korus.png";
 
-const AdminSidebar = ({ isOpen, toggleSidebar }) => {
+const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
   const { logout } = useAuth();
+
   return (
     <div className="relative">
       {/* Sidebar */}
       <div
+        ref={sidebarRef} // Attach the ref here
         className={`fixed top-0 left-0 h-full bg-gray-800 text-white shadow-lg transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 transition-transform duration-300 z-50 w-64 flex flex-col justify-between`}
+        onClick={(e) => e.stopPropagation()} // Prevent click inside the sidebar from closing it
       >
         {/* Sidebar Header */}
         <div className="py-4 px-6 bg-gray-900 shadow-md flex items-center space-x-3">
@@ -45,6 +47,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
               }`
             }
             end
+            onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
             <FaTachometerAlt className="mr-3 text-xl" />
             <span>Dashboard</span>
@@ -59,6 +62,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
                   : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
+            onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
             <FaUsers className="mr-3 text-xl" />
             <span>Employees</span>
@@ -73,6 +77,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
                   : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
+            onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
             <FaBuilding className="mr-3 text-xl" />
             <span>Department</span>
@@ -87,6 +92,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
                   : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
+            onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
             <FaCalendarAlt className="mr-3 text-xl" />
             <span>Leave</span>
@@ -101,6 +107,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
                   : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
+            onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
             <FaMoneyBillWave className="mr-3 text-xl" />
             <span>Salary</span>
@@ -115,24 +122,11 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
                   : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
+            onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
             <FaWallet className="mr-3 text-xl" />
             <span>Allowances</span>
           </NavLink>
-
-          {/* <NavLink
-            to="/admin-dashboard/settings"
-            className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
-              }`
-            }
-          >
-            <FaCogs className="mr-3 text-xl" />
-            <span>Settings</span>
-          </NavLink> */}
         </div>
 
         {/* Logout Button (At the bottom of sidebar) */}

@@ -61,17 +61,17 @@ export const addSalaries = async (payload) => {
   }
 };
 
-export const getSalaryDetails = async (_id) => {
+export const getSalaryDetails = async (_id, paymentMonth, paymentYear) => {
   try {
     const response = await axios.get(
-      `https://employee-management-system-backend-objq.onrender.com/api/salary/${_id}`,
+      `https://employee-management-system-backend-objq.onrender.com/api/salary/${_id}?paymentMonth=${paymentMonth}&paymentYear=${paymentYear}`, // Include the paymentMonth and paymentYear in the URL
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       }
     );
-    
+
     return response.data;
   } catch (error) {
     console.error("Error fetching salary details:", error);
@@ -90,6 +90,7 @@ export const updateSalary = async (employeeId, payload) => {
         },
       }
     );
+    
     return response.data; // Return the updated salary details or success response
   } catch (error) {
     console.error("Error updating salary:", error);
@@ -107,24 +108,6 @@ export const getAllSalaries = async () => {
     return response.data; // Assuming the backend sends an array of salaries
   } catch (error) {
     console.error("Error fetching salaries:", error);
-    throw error;
-  }
-};
-
-export const getRecentSalaryDetails = async (employeeId) => {
-  try {
-    const response = await axios.get(
-      `https://employee-management-system-backend-objq.onrender.com/api/salary/edit/${employeeId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-    
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching salary details:", error);
     throw error;
   }
 };

@@ -102,15 +102,15 @@ const ViewLeaveHistory = () => {
       <div className="flex flex-wrap items-center justify-between p-6 rounded-lg shadow-md bg-white gap-4">
         {/* Leave Counts */}
         <div className="flex space-x-6 items-center">
-          <div className="text-xl font-semibold text-gray-700">
+          <div className="text-lg font-semibold text-gray-700">
             Earned Leave (EL): {leaveCounts.el}
           </div>
           <div className="h-8 w-px bg-gray-300"></div>
-          <div className="text-xl font-semibold text-gray-700">
+          <div className="text-lg font-semibold text-gray-700">
             Casual Leave (CL): {leaveCounts.cl}
           </div>
           <div className="h-8 w-px bg-gray-300"></div>
-          <div className="text-xl font-semibold text-gray-700">
+          <div className="text-lg font-semibold text-gray-700">
             Sick Leave (SL): {leaveCounts.sl}
           </div>
         </div>

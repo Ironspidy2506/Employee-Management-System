@@ -43,7 +43,11 @@ const EmployeeDashboard = () => {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-0 lg:ml-64">
+      <div
+        className={`flex-1 flex flex-col transition-all duration-300 ${
+          isSidebarOpen ? "ml-64" : "ml-0" // Adjust margin-left based on sidebar state
+        }`}
+      >
         {/* Navbar */}
         <EmployeeNavbar user={user} toggleSidebar={toggleSidebar} />
 

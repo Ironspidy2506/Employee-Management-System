@@ -42,12 +42,16 @@ const AdminDashboard = () => {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col">
+      <div
+        className={`flex-1 flex flex-col transition-all duration-300 ${
+          isSidebarOpen ? "ml-64" : "ml-0" // Adjust margin-left based on sidebar state
+        }`}
+      >
         {/* Navbar */}
         <Navbar toggleSidebar={toggleSidebar} />
 
         {/* Dashboard Content */}
-        <div className="flex-1 p-6 ml-0 lg:ml-64">
+        <div className="flex-1 p-6">
           {/* Adjust content area margin to make room for sidebar on large screens */}
           <h1 className="text-2xl font-bold text-gray-800">
             Welcome to the Admin Dashboard, {user?.name || "User"}!

@@ -90,7 +90,7 @@ export const updateSalary = async (employeeId, payload) => {
         },
       }
     );
-    
+
     return response.data; // Return the updated salary details or success response
   } catch (error) {
     console.error("Error updating salary:", error);

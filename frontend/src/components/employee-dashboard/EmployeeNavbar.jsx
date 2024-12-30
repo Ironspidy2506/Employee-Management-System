@@ -6,7 +6,7 @@ const EmployeeNavbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="flex justify-between items-center bg-gray-900 text-white px-6 py-4 shadow-md">
+    <div className="flex justify-between items-center bg-gray-900 text-white px-6 py-5 shadow-md">
       {/* Welcome Message */}
       <div className="flex-shrink-0 mb-2 sm:mb-0">
         <p className="text-lg font-semibold">
@@ -28,7 +28,7 @@ const EmployeeNavbar = ({ toggleSidebar }) => {
         <div className="lg:hidden">
           <button
             onClick={toggleSidebar}
-            className="text-2xl text-white focus:outline-none"
+            className="hamburger-btn text-2xl text-white focus:outline-none"
           >
             <FaBars />
           </button>

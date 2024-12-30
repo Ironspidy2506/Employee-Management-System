@@ -3,9 +3,11 @@ import axios from "axios";
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../context/authContext";
 
 const EditAllowances = () => {
-  const { _id } = useParams(); // Get the allowance ID from URL
+  const { user } = useAuth();
+  const { _id } = useParams(); // Get the allowance ID from the URL
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     employeeId: "",
@@ -14,14 +16,45 @@ const EditAllowances = () => {
     department: "",
     client: "",
     projectNo: "",
-    placeOfVisit: "",
-    startDate: "",
-    endDate: "",
-    allowances: [],
+    allowanceMonth: "",
+    allowanceYear: "",
+    allowanceType: "",
+    allowanceAmount: "",
   });
 
   useEffect(() => {
-    // Fetch allowance data from the backend
+    // Fetch employee data
+    const fetchEmployeeData = async () => {
+      try {
+        const response = await axios.get(
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/summary/${user._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const employee = response.data.employee;
+
+        setFormData((prev) => ({
+          ...prev,
+          employeeId: employee.employeeId,
+          empName: employee.name,
+          designation: employee.designation,
+          department: employee.department.departmentName,
+        }));
+      } catch (err) {
+        console.error("Error fetching employee data:", err);
+      }
+    };
+
+    if (user?._id) {
+      fetchEmployeeData();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    // Fetch allowance data
     const fetchAllowanceData = async () => {
       try {
         const response = await axios.get(
@@ -32,21 +65,17 @@ const EditAllowances = () => {
             },
           }
         );
-
         const allowance = response.data.allowance;
-        // Set the formData with the fetched allowance data
-        setFormData({
-          employeeId: allowance.employeeId.employeeId,
-          empName: allowance.empName,
-          designation: allowance.designation,
-          department: allowance.department,
-          client: allowance.client,
-          projectNo: allowance.projectNo,
-          placeOfVisit: allowance.placeOfVisit,
-          startDate: new Date(allowance.startDate).toISOString().split("T")[0],
-          endDate: new Date(allowance.endDate).toISOString().split("T")[0],
-          allowances: allowance.allowances || [],
-        });
+
+        setFormData((prev) => ({
+          ...prev,
+          projectNo: allowance.projectNo || "",
+          client: allowance.client || "",
+          allowanceMonth: allowance.allowanceMonth || "",
+          allowanceYear: allowance.allowanceYear || "",
+          allowanceType: allowance.allowanceType || "",
+          allowanceAmount: allowance.allowanceAmount || "",
+        }));
       } catch (err) {
         console.error("Error fetching allowance data:", err);
       }
@@ -55,7 +84,6 @@ const EditAllowances = () => {
     fetchAllowanceData();
   }, [_id]);
 
-  // Handle changes in general form fields (like empName, department, etc.)
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -64,40 +92,9 @@ const EditAllowances = () => {
     }));
   };
 
-  // Handle changes in allowances (each allowance detail and amount)
-  const handleAllowanceChange = (index, e) => {
-    const { name, value } = e.target;
-    const updatedAllowances = [...formData.allowances];
-    updatedAllowances[index] = { ...updatedAllowances[index], [name]: value };
-    setFormData((prev) => ({
-      ...prev,
-      allowances: updatedAllowances,
-    }));
-  };
-
-  // Add a new allowance row to the allowances array
-  const handleAddAllowance = () => {
-    setFormData((prev) => ({
-      ...prev,
-      allowances: [...prev.allowances, { detail: "", amount: "" }],
-    }));
-  };
-
-  // Remove an allowance row from the allowances array
-  const handleRemoveAllowance = (index) => {
-    const updatedAllowances = formData.allowances.filter((_, i) => i !== index);
-    setFormData((prev) => ({
-      ...prev,
-      allowances: updatedAllowances,
-    }));
-  };
-
-  // Handle form submission (update the data)
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent form from refreshing
-
+    e.preventDefault();
     try {
-      // Send updated data to the backend API
       const response = await axios.put(
         `https://employee-management-system-backend-objq.onrender.com/api/allowances/edit/${_id}`,
         formData,
@@ -116,10 +113,8 @@ const EditAllowances = () => {
     }
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    console.log("File ready to update");
-  };
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
   return (
     <>
@@ -127,199 +122,194 @@ const EditAllowances = () => {
       <div className="mt-2 max-w-full mx-auto p-6 bg-white shadow-md rounded-md">
         <h2 className="text-2xl font-bold text-center mb-6">Edit Allowance</h2>
         <form onSubmit={handleSubmit}>
+          {/* Employee Information */}
           <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 mb-2">Employee ID</label>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Employee ID
+              </label>
               <input
                 type="text"
                 name="employeeId"
                 value={formData.employeeId}
-                onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-md"
-                required
-                disabled
+                readOnly
               />
             </div>
             <div>
-              <label className="block text-gray-700 mb-2">Employee Name</label>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Employee Name
+              </label>
               <input
                 type="text"
                 name="empName"
                 value={formData.empName}
-                onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-md"
-                required
-                disabled
+                readOnly
               />
             </div>
           </div>
 
+          {/* Additional Fields */}
           <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 mb-2">Designation</label>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Designation
+              </label>
               <input
                 type="text"
                 name="designation"
                 value={formData.designation}
-                onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-md"
-                required
-                disabled
+                readOnly
               />
             </div>
             <div>
-              <label className="block text-gray-700 mb-2">Department</label>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Department
+              </label>
               <input
                 type="text"
                 name="department"
                 value={formData.department}
-                onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-md"
-                required
-                disabled
+                readOnly
               />
             </div>
           </div>
 
+          {/* Allowance Details */}
           <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 mb-2">Client</label>
-              <input
-                type="text"
-                name="client"
-                value={formData.client}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 mb-2">Project No.</label>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Project No.
+              </label>
               <input
                 type="text"
                 name="projectNo"
                 value={formData.projectNo}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-md"
-                required
+              />
+            </div>
+            <div>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Client
+              </label>
+              <input
+                type="text"
+                name="client"
+                value={formData.client}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md"
               />
             </div>
           </div>
 
           <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 mb-2">Place of Visit</label>
-              <input
-                type="text"
-                name="placeOfVisit"
-                value={formData.placeOfVisit}
+              <label className="block font-semibold text-gray-700 mb-2">
+                Month
+              </label>
+              <select
+                name="allowanceMonth"
+                value={formData.allowanceMonth}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md select-scrollable"
                 required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 mb-2">Start Date</label>
-              <input
-                type="date"
-                name="startDate"
-                value={formData.startDate}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 mb-2">End Date</label>
-              <input
-                type="date"
-                name="endDate"
-                value={formData.endDate}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
-                required
-              />
-            </div>
-          </div>
-
-          {/* Allowances Section */}
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Allowances</label>
-            {formData.allowances.length > 0 && (
-              <div>
-                {formData.allowances.map((allowance, index) => (
-                  <div key={index} className="mb-4 flex items-center space-x-4">
-                    <div className="w-1/3">
-                      <input
-                        type="text"
-                        name="detail"
-                        value={allowance.detail}
-                        onChange={(e) => handleAllowanceChange(index, e)}
-                        placeholder="Allowance Detail"
-                        className="w-full px-3 py-2 border rounded-md"
-                        required
-                      />
-                    </div>
-
-                    <div className="w-1/3">
-                      <input
-                        type="number"
-                        name="amount"
-                        value={allowance.amount}
-                        onChange={(e) => handleAllowanceChange(index, e)}
-                        placeholder="Amount"
-                        className="w-full px-3 py-2 border rounded-md"
-                        required
-                      />
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveAllowance(index)}
-                      className="bg-red-600 text-white py-2 px-4 rounded-md border border-red-700 hover:bg-red-700 focus:outline-none"
-                    >
-                      Delete
-                    </button>
-                  </div>
+              >
+                <option value="">Select Month</option>
+                {[
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ].map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
                 ))}
-              </div>
-            )}
-
-            {/* Add Allowance Button */}
-            <button
-              type="button"
-              onClick={handleAddAllowance}
-              className="w-xl bg-blue-600 text-white py-2 px-4 rounded-md mb-4 hover:bg-blue-700"
-            >
-              Add Allowance
-            </button>
+              </select>
+            </div>
+            <div>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Year
+              </label>
+              <select
+                name="allowanceYear"
+                value={formData.allowanceYear}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md select-scrollable"
+                required
+              >
+                <option value="">Select Year</option>
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-4">
+          <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 mb-2">
-                Edit Proof of Allowance
+              <label className="block font-semibold text-gray-700 mb-2">
+                Allowance Type
+              </label>
+              <select
+                name="allowanceType"
+                value={formData.allowanceType}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              >
+                <option value="">Select Allowance Type</option>
+                <option value="site">Site Allowance</option>
+                <option value="earnedLeave">Earned Leave</option>
+                <option value="ltc">LTC</option>
+                <option value="loyaltyBonus">Loyalty Bonus</option>
+                <option value="petrol">Petrol</option>
+                <option value="driver">Driver Allowance</option>
+                <option value="carMaint">Car Maintenance</option>
+                <option value="localTravel">Local Travel/Metro Fair</option>
+                <option value="deferred">Deferred Allowance</option>
+                <option value="overTime">Overtime</option>
+                <option value="others">Other Allowances</option>
+              </select>
+            </div>
+            <div>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Amount
               </label>
               <input
-                type="file"
-                name="proofOfAllowance"
-                accept=".pdf,.jpg,.jpeg,.png" // Allow specific file types
-                onChange={handleFileChange} // Function to handle file selection
+                type="number"
+                name="allowanceAmount"
+                value={formData.allowanceAmount}
+                onChange={handleChange}
+                onWheel={(e) => e.target.blur()}
                 className="w-full px-3 py-2 border rounded-md"
+                required
               />
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
           >
-            Submit Changes
+            Update Allowance
           </button>
         </form>
       </div>
-
       <Footer />
     </>
   );

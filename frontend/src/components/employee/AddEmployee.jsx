@@ -4,8 +4,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
+import { useAuth } from "../../context/authContext";
 
 const AddEmployee = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [departments, setDepartments] = useState([]);
   const [formData, setFormData] = useState({});
@@ -48,7 +50,7 @@ const AddEmployee = () => {
       );
 
       if (response.data.success) {
-        navigate("/admin-dashboard/employees");
+        navigate(`/${user.role}-dashboard/employees`);
       }
     } catch (error) {
       if (error.response && error.response.data.error) {
@@ -391,6 +393,8 @@ const AddEmployee = () => {
               >
                 <option value="">Select Role</option>
                 <option value="Admin">Admin</option>
+                <option value="Accounts">Accounts</option>
+                <option value="HR">HR</option>
                 <option value="Employee">Employee</option>
               </select>
             </div>

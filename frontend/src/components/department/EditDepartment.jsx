@@ -3,9 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
+import { useAuth } from "../../context/authContext";
 
 const EditDepartment = () => {
   const { _id } = useParams();
+  const { user} = useAuth();
   const navigate = useNavigate();
 
   const [department, setDepartment] = useState([]);
@@ -58,7 +60,7 @@ const EditDepartment = () => {
       );
 
       if (response.data.success) {
-        navigate("/admin-dashboard/departments");
+        navigate(`/${user.role}-dashboard/departments`);
       }
     } catch (error) {
       if (error.response && error.response.data.error) {

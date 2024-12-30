@@ -13,7 +13,6 @@ import KorusImage from "./../../assets/Korus.png";
 const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
   const { logout } = useAuth();
 
-
   return (
     <div className="relative">
       {/* Sidebar */}
@@ -31,7 +30,9 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
             alt="Company Logo"
             className="w-10 h-10 rounded-full object-cover lg:block hidden"
           />
-          <h3 className="text-lg font-bold md:mt-0.5">Korus Pvt. Ltd.</h3>
+          <h3 className="text-base font-bold md:mt-0.5">
+            Korus Engineering Solutions Pvt. Ltd.
+          </h3>
         </div>
 
         {/* Navigation Links */}

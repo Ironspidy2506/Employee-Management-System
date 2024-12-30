@@ -18,7 +18,12 @@ const AdminDashboard = () => {
   useEffect(() => {
     // Function to handle outside clicks
     const handleClickOutside = (event) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+      // Close the sidebar only if clicked outside the sidebar and hamburger icon
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        !event.target.closest(".hamburger-btn")
+      ) {
         setIsSidebarOpen(false);
       }
     };
@@ -38,16 +43,16 @@ const AdminDashboard = () => {
       <AdminSidebar
         isOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
-        sidebarRef={sidebarRef} // Pass ref to sidebar
+        sidebarRef={sidebarRef}
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-0 lg:ml-64">
         {/* Navbar */}
         <Navbar toggleSidebar={toggleSidebar} />
 
         {/* Dashboard Content */}
-        <div className="flex-1 p-6 ml-0 lg:ml-64">
+        <div className="flex-1 p-6">
           {/* Adjust content area margin to make room for sidebar on large screens */}
           <h1 className="text-2xl font-bold text-gray-800">
             Welcome to the Admin Dashboard, {user?.name || "User"}!

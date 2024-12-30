@@ -8,9 +8,34 @@ const ViewAllAllowances = () => {
   const { user } = useAuth();
   const [allowanceHistory, setAllowanceHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: "", direction: "" });
-  const [voucherNos, setVoucherNos] = useState({}); // State to track voucher numbers
+
+  // Merge records with the same empId, allowanceMonth, and allowanceYear
+  const mergeAllowanceRecords = (data) => {
+    const merged = {};
+
+    data.forEach((record) => {
+      const key = `${record.employeeId.employeeId}-${record.allowanceMonth}-${record.allowanceYear}`;
+
+      if (!merged[key]) {
+        merged[key] = { ...record };
+        // Initialize fields that might need to be turned into arrays
+        Object.keys(record).forEach((field) => {
+          if (["allowanceType", "allowanceAmount", "status"].includes(field)) {
+            merged[key][field] = [record[field]];
+          }
+        });
+      } else {
+        // Merge fields into arrays for duplicates
+        Object.keys(record).forEach((field) => {
+          if (["allowanceType", "allowanceAmount", "status"].includes(field)) {
+            merged[key][field].push(record[field]);
+          }
+        });
+      }
+    });
+
+    return Object.values(merged);
+  };
 
   // Fetch allowance history data
   useEffect(() => {
@@ -24,9 +49,9 @@ const ViewAllAllowances = () => {
             },
           }
         );
-
-        setAllowanceHistory(response.data);
-        setFilteredHistory(response.data);
+        const mergedData = mergeAllowanceRecords(response.data);
+        setAllowanceHistory(mergedData);
+        setFilteredHistory(mergedData);
       } catch (error) {
         console.error("Error fetching allowance data:", error);
       }
@@ -34,116 +59,66 @@ const ViewAllAllowances = () => {
     fetchAllowanceData();
   }, [user._id]);
 
-  // Handle project number search
+  // Handle search by Employee ID
   const handleSearch = (e) => {
     const value = e.target.value;
-    setSearchTerm(value);
+
     if (value) {
-      const filtered = allowanceHistory.filter((allowance) =>
-        allowance.projectNo.toLowerCase().includes(value.toLowerCase())
+      // Convert value to number if it's not empty
+      const numericValue = Number(value);
+
+      const filtered = allowanceHistory.filter(
+        (allowance) => allowance?.employeeId?.employeeId === numericValue
       );
+
       setFilteredHistory(filtered);
     } else {
       setFilteredHistory(allowanceHistory);
     }
   };
 
-  // Sorting function
-  const handleSort = (key) => {
-    let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
-      direction = "descending";
-    }
-    setSortConfig({ key, direction });
-
-    const sortedData = [...filteredHistory].sort((a, b) => {
-      if (key === "startDate" || key === "endDate") {
-        const dateA = new Date(a[key]);
-        const dateB = new Date(b[key]);
-        return direction === "ascending" ? dateA - dateB : dateB - dateA;
-      }
-      return 0;
-    });
-    setFilteredHistory(sortedData);
+  const handleAddAllowance = () => {
+    navigate(`/${user.role}-dashboard/allowances/add-allowances`);
   };
 
-  // Approve allowance with voucher number
-  const handleApprove = async (allowanceId) => {
-    const voucherNo = voucherNos[allowanceId];
-    if (!voucherNo) {
-      alert("Please enter a voucher number.");
-      return;
-    }
-
-    try {
-      const response = await axios.put(
-        `https://employee-management-system-backend-objq.onrender.com/api/allowances/${allowanceId}`,
-        { status: "approved", voucherNo },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      setAllowanceHistory((prevHistory) =>
-        prevHistory.map((allowance) =>
-          allowance._id === allowanceId
-            ? { ...allowance, status: "approved", voucherNo }
-            : allowance
-        )
-      );
-      setFilteredHistory((prevHistory) =>
-        prevHistory.map((allowance) =>
-          allowance._id === allowanceId
-            ? { ...allowance, status: "approved", voucherNo }
-            : allowance
-        )
-      );
-
-    } catch (error) {
-      console.error("Error approving allowance:", error);
-    }
+  const handleEditAllowance = () => {
+    navigate(`/${user.role}-dashboard/allowances/edit-allowances`);
   };
 
-  // Update voucher number state for specific allowance
-  const handleInputChange = (allowanceId, value) => {
-    setVoucherNos((prev) => ({ ...prev, [allowanceId]: value }));
-  };
-
-  // Get status color helper
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "pending":
-        return "text-yellow-500";
-      case "approved":
-        return "text-green-500";
-      case "rejected":
-        return "text-red-500";
-      default:
-        return "text-gray-500";
-    }
-  };
-
-  // Format date
-  const formatDate = (date) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
+  const handleApproveAllowance = () => {
+    navigate(`/${user.role}-dashboard/allowances/approve-allowances`);
   };
 
   return (
     <div className="p-6 space-y-6 bg-white">
-      {/* Allowance History Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 rounded-sm shadow-md p-5">
+      {/* Search Bar */}
+      <div className="flex flex-col md:flex-col justify-between gap-4 rounded-sm shadow-md p-5">
         <input
           type="search"
-          placeholder="Search Project Number"
+          placeholder="Search by Employee ID"
           className="w-full md:w-auto flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           onChange={handleSearch}
         />
+        <div className="flex gap-4">
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            onClick={handleAddAllowance}
+          >
+            Add Allowance
+          </button>
+          <button
+            className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+            onClick={handleEditAllowance}
+          >
+            Edit Allowance
+          </button>
+          <button
+            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+            onClick={handleApproveAllowance}
+          >
+            Approve Allowance
+          </button>
+        </div>
       </div>
 
       {/* Table Section */}
@@ -156,122 +131,186 @@ const ViewAllAllowances = () => {
                 S. No.
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Employee ID
+                Emp ID
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Employee Name
+                Emp Name
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Department
+                Allowance Month
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Project No.
+                Allowance Year
+              </th>
+              {/* Add other columns as needed */}
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                EPF By Co.
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Allowance Type
-              </th>
-              <th
-                className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer"
-                onClick={() => handleSort("startDate")}
-              >
-                Start Date
-                {sortConfig.key === "startDate" &&
-                  (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
-              </th>
-              <th
-                className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer"
-                onClick={() => handleSort("endDate")}
-              >
-                End Date
-                {sortConfig.key === "endDate" &&
-                  (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
+                ESI by Co.
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Location
+                Med.& P.A. Ins.
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Allowances
+                Monthly Ins. & Accidental
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Status
+                Bonus
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Actions
+                Earned Leave
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                LTC
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Gratuity
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Loyalty Bonus
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Res. Phone
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Mobile
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Car EMI
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Petrol
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Driver
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Car Maint.
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Local Travel/Metro Fair
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Deferred
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Special Allowance
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Over Time
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Others
               </th>
             </tr>
           </thead>
           <tbody>
-            {filteredHistory.map((allowance, index) => (
-              <tr key={allowance._id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {index + 1}
-                </td>
-                <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {allowance.employeeId.employeeId}
-                </td>
-                <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {allowance.empName}
-                </td>
-                <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {allowance.department}
-                </td>
-                <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {allowance.projectNo}
-                </td>
-                <td className="px-4 py-2 text-center text-sm text-gray-800 capitalize">
-                  {allowance.allowanceType}
-                </td>
-                <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {formatDate(allowance.startDate)}
-                </td>
-                <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {formatDate(allowance.endDate)}
-                </td>
-                <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {allowance.placeOfVisit}
-                </td>
-                <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {allowance.allowances.reduce(
-                    (sum, item) => sum + item.amount,
-                    0
-                  )}
-                </td>
-                <td
-                  className={`px-4 py-2 text-center text-sm font-semibold ${getStatusColor(
-                    allowance.status
-                  )}`}
-                >
-                  {allowance.status === "approved"
-                    ? allowance.status.charAt(0).toUpperCase() +
-                      allowance.status.slice(1)
-                    : allowance.status.charAt(0).toUpperCase() +
-                      allowance.status.slice(1)}
-                </td>
-                <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {allowance.status === "pending" ? (
-                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                      <input
-                        type="text"
-                        placeholder="Voucher No."
-                        value={voucherNos[allowance._id] || ""}
-                        onChange={(e) =>
-                          handleInputChange(allowance._id, e.target.value)
-                        }
-                        className="px-2 py-1 border border-gray-300 rounded-md"
-                      />
-                      <button
-                        onClick={() => handleApprove(allowance._id)}
-                        className="px-4 py-2 text-sm font-semibold text-white bg-green-500 rounded-lg hover:bg-green-600 sm:text-base"
-                      >
-                        Approve
-                      </button>
-                    </div>
-                  ) : allowance.status === "approved" ? (
-                    <span>Voucher No - {allowance.voucherNo}</span>
-                  ) : null}
-                </td>
-              </tr>
-            ))}
+            {filteredHistory.map((allowance, index) => {
+              // Create a map of allowance types to amounts for easier access
+              const allowanceMap = {};
+              if (
+                allowance.allowanceType &&
+                allowance.allowanceAmount &&
+                allowance.status
+              ) {
+                allowance.allowanceType.forEach((type, idx) => {
+                  // Check if the allowance status is "approved"
+                  if (allowance.status[idx] === "approved") {
+                    // Add the allowance amount to the map for the corresponding type
+                    const key = type.toLowerCase();
+                    allowanceMap[key] =
+                      (allowanceMap[key] || 0) + allowance.allowanceAmount[idx];
+                  }
+                });
+              }
+
+              return (
+                <tr key={allowance._id} className="border-b hover:bg-gray-50">
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {index + 1}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowance.employeeId.employeeId}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowance.employeeId.name}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowance.allowanceMonth}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowance.allowanceYear}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["epfbyco"] || allowance.epfByCo || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["esibyco"] || allowance.esiByCo || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["medpains"] || allowance.medPAIns || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["monthlyinsacc"] ||
+                      allowance.monthlyInsAcc ||
+                      0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["bonus"] || allowance.bonus || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["earnedleave"] || allowance.earnedLeave || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["ltc"] || allowance.ltc || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["gratuity"] || allowance.gratuity || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["loyaltybonus"] ||
+                      allowance.loyaltyBonus ||
+                      0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["resphone"] || allowance.resPhone || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["mobile"] || allowance.mobile || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["caremi"] || allowance.carEmi || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["petrol"] || allowance.petrol || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["driver"] || allowance.driver || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["carmaint"] || allowance.carMaint || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["localtravel"] || allowance.localTravel || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["deferred"] || allowance.deferred || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["specialallowance"] ||
+                      allowance.specialAllowance ||
+                      0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["overtime"] || allowance.overTime || 0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["others"] || allowance.others || 0}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { DepartmentButtons } from "../../utils/DepartmentHelper";
 import axios from "axios";
+import { useAuth } from "../../context/authContext";
 
 const DepartmentList = () => {
+  const { user } = useAuth();
   const [departments, setDepartments] = useState([]);
   const [depLoading, setDepLoading] = useState(false);
   const [filteredDepartments, setFilteredDepartments] = useState([]);
@@ -77,7 +79,7 @@ const DepartmentList = () => {
               onChange={filterDepartments}
             />
             <Link
-              to="/admin-dashboard/add-department"
+              to={`/${user.role}-dashboard/add-department`}
               className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
             >
               Add New Department
@@ -88,8 +90,12 @@ const DepartmentList = () => {
             <thead>
               <tr className="bg-gray-200">
                 <th className="border border-gray-300 px-4 py-2">S.No.</th>
-                <th className="border border-gray-300 px-4 py-2">Department ID</th>
-                <th className="border border-gray-300 px-4 py-2">Department Name</th>
+                <th className="border border-gray-300 px-4 py-2">
+                  Department ID
+                </th>
+                <th className="border border-gray-300 px-4 py-2">
+                  Department Name
+                </th>
                 <th className="border border-gray-300 px-4 py-2">Actions</th>
               </tr>
             </thead>
@@ -105,10 +111,11 @@ const DepartmentList = () => {
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     {dep.departmentName}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center flex justify-center">
+                  <td className="border border-gray-300 px-2 py-2 text-center flex justify-center">
                     <DepartmentButtons
                       _id={dep._id}
                       onDepartmentDelete={onDepartmentDelete}
+                      user={user}
                     />
                   </td>
                 </tr>

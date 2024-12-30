@@ -4,15 +4,13 @@ import {
   FaTachometerAlt,
   FaCalendarAlt,
   FaBuilding,
-  FaMoneyBillWave,
   FaUsers,
   FaSignOutAlt,
-  FaWallet,
 } from "react-icons/fa";
 import { useAuth } from "../../context/authContext";
 import KorusImage from "./../../assets/Korus.png";
 
-const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
+const HrSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
   const { logout } = useAuth();
 
   return (
@@ -40,7 +38,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
         {/* Navigation Links */}
         <div className="flex-1 px-4 py-6 space-y-4">
           <NavLink
-            to="/admin-dashboard"
+            to="/hr-dashboard"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -56,7 +54,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
-            to="/admin-dashboard/employees"
+            to="/hr-dashboard/employees"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -71,7 +69,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
-            to="/admin-dashboard/departments"
+            to="/hr-dashboard/departments"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -86,7 +84,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
-            to="/admin-dashboard/leave"
+            to="/hr-dashboard/leave"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -98,36 +96,6 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           >
             <FaCalendarAlt className="mr-3 text-xl" />
             <span>Leave</span>
-          </NavLink>
-
-          <NavLink
-            to="/admin-dashboard/salary"
-            className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
-              }`
-            }
-            onClick={toggleSidebar} // Close the sidebar when this link is clicked
-          >
-            <FaMoneyBillWave className="mr-3 text-xl" />
-            <span>Salary</span>
-          </NavLink>
-
-          <NavLink
-            to="/admin-dashboard/allowances"
-            className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
-              }`
-            }
-            onClick={toggleSidebar} // Close the sidebar when this link is clicked
-          >
-            <FaWallet className="mr-3 text-xl" />
-            <span>Allowances</span>
           </NavLink>
         </div>
 
@@ -147,4 +115,4 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
   );
 };
 
-export default AdminSidebar;
+export default HrSidebar;

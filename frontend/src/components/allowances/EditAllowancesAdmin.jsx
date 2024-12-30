@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
 
-const ApplyAllowances = () => {
+const EditAllowancesAdmin = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -20,12 +20,13 @@ const ApplyAllowances = () => {
     allowanceType: "",
     allowanceAmount: "",
   });
-
+  
   useEffect(() => {
     const fetchEmployeeData = async () => {
+      if (!formData.employeeId) return; // Prevent API call if employeeId is empty
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/summary/${user._id}`,
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${formData.employeeId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -33,7 +34,6 @@ const ApplyAllowances = () => {
           }
         );
         const employee = response.data.employee;
-
         setFormData((prev) => ({
           ...prev,
           employeeId: employee.employeeId,
@@ -46,10 +46,8 @@ const ApplyAllowances = () => {
       }
     };
 
-    if (user?._id) {
-      fetchEmployeeData();
-    }
-  }, [user]);
+    fetchEmployeeData();
+  }, [formData.employeeId]); // Trigger this only when employeeId changes
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,10 +60,9 @@ const ApplyAllowances = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const userId = user._id;
     try {
-      const response = await axios.post(
-        `https://employee-management-system-backend-objq.onrender.com/api/allowances/add/${userId}`,
+      const response = await axios.put(
+        `https://employee-management-system-backend-objq.onrender.com/api/allowances/admin/edit-allowance/${formData.employeeId}`,
         formData,
         {
           headers: {
@@ -75,7 +72,7 @@ const ApplyAllowances = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        navigate("/employee-dashboard/allowances");
+        navigate(`/${user.role}-dashboard/allowances`);
       }
     } catch (err) {
       if (err.response) {
@@ -95,7 +92,7 @@ const ApplyAllowances = () => {
       <Header />
       <div className="mt-2 max-w-full mx-auto p-6 bg-white shadow-md rounded-md">
         <h2 className="text-2xl font-bold text-center mb-6">
-          Add Allowance Form
+          Edit Allowance Form
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4 grid grid-cols-2 gap-4">
@@ -109,7 +106,6 @@ const ApplyAllowances = () => {
                 value={formData.employeeId}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-md"
-                readOnly
               />
             </div>
             <div>
@@ -164,8 +160,8 @@ const ApplyAllowances = () => {
               <input
                 type="text"
                 name="projectNo"
-                placeholder="(If Any)"
                 onChange={handleChange}
+                placeholder="(If Any)"
                 className="w-full px-3 py-2 border rounded-md"
               />
             </div>
@@ -240,16 +236,16 @@ const ApplyAllowances = () => {
                 required
               >
                 <option value="">Select Allowance Type</option>
-                <option value="site">Site Allowance</option>
-                <option value="earnedLeave">Earned Leave</option>
-                <option value="ltc">LTC</option>
-                <option value="loyaltyBonus">Loyalty Bonus</option>
-                <option value="petrol">Petrol</option>
-                <option value="driver">Driver Allowance</option>
-                <option value="carMaint">Car Maintenance</option>
-                <option value="localTravel">Local Travel/Metro Fair</option>
-                <option value="deferred">Deferred Allowance</option>
-                <option value="overTime">Overtime</option>
+                <option value="epfByCo">E.P.F By Co.</option>
+                <option value="esiByCo">E.S.I By Co.</option>
+                <option value="medPAIns">Med.& P.A. Ins.</option>
+                <option value="monthlyInsAcc">Monthly Ins. & Accidental</option>
+                <option value="bonus">Bonus</option>
+                <option value="gratuity">Gratuity</option>
+                <option value="resPhone">Res. Phone</option>
+                <option value="mobile ">Mobile</option>
+                <option value="carEmi">Car EMI</option>
+                <option value="specialAllowance">Special Allowance</option>
                 <option value="others">Other Allowances</option>
               </select>
             </div>
@@ -273,7 +269,7 @@ const ApplyAllowances = () => {
             type="submit"
             className="w-full bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
           >
-            Submit Allowance
+            Update Allowance
           </button>
         </form>
       </div>
@@ -282,4 +278,4 @@ const ApplyAllowances = () => {
   );
 };
 
-export default ApplyAllowances;
+export default EditAllowancesAdmin;

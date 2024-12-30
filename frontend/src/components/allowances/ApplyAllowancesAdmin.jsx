@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
 
-const ApplyAllowances = () => {
+const ApplyAllowancesAdmin = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -22,10 +22,10 @@ const ApplyAllowances = () => {
   });
 
   useEffect(() => {
-    const fetchEmployeeData = async () => {
+    const fetchEmployeeData = async (employeeId) => {
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/summary/${user._id}`,
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${employeeId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -46,10 +46,11 @@ const ApplyAllowances = () => {
       }
     };
 
-    if (user?._id) {
-      fetchEmployeeData();
+    // If employeeId is set and changes, fetch employee data
+    if (formData.employeeId) {
+      fetchEmployeeData(formData.employeeId);
     }
-  }, [user]);
+  }, [formData.employeeId, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,10 +63,9 @@ const ApplyAllowances = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const userId = user._id;
     try {
       const response = await axios.post(
-        `https://employee-management-system-backend-objq.onrender.com/api/allowances/add/${userId}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/allowances/admin/add-allowance/${formData.employeeId}`,
         formData,
         {
           headers: {
@@ -75,7 +75,7 @@ const ApplyAllowances = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        navigate("/employee-dashboard/allowances");
+        navigate(`/${user.role}-dashboard/allowances`);
       }
     } catch (err) {
       if (err.response) {
@@ -109,7 +109,6 @@ const ApplyAllowances = () => {
                 value={formData.employeeId}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-md"
-                readOnly
               />
             </div>
             <div>
@@ -164,8 +163,8 @@ const ApplyAllowances = () => {
               <input
                 type="text"
                 name="projectNo"
-                placeholder="(If Any)"
                 onChange={handleChange}
+                placeholder="(If Any)"
                 className="w-full px-3 py-2 border rounded-md"
               />
             </div>
@@ -240,16 +239,16 @@ const ApplyAllowances = () => {
                 required
               >
                 <option value="">Select Allowance Type</option>
-                <option value="site">Site Allowance</option>
-                <option value="earnedLeave">Earned Leave</option>
-                <option value="ltc">LTC</option>
-                <option value="loyaltyBonus">Loyalty Bonus</option>
-                <option value="petrol">Petrol</option>
-                <option value="driver">Driver Allowance</option>
-                <option value="carMaint">Car Maintenance</option>
-                <option value="localTravel">Local Travel/Metro Fair</option>
-                <option value="deferred">Deferred Allowance</option>
-                <option value="overTime">Overtime</option>
+                <option value="epfByCo">E.P.F By Co.</option>
+                <option value="esiByCo">E.S.I By Co.</option>
+                <option value="medPAIns">Med.& P.A. Ins.</option>
+                <option value="monthlyInsAcc">Monthly Ins. & Accidental</option>
+                <option value="bonus">Bonus</option>
+                <option value="gratuity">Gratuity</option>
+                <option value="resPhone">Res. Phone</option>
+                <option value="mobile ">Mobile</option>
+                <option value="carEmi">Car EMI</option>
+                <option value="specialAllowance">Special Allowance</option>
                 <option value="others">Other Allowances</option>
               </select>
             </div>
@@ -282,4 +281,4 @@ const ApplyAllowances = () => {
   );
 };
 
-export default ApplyAllowances;
+export default ApplyAllowancesAdmin;

@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext.jsx";
-import { getLeaveRecords, approveRejectLeave } from "../../utils/AdminLeaveHelper.jsx";
+import {
+  getLeaveRecords,
+  approveRejectLeave,
+} from "../../utils/AdminLeaveHelper.jsx";
 
 const ViewAllLeaves = () => {
   const { user } = useAuth();
   const [leaveHistory, setLeaveHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
   const navigate = useNavigate();
   const userId = user._id;
@@ -26,21 +30,19 @@ const ViewAllLeaves = () => {
     fetchLeaveHistory();
   }, [userId]);
 
-
   const handleApproveReject = async (leaveId, action) => {
     try {
-        await approveRejectLeave(leaveId, action);
-        const updatedHistory = leaveHistory.map((leave) =>
-            leave._id === leaveId ? { ...leave, status: action } : leave
-        );
+      await approveRejectLeave(leaveId, action);
+      const updatedHistory = leaveHistory.map((leave) =>
+        leave._id === leaveId ? { ...leave, status: action } : leave
+      );
 
-        setLeaveHistory(updatedHistory);
-        setFilteredHistory(updatedHistory);
+      setLeaveHistory(updatedHistory);
+      setFilteredHistory(updatedHistory);
     } catch (error) {
-        console.error(`Error ${action} leave:`, error);
+      console.error(`Error ${action} leave:`, error);
     }
-};
-
+  };
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -91,11 +93,45 @@ const ViewAllLeaves = () => {
     return `${day}-${month}-${year}`;
   };
 
+  const handleSearch = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+
+    // Filter by employeeId (handling it as a number)
+    const filtered = leaveHistory.filter((leave) => {
+      return leave.employeeId.employeeId.toString().includes(query); // Ensure employeeId is treated as a string
+    });
+
+    setFilteredHistory(filtered);
+  };
+
   return (
     <div className="p-6 space-y-6 bg-white">
+      {/* Search Bar */}
+
       {/* Table Section */}
       <div className="overflow-x-auto">
         <h2 className="text-2xl font-bold mb-4">Leave History</h2>
+        <div className="mb-4 flex justify-between items-center rounded-sm p-1">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Search by Employee ID"
+            className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+        <div className="flex justify-start mb-4">
+          <button
+            onClick={() =>
+              navigate("/admin-dashboard/leave/employeesLeaveBalances")
+            }
+            className="w-full sm:w-auto px-5 py-2 text-center text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+          >
+            View Remaining Leaves
+          </button>
+        </div>
+
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead className="bg-gray-200 border-b">
             <tr>
@@ -177,13 +213,17 @@ const ViewAllLeaves = () => {
                   {leave.status === "pending" ? (
                     <>
                       <button
-                        onClick={() => handleApproveReject(leave._id, "approved")}
+                        onClick={() =>
+                          handleApproveReject(leave._id, "approved")
+                        }
                         className="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
                       >
                         Approve
                       </button>
                       <button
-                        onClick={() => handleApproveReject(leave._id, "rejected")}
+                        onClick={() =>
+                          handleApproveReject(leave._id, "rejected")
+                        }
                         className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700"
                       >
                         Reject

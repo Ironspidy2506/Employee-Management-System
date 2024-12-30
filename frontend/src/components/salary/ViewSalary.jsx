@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { getAllSalaries } from "../../utils/SalaryHelper";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/authContext";
 
 const ViewSalary = () => {
+  const { user } = useAuth();
   const [salaries, setSalaries] = useState([]);
   const [filteredSalaries, setFilteredSalaries] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -85,7 +87,7 @@ const ViewSalary = () => {
   return (
     <div className="p-4 space-y-6">
       {/* Search and Buttons Section */}
-      <div className="flex flex-wrap items-center justify-between bg-gray-100 p-4 rounded-lg shadow-md gap-4">
+      <div className="flex flex-wrap items-center justify-between bg-gray-50 p-4 rounded-lg shadow-md gap-4">
         <input
           type="text"
           value={searchQuery}
@@ -95,13 +97,13 @@ const ViewSalary = () => {
         />
         <div className="flex space-x-4">
           <button
-            onClick={() => navigate("/admin-dashboard/salary/add")}
+            onClick={() => navigate(`/${user.role}-dashboard/salary/add`)}
             className="px-6 py-3 text-sm font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 min-w-[200px]"
           >
             Add Salary
           </button>
           <button
-            onClick={() => navigate("/admin-dashboard/salary/edit")}
+            onClick={() => navigate(`/${user.role}-dashboard/salary/edit`)}
             className="px-6 py-3 text-sm font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 min-w-[200px]"
           >
             Edit Salary
@@ -119,22 +121,34 @@ const ViewSalary = () => {
               <th className="border text-center px-4 py-2">Gross Salary</th>
               <th className="border text-center px-4 py-2">Basic Salary</th>
               <th className="border text-center bg-blue-100 px-4 py-2">HRA</th>
-              <th className="border text-center bg-blue-100 px-4 py-2">Food Allowance</th>
+              <th className="border text-center bg-blue-100 px-4 py-2">
+                Food Allowance
+              </th>
               <th className="border text-center bg-blue-100 px-4 py-2">
                 Medical Allowance
               </th>
               <th className="border text-center bg-blue-100 px-4 py-2">
                 Transport Allowance
               </th>
-              <th className="border text-center bg-blue-100 px-2 py-2">Other Allowances</th>
+              <th className="border text-center bg-blue-100 px-2 py-2">
+                Other Allowances
+              </th>
               <th className="border text-center bg-red-100 px-2 py-1">EPF</th>
               <th className="border text-center bg-red-100 px-2 py-1">ESI</th>
-              <th className="border text-center bg-red-100 px-2 py-1">Adv. Deductions</th>
-              <th className="border text-center bg-red-100 px-2 py-1">Tax Deductions</th>
-              <th className="border text-center bg-red-100 px-2 py-1">Other Deductions</th>
+              <th className="border text-center bg-red-100 px-2 py-1">
+                Adv. Deductions
+              </th>
+              <th className="border text-center bg-red-100 px-2 py-1">
+                Tax Deductions
+              </th>
+              <th className="border text-center bg-red-100 px-2 py-1">
+                Other Deductions
+              </th>
               <th className="border text-center px-4 py-2">Payment Month</th>
               <th className="border text-center px-4 py-2">Payment Year</th>
-              <th className="border text-center bg-green-100 px-4 py-2">Total Salary</th>
+              <th className="border text-center bg-green-100 px-4 py-2">
+                Total Salary
+              </th>
             </tr>
           </thead>
           <tbody>

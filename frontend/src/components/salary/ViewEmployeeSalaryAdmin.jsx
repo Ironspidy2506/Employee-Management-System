@@ -4,10 +4,34 @@ import axios from "axios";
 
 const ViewEmployeeSalaryAdmin = () => {
   const { _id } = useParams();
+  const [employee, setEmployee] = useState({});
   const [salaries, setSalaries] = useState([]);
   const [filteredSalaries, setFilteredSalaries] = useState([]);
 
   // Fetch salary history for the employee
+  useEffect(() => {
+    const getEmployeeSummary = async () => {
+      try {
+        const response = await axios.get(
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/${_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        console.log(response.data);
+        
+        const data = await response.data.employee;
+        setEmployee(data);
+      } catch (error) {
+        console.error("Error fetching employee leave history:", error);
+      }
+    };
+
+    getEmployeeSummary();
+  }, [_id]);
+
   useEffect(() => {
     const fetchSalaryHistory = async () => {
       try {
@@ -66,22 +90,20 @@ const ViewEmployeeSalaryAdmin = () => {
     return salary.basicSalary + totalAllowances - totalDeductions;
   };
 
-  const employee = salaries.length > 0 ? salaries[0].employeeId : {};
-
   return (
     <div className="mt-5">
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">
+      <h1 className="text-2xl font-semibold text-gray-800 mb-4">
         Employee Salary History
       </h1>
 
       <div className="bg-gray-100 p-4 rounded-lg shadow-lg mb-6">
-        <div className="mt-2">
+        <div>
           <p className="text-lg font-medium text-gray-600">
-            <span className="font-bold text-gray-800">Emp Id:</span>{" "}
+            <span className="font-semibold text-gray-800">Emp Id:</span>{" "}
             {employee.employeeId}
           </p>
           <p className="text-lg font-medium text-gray-600">
-            <span className="font-bold text-gray-800">Emp Name:</span>{" "}
+            <span className="font-semibold text-gray-800">Emp Name:</span>{" "}
             {employee.name}
           </p>
         </div>

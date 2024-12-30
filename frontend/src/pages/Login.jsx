@@ -21,12 +21,17 @@ const Login = () => {
           password,
         }
       );
+      
 
       if (response.data.success) {
         login(response.data.user);
         localStorage.setItem("token", response.data.token);
         if (response.data.user.role === "admin") {
           navigate("/admin-dashboard");
+        } else if (response.data.user.role === "accounts") {
+          navigate("/accounts-dashboard");
+        } else if (response.data.user.role === "hr") {
+          navigate("/hr-dashboard");
         } else {
           navigate("/employee-dashboard");
         }

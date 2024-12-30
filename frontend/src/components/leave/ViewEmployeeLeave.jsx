@@ -4,11 +4,33 @@ import axios from "axios";
 
 const ViewEmployeeLeave = () => {
   const { _id } = useParams(); // Extract employee ID from the URL
+  const [employee, setEmployee] = useState({});
   const [leaveHistory, setLeaveHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "" });
 
   // Fetch leave data when component mounts
+  useEffect(() => {
+    const getEmployeeLeaveBalance = async () => {
+      try {
+        const response = await axios.get(
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/${_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const data = await response.data.employee;
+        setEmployee(data);
+      } catch (error) {
+        console.error("Error fetching employee leave history:", error);
+      }
+    };
+
+    getEmployeeLeaveBalance();
+  }, [_id]);
+
   useEffect(() => {
     const fetchLeaveHistory = async () => {
       try {
@@ -71,6 +93,36 @@ const ViewEmployeeLeave = () => {
   return (
     <div className="overflow-x-auto p-4 mt-2">
       <h2 className="text-2xl font-bold mb-4">Leave History</h2>
+      <div className="flex flex-wrap items-center justify-between p-6 rounded-lg shadow-md bg-white gap-4 mb-4">
+        <div className=" p-4 rounded-lg">
+          <div>
+            <p className="text-lg font-medium text-gray-600">
+              <span className="font-semibold text-gray-800">Emp Id:</span>{" "}
+              {employee.employeeId}
+            </p>
+            <p className="text-lg font-medium text-gray-600">
+              <span className="font-semibold text-gray-800">Emp Name:</span>{" "}
+              {employee.name}
+            </p>
+          </div>
+        </div>
+        {/* Leave Counts */}
+        <div className="flex space-x-6 items-center">
+          <div className="text-lg font-semibold text-gray-700">
+            Earned Leave (EL): {employee.leaveBalance?.el || 0}{" "}
+            {/* Corrected */}
+          </div>
+          <div className="h-8 w-px bg-gray-300"></div>
+          <div className="text-lg font-semibold text-gray-700">
+            Casual Leave (CL): {employee.leaveBalance?.cl || 0}{" "}
+            {/* Corrected */}
+          </div>
+          <div className="h-8 w-px bg-gray-300"></div>
+          <div className="text-lg font-semibold text-gray-700">
+            Sick Leave (SL): {employee.leaveBalance?.sl || 0} {/* Corrected */}
+          </div>
+        </div>
+      </div>
       <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
         <thead className="bg-gray-200 border-b">
           <tr>

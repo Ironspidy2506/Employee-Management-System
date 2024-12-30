@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/authContext.jsx";
-import EmployeeSidebar from "../components/employee-dashboard/EmployeeSidebar.jsx";
-import EmployeeNavbar from "../components/employee-dashboard/EmployeeNavbar.jsx";
+import Navbar from "../components/dashboard/Navbar.jsx";
 import { Outlet } from "react-router-dom";
+import AccountSidebar from "../components/accounts-dashboard/AccountSidebar.jsx";
 
-const EmployeeDashboard = () => {
+const AccountsDashboard = () => {
   const { user } = useAuth();
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Ref for sidebar to detect outside clicks
+  // Create a ref for the sidebar to detect clicks outside it
   const sidebarRef = useRef(null);
 
-  // Toggle sidebar function
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -19,6 +19,7 @@ const EmployeeDashboard = () => {
   useEffect(() => {
     // Function to handle outside clicks
     const handleClickOutside = (event) => {
+      // Close the sidebar only if clicked outside the sidebar and hamburger icon
       if (
         sidebarRef.current &&
         !sidebarRef.current.contains(event.target) &&
@@ -39,8 +40,8 @@ const EmployeeDashboard = () => {
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
-      <EmployeeSidebar
+      {/* Sidebar with ref */}
+      <AccountSidebar
         isOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
         sidebarRef={sidebarRef}
@@ -49,20 +50,21 @@ const EmployeeDashboard = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col ml-0 lg:ml-64">
         {/* Navbar */}
-        <EmployeeNavbar user={user} toggleSidebar={toggleSidebar} />
+        <Navbar toggleSidebar={toggleSidebar} />
 
         {/* Dashboard Content */}
         <div className="flex-1 p-6">
+          {/* Adjust content area margin to make room for sidebar on large screens */}
           <h1 className="text-2xl font-bold text-gray-800">
-            Welcome to the Employee Dashboard, {user?.name || "User"}!
+            Welcome to the Accounts Dashboard, {user?.name || "User"}!
           </h1>
 
+          {/* Render nested route content */}
           <Outlet />
-          {/* Add any other relevant content or components here */}
         </div>
       </div>
     </div>
   );
 };
 
-export default EmployeeDashboard;
+export default AccountsDashboard;

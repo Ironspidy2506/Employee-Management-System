@@ -8,8 +8,10 @@ import {
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/authContext";
 
 const EditSalary = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [departments, setDepartments] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -147,7 +149,7 @@ const EditSalary = () => {
 
     try {
       const result = await updateSalary(selectedEmployee, payload);
-      navigate("/admin-dashboard/salary");
+      navigate(`/${user.role}-dashboard/salary`);
     } catch (error) {
       console.error("Error updating salary:", error);
       alert("Error updating salary.");

@@ -7,9 +7,11 @@ const ViewEmployeeSalary = () => {
   const [salary, setSalary] = useState({
     basicSalary: 0,
     allowances: [],
+    approvedAllowances: [],
     deductions: [],
-    totalSalary: 0,
-    paymentDate: "",
+    grossSalary: 0,
+    paymentMonth: "",
+    paymentYear: "",
     employeeId: {},
   });
   const [loading, setLoading] = useState(false);
@@ -48,6 +50,7 @@ const ViewEmployeeSalary = () => {
           },
         }
       );
+
       setSalary(response.data);
       setShowSalaryDetails(true);
     } catch (err) {
@@ -58,36 +61,68 @@ const ViewEmployeeSalary = () => {
     }
   };
 
-  const calculateTotalSalary = () => {
-    const hra = salary.allowances[0]?.amount || 0;
-    const foodAllowance = salary.allowances[1]?.amount || 0;
-    const medicalAllowance = salary.allowances[2]?.amount || 0;
-    const transportAllowance = salary.allowances[3]?.amount || 0;
-    const otherAllowances = salary.allowances.reduce(
-      (total, allowance, index) =>
-        index > 3 ? total + (allowance?.amount || 0) : total,
+  const calculateTotalSalary = (salary) => {
+    // Calculate total of default allowances and approved allowances
+    const totalAllowances = [
+      ...salary.defaultAllowances,
+      ...salary.approvedAllowances,
+    ].reduce((total, allowance) => total + (allowance?.amount || 0), 0);
+
+    // Calculate total deductions
+    const totalDeductions = salary.deductions.reduce(
+      (total, deduction) => total + (deduction?.amount || 0),
       0
     );
 
-    const epf = salary.deductions[0]?.amount || 0;
-    const esi = salary.deductions[1]?.amount || 0;
-    const advance = salary.deductions[2]?.amount || 0;
-    const tax = salary.deductions[3]?.amount || 0;
-    const otherDeductions = salary.deductions.reduce(
-      (total, deduction, index) =>
-        index > 3 ? total + (deduction?.amount || 0) : total,
-      0
-    );
-
-    const totalAllowances =
-      hra +
-      foodAllowance +
-      medicalAllowance +
-      transportAllowance +
-      otherAllowances;
-    const totalDeductions = epf + esi + advance + tax + otherDeductions;
-
+    // Total salary calculation
     return salary.basicSalary + totalAllowances - totalDeductions;
+  };
+
+  const getAllowanceName = (type) => {
+    switch (type.toLowerCase()) {
+      case "epfbyco":
+        return "EPF By Co.";
+      case "esibyco":
+        return "ESI by Co.";
+      case "medpains":
+        return "Med. & P.A. Ins.";
+      case "monthlyinsacc":
+        return "Monthly Ins. & Accidental";
+      case "bonus":
+        return "Bonus";
+      case "earnedleave":
+        return "Earned Leave";
+      case "ltc":
+        return "LTC";
+      case "gratuity":
+        return "Gratuity";
+      case "loyaltybonus":
+        return "Loyalty Bonus";
+      case "resphone":
+        return "Res. Phone";
+      case "mobile":
+        return "Mobile";
+      case "caremi":
+        return "Car EMI";
+      case "petrol":
+        return "Petrol";
+      case "driver":
+        return "Driver";
+      case "carmaint":
+        return "Car Maint.";
+      case "localtravel":
+        return "Local Travel/Metro Fair";
+      case "deferred":
+        return "Deferred";
+      case "specialallowance":
+        return "Special Allowance";
+      case "overtime":
+        return "Over Time";
+      case "others":
+        return "Other Allowances";
+      default:
+        return type; // Return the type if it doesn't match any case
+    }
   };
 
   return (
@@ -194,28 +229,58 @@ const ViewEmployeeSalary = () => {
           {/* Salary Summary */}
           <div className="mt-8 text-gray-700">
             <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-              <p className="mb-4 text-lg">
+              <p className="mb-2 text-lg">
                 <span className="font-bold">Gross Salary:</span>{" "}
                 <span className="font-medium">₹{salary.grossSalary}</span>
               </p>
-              <p className="mb-4 text-lg">
+              <p className="text-lg">
                 <span className="font-bold">Basic Salary:</span>{" "}
                 <span className="font-medium">₹{salary.basicSalary}</span>
               </p>
             </div>
           </div>
 
-          {/* Allowances */}
+          {/* Default Allowances */}
           <div className="mt-8 text-gray-700">
             <h3 className="text-xl font-semibold mb-4">Allowances</h3>
-            {salary.allowances.length === 0 ? (
+            {salary.defaultAllowances.length === 0 ? (
               <p>No allowances available</p>
             ) : (
               <div className="grid grid-cols-2 gap-4">
-                {salary.allowances.map((allowance, index) => (
+                {salary.defaultAllowances.map((allowance, index) => (
                   <React.Fragment key={index}>
                     <div className="text-center font-semibold bg-blue-200 p-2 rounded-lg shadow-sm">
                       {allowance.name}
+                    </div>
+                    <div className="text-center font-bold text-blue-700 bg-blue-100 p-2 rounded-lg shadow-sm">
+                      ₹{allowance.amount}
+                    </div>
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Approved Allowances */}
+          <div className="mt-8 text-gray-700">
+            <h3 className="text-xl font-semibold mb-4">Approved Allowances</h3>
+            {salary.approvedAllowances.length === 0 ? (
+              <p>No approved allowances available</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {salary.approvedAllowances.map((allowance, index) => (
+                  <React.Fragment key={index}>
+                    <div className="flex justify-around items-center bg-blue-200 p-2 rounded-lg shadow-sm">
+                      <span className="font-semibold">
+                        {getAllowanceName(allowance.name)}{" "}
+                        {allowance.name === "others" &&
+                        allowance.voucherNo === "" ? (
+                          <span className=" font-medium">(Admin)</span>
+                        ) : allowance.name === "others" &&
+                          allowance.voucherNo !== "" ? (
+                          <span className=" font-medium">(Employee)</span>
+                        ) : null}
+                      </span>
                     </div>
                     <div className="text-center font-bold text-blue-700 bg-blue-100 p-2 rounded-lg shadow-sm">
                       ₹{allowance.amount}
@@ -248,8 +313,8 @@ const ViewEmployeeSalary = () => {
           </div>
 
           {/* Net Salary */}
-          <div className="mt-8 grid grid-cols-2 gap-4 text-gray-800 text-lg">
-            <div className="text-center font-semibold bg-gray-200 p-2 rounded-lg shadow-sm">
+          <div className="mt-8 grid grid-cols-2 gap-4 text-gray-700 text-lg">
+            <div className=" subpixel-antialiased text-center font-bold bg-green-200 p-2 rounded-lg shadow-sm">
               Total Salary
             </div>
             <div className="text-center font-bold text-green-700 bg-green-100 p-2 rounded-lg shadow-sm">

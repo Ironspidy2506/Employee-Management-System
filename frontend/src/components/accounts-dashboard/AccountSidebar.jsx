@@ -12,7 +12,7 @@ import {
 import { useAuth } from "../../context/authContext";
 import KorusImage from "./../../assets/Korus.png";
 
-const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
+const AccountSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
   const { logout } = useAuth();
 
   return (
@@ -40,7 +40,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
         {/* Navigation Links */}
         <div className="flex-1 px-4 py-6 space-y-4">
           <NavLink
-            to="/admin-dashboard"
+            to="/accounts-dashboard"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -56,7 +56,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
-            to="/admin-dashboard/employees"
+            to="/accounts-dashboard/employees"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -71,7 +71,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
-            to="/admin-dashboard/departments"
+            to="/accounts-dashboard/departments"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -86,7 +86,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
-            to="/admin-dashboard/leave"
+            to="/accounts-dashboard/leave"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -101,7 +101,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
-            to="/admin-dashboard/salary"
+            to="/accounts-dashboard/salary"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -116,7 +116,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
-            to="/admin-dashboard/allowances"
+            to="/accounts-dashboard/allowances"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -147,4 +147,4 @@ const AdminSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
   );
 };
 
-export default AdminSidebar;
+export default AccountSidebar;

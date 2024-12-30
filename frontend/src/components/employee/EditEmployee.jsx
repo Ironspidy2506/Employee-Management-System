@@ -4,8 +4,10 @@ import axios from "axios";
 import { fetchDepartments } from "../../utils/EmployeeHelper";
 import Header from "../HeaderFooter/Header";
 import Footer from "../HeaderFooter/Footer";
+import { useAuth } from "../../context/authContext";
 
 const EditEmployee = () => {
+  const { user } = useAuth();
   const { _id } = useParams();
   const navigate = useNavigate();
 
@@ -91,7 +93,7 @@ const EditEmployee = () => {
       );
 
       if (response.data.success) {
-        navigate("/admin-dashboard/employees");
+        navigate(`/${user.role}-dashboard/employees`);
       }
     } catch (error) {
       if (error.response && error.response.data.error) {
@@ -460,6 +462,8 @@ const EditEmployee = () => {
                   >
                     <option value="">Select Role</option>
                     <option value="Admin">Admin</option>
+                    <option value="Accounts">Accounts</option>
+                    <option value="HR">HR</option>
                     <option value="Employee">Employee</option>
                   </select>
                 </div>

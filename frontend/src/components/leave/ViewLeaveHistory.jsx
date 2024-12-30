@@ -130,14 +130,14 @@ const ViewLeaveHistory = () => {
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead className="bg-gray-200 border-b">
             <tr>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
                 S. No.
               </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
                 Leave Type
               </th>
               <th
-                className="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer"
+                className="px-4 py-2 text-left text-base font-medium text-gray-700 cursor-pointer"
                 onClick={() => handleSort("startDate")}
               >
                 Start Date
@@ -145,20 +145,20 @@ const ViewLeaveHistory = () => {
                   (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
               </th>
               <th
-                className="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer"
+                className="px-4 py-2 text-left text-base font-medium text-gray-700 cursor-pointer"
                 onClick={() => handleSort("endDate")}
               >
                 End Date
                 {sortConfig.key === "endDate" &&
                   (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
               </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
                 No. of Days
               </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
                 Status
               </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
                 Actions
               </th>
             </tr>
@@ -166,28 +166,28 @@ const ViewLeaveHistory = () => {
           <tbody>
             {filteredHistory.map((leave, index) => (
               <tr key={leave._id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-2 text-sm text-gray-800">{index + 1}</td>
-                <td className="px-4 py-2 text-sm text-gray-800">
+                <td className="px-4 py-2 text-base text-gray-800">{index + 1}</td>
+                <td className="px-4 py-2 text-base text-gray-800">
                   {leave.type.toUpperCase()}
                 </td>
-                <td className="px-4 py-2 text-sm text-gray-800">
+                <td className="px-4 py-2 text-base text-gray-800">
                   {formatDate(leave.startDate)}
                 </td>
-                <td className="px-4 py-2 text-sm text-gray-800">
+                <td className="px-4 py-2 text-base text-gray-800">
                   {formatDate(leave.endDate)}
                 </td>
 
-                <td className="px-4 py-2 text-sm text-gray-800">
+                <td className="px-4 py-2 text-base text-gray-800">
                   {leave.days}
                 </td>
                 <td
-                  className={`px-4 py-2 text-sm font-semibold ${getStatusColor(
+                  className={`px-4 py-2 text-base font-semibold ${getStatusColor(
                     leave.status
                   )}`}
                 >
                   {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
                 </td>
-                <td className="flex px-4 py-2 text-sm text-gray-800 space-x-2">
+                <td className="flex px-4 py-2 text-base text-gray-800 space-x-2">
                   {leave.status !== "approved" &&
                   leave.status !== "rejected" ? (
                     <>
@@ -197,13 +197,13 @@ const ViewLeaveHistory = () => {
                             `/employee-dashboard/leave/edit/${leave._id}`
                           )
                         }
-                        className="px-4 py-2 text-sm font-semibold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                        className="px-4 py-2 text-base font-semibold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(leave._id)}
-                        className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                        className="px-4 py-2 text-base font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                       >
                         Delete
                       </button>

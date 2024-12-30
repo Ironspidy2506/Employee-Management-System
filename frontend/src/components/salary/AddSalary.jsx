@@ -7,8 +7,10 @@ import {
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/authContext";
 
 const AddSalary = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [departments, setDepartments] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -103,7 +105,7 @@ const AddSalary = () => {
 
     try {
       const result = await addSalaries(payload);
-      navigate("/admin-dashboard/salary");
+      navigate(`/${user.role}-dashboard/salary`);
     } catch (error) {
       console.error("Error submitting salary:", error);
       alert("Error adding salary.");
@@ -268,7 +270,6 @@ const AddSalary = () => {
                         e.target.value
                       )
                     }
-
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-md"
                     placeholder="Allowance Name"
                   />

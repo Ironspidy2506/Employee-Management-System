@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.select-scrollable {
+  max-height: 150px; /* Adjust this height as needed */
+  overflow-y: auto; /* Enables vertical scrolling */
+}

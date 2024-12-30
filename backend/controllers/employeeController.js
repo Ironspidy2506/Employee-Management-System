@@ -125,9 +125,7 @@ const getEmployee = async (req, res) => {
       .populate("department");
     return res.status(200).json({ success: true, employee });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ success: false, error: "Edit Department Server Error" });
+    return res.status(500).json({ success: false, error: "Server Error" });
   }
 };
 
@@ -199,6 +197,7 @@ const updateEmployee = async (req, res) => {
     // Update the user document
     const updatedUserFields = {
       ...(name && { name }),
+      ...(role && { role }),
       ...(profileImage && { profileImage }),
     };
 
@@ -312,8 +311,32 @@ const getSalaryDetailsOfEmployee = async (req, res) => {
       return res.status(404).json({ message: "Salary record not found." });
     }
 
-    // Return salary details
-    return res.json(salary);
+    // Fetch approved allowances for the same employee, month, and year
+    const approvedAllowances = await Allowance.find({
+      employeeId: empId,
+      allowanceMonth: paymentMonth,
+      allowanceYear: paymentYear,
+      status: "approved",
+    });
+
+    // Combine the default allowances from salary and approved allowances separately
+    const defaultAllowances = salary.allowances;
+    const approvedAllowancesList = approvedAllowances.map((allowance) => ({
+      name: allowance.allowanceType,
+      amount: allowance.allowanceAmount,
+      voucherNo: allowance.voucherNo,
+    }));
+
+    // Return salary details with both default and approved allowances separately
+    return res.json({
+      grossSalary: salary.grossSalary,
+      basicSalary: salary.basicSalary,
+      defaultAllowances: defaultAllowances, // Default allowances from salary
+      approvedAllowances: approvedAllowancesList, // Approved allowances from the Allowance model
+      deductions: salary.deductions,
+      paymentMonth: salary.paymentMonth,
+      paymentYear: salary.paymentYear,
+    });
   } catch (error) {
     console.error("Error fetching salary details:", error);
     return res.status(500).json({ message: "Error fetching salary details." });
@@ -357,6 +380,63 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
+const getEmployeeSummaryForAllowances = async (req, res) => {
+  const { employeeId } = req.params;
+
+  try {
+    const employee = await Employee.findOne({ employeeId }).populate(
+      "department"
+    );
+
+    if (!employee) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Employee not found" });
+    }
+
+    return res.status(200).json({ success: true, employee });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error: "Server Error" });
+  }
+};
+
+const updateEmployeeLeaveBalance = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    const { el, cl, sl } = req.body;
+
+    const employee = await Employee.findOne({ employeeId: employeeId });
+    if (!employee) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Employee not found" });
+    }
+
+    const updatedLeaveBalance = {
+      el: el !== undefined ? el : employee.leaveBalance.el,
+      cl: cl !== undefined ? cl : employee.leaveBalance.cl,
+      sl: sl !== undefined ? sl : employee.leaveBalance.sl,
+    };
+
+    employee.leaveBalance = updatedLeaveBalance;
+
+    await employee.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Leave balance updated successfully",
+      data: employee,
+    });
+  } catch (error) {
+    console.error("Error updating leave balance:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Server error while updating leave balance",
+    });
+  }
+};
+
 export {
   addEmployee,
   upload,
@@ -368,4 +448,6 @@ export {
   getSalaryDetailsOfEmployee,
   getEmployeeLeaves,
   deleteEmployee,
+  getEmployeeSummaryForAllowances,
+  updateEmployeeLeaveBalance,
 };

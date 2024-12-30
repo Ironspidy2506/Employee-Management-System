@@ -96,7 +96,6 @@ const employeeSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["admin", "employee"],
     required: true,
   },
   profileImage: {

@@ -192,29 +192,34 @@ const ViewSalary = () => {
                   }, 0)}
                 </td>
                 <td className="border px-4 py-2 text-center">
-                  {salary.deductions[0]?.amount || 0}
+                  {salary.deductions.find((d) => d.name === "EPF")?.amount || 0}
                 </td>
                 <td className="border px-4 py-2 text-center">
-                  {salary.deductions[1]?.amount || 0}
+                  {salary.deductions.find((d) => d.name === "ESI")?.amount || 0}
                 </td>
                 <td className="border px-4 py-2 text-center">
-                  {salary.deductions[2]?.amount || 0}
+                  {salary.deductions.find((d) => d.name === "Advance Deduction")
+                    ?.amount || 0}
                 </td>
                 <td className="border px-4 py-2 text-center">
-                  {salary.deductions[3]?.amount || 0}
+                  {salary.deductions.find((d) => d.name === "Tax Deduction")
+                    ?.amount || 0}
                 </td>
                 <td className="border px-4 py-2 text-center">
-                  {salary.deductions.reduce((total, deduction, index) => {
-                    if (
-                      index !== 0 &&
-                      index !== 1 &&
-                      index !== 2 &&
-                      index !== 3
-                    ) {
-                      return total + (deduction?.amount || 0);
-                    }
-                    return total;
-                  }, 0)}
+                  {salary.deductions
+                    .filter(
+                      (deduction) =>
+                        ![
+                          "EPF",
+                          "ESI",
+                          "Advance Deduction",
+                          "Tax Deduction",
+                        ].includes(deduction?.name)
+                    )
+                    .reduce(
+                      (total, deduction) => total + (deduction?.amount || 0),
+                      0
+                    )}
                 </td>
                 <td className="border px-4 py-2 text-center">
                   {salary.paymentMonth}

@@ -20,13 +20,14 @@ const EditAllowancesAdmin = () => {
     allowanceType: "",
     allowanceAmount: "",
   });
-  
+
+  const [employeeId, setEmployeeId] = useState("");
   useEffect(() => {
     const fetchEmployeeData = async () => {
-      if (!formData.employeeId) return; // Prevent API call if employeeId is empty
+      if (!employeeId) return;
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${formData.employeeId}`,
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${employeeId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -47,7 +48,11 @@ const EditAllowancesAdmin = () => {
     };
 
     fetchEmployeeData();
-  }, [formData.employeeId]); // Trigger this only when employeeId changes
+  }, [employeeId]);
+
+  const handleEmployeeIdChange = (e) => {
+    setEmployeeId(e.target.value);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -103,8 +108,8 @@ const EditAllowancesAdmin = () => {
               <input
                 type="text"
                 name="employeeId"
-                value={formData.employeeId}
-                onChange={handleChange}
+                value={employeeId}
+                onChange={handleEmployeeIdChange}
                 className="w-full px-3 py-2 border rounded-md"
               />
             </div>

@@ -87,7 +87,7 @@ const ApplyAllowancesAdmin = () => {
     }
   };
 
-  const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear() - 1;
   const years = Array.from({ length: 10 }, (_, i) => currentYear + i); // Generate years from current year to 20 years ahead
 
   return (

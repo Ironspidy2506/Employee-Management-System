@@ -20,7 +20,7 @@ const ViewEmployeeSalary = () => {
   const [paymentYear, setPaymentYear] = useState("");
   const [showSalaryDetails, setShowSalaryDetails] = useState(false);
 
-  const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear() - 1;
   const years = Array.from({ length: 21 }, (_, i) => currentYear + i);
 
   const months = [

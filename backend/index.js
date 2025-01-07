@@ -8,6 +8,7 @@ import employeeRouter from "./routes/employee.js";
 import salaryRouter from "./routes/salary.js";
 import leaveRouter from "./routes/leave.js";
 import allowanceRouter from "./routes/allowance.js";
+import userRouter from "./routes/users.js";
 
 const app = express();
 app.use(express.json());
@@ -26,6 +27,7 @@ dbConnect();
 
 app.use(express.static("public/uploads"));
 app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
 app.use("/api/department", departmentRouter);
 app.use("/api/employees", employeeRouter);
 app.use("/api/salary", salaryRouter);

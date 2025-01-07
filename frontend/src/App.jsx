@@ -36,6 +36,7 @@ import ViewEmployeesLeaveCount from "./components/leave/ViewEmployeesLeaveCount"
 import AccountsDashboard from "./pages/AccountsDashboard";
 import HrDashboard from "./pages/HrDashboard";
 import EditLeaveBalances from "./components/leave/EditLeaveBalances";
+import UsersData from "./components/hr-dashboard/UsersData";
 
 const App = () => {
   return (
@@ -56,25 +57,67 @@ const App = () => {
           }
         >
           <Route index element={<AdminSummary />} />
-          <Route path="/admin-dashboard/departments" element={<DepartmentList />} />
-          <Route path="/admin-dashboard/add-department" element={<AddDepartment />} />
-          <Route path="/admin-dashboard/departments/viewemployees/:_id" element={<ViewDepartment />} />
-          <Route path="/admin-dashboard/departments/:_id" element={<EditDepartment />} />
+          <Route
+            path="/admin-dashboard/departments"
+            element={<DepartmentList />}
+          />
+          <Route
+            path="/admin-dashboard/add-department"
+            element={<AddDepartment />}
+          />
+          <Route
+            path="/admin-dashboard/departments/viewemployees/:_id"
+            element={<ViewDepartment />}
+          />
+          <Route
+            path="/admin-dashboard/departments/:_id"
+            element={<EditDepartment />}
+          />
           <Route path="/admin-dashboard/employees" element={<EmployeeList />} />
-          <Route path="/admin-dashboard/employees/:_id" element={<ViewEmployee />} />
-          <Route path="/admin-dashboard/employees/edit/:_id" element={<EditEmployee />} />
-          <Route path="/admin-dashboard/employees/salary/:_id" element={<ViewEmployeeSalaryAdmin />} />
-          <Route path="/admin-dashboard/employees/leave/:_id" element={<ViewEmployeeLeave />} />
-          <Route path="/admin-dashboard/add-employee" element={<AddEmployee />} />
+          <Route
+            path="/admin-dashboard/employees/:_id"
+            element={<ViewEmployee />}
+          />
+          <Route
+            path="/admin-dashboard/employees/edit/:_id"
+            element={<EditEmployee />}
+          />
+          <Route
+            path="/admin-dashboard/employees/salary/:_id"
+            element={<ViewEmployeeSalaryAdmin />}
+          />
+          <Route
+            path="/admin-dashboard/employees/leave/:_id"
+            element={<ViewEmployeeLeave />}
+          />
+          <Route
+            path="/admin-dashboard/add-employee"
+            element={<AddEmployee />}
+          />
           <Route path="/admin-dashboard/salary" element={<SalaryOptions />} />
           <Route path="/admin-dashboard/salary/add" element={<AddSalary />} />
           <Route path="/admin-dashboard/salary/edit" element={<EditSalary />} />
-          <Route path="/admin-dashboard/allowances" element={<ViewAllAllowances />} />
-          <Route path="/admin-dashboard/allowances/add-allowances" element={<ApplyAllowancesAdmin />} />
-          <Route path="/admin-dashboard/allowances/edit-allowances" element={<EditAllowancesAdmin />} />
-          <Route path="/admin-dashboard/allowances/approve-allowances" element={<ApproveAllowances />} />
+          <Route
+            path="/admin-dashboard/allowances"
+            element={<ViewAllAllowances />}
+          />
+          <Route
+            path="/admin-dashboard/allowances/add-allowances"
+            element={<ApplyAllowancesAdmin />}
+          />
+          <Route
+            path="/admin-dashboard/allowances/edit-allowances"
+            element={<EditAllowancesAdmin />}
+          />
+          <Route
+            path="/admin-dashboard/allowances/approve-allowances"
+            element={<ApproveAllowances />}
+          />
           <Route path="/admin-dashboard/leave" element={<ViewAllLeaves />} />
-          <Route path="/admin-dashboard/leave/employeesLeaveBalances" element={<ViewEmployeesLeaveCount />} />
+          <Route
+            path="/admin-dashboard/leave/employeesLeaveBalances"
+            element={<ViewEmployeesLeaveCount />}
+          />
         </Route>
 
         {/* Accounts Dashboard Routes */}
@@ -89,24 +132,78 @@ const App = () => {
           }
         >
           <Route index element={<AdminSummary />} />
-          <Route path="/accounts-dashboard/departments" element={<DepartmentList />} />
-          <Route path="/accounts-dashboard/add-department" element={<AddDepartment />} />
-          <Route path="/accounts-dashboard/departments/viewemployees/:_id" element={<ViewDepartment />} />
-          <Route path="/accounts-dashboard/departments/:_id" element={<EditDepartment />} />
-          <Route path="/accounts-dashboard/employees" element={<EmployeeList />} />
-          <Route path="/accounts-dashboard/employees/:_id" element={<ViewEmployee />} />
-          <Route path="/accounts-dashboard/employees/edit/:_id" element={<EditEmployee />} />
-          <Route path="/accounts-dashboard/employees/salary/:_id" element={<ViewEmployeeSalaryAdmin />} />
-          <Route path="/accounts-dashboard/employees/leave/:_id" element={<ViewEmployeeLeave />} />
-          <Route path="/accounts-dashboard/add-employee" element={<AddEmployee />} />
-          <Route path="/accounts-dashboard/salary" element={<SalaryOptions />} />
-          <Route path="/accounts-dashboard/salary/add" element={<AddSalary />} />
-          <Route path="/accounts-dashboard/salary/edit" element={<EditSalary />} />
-          <Route path="/accounts-dashboard/allowances" element={<ViewAllAllowances />} />
-          <Route path="/accounts-dashboard/allowances/add-allowances" element={<ApplyAllowancesAdmin />} />
-          <Route path="/accounts-dashboard/allowances/edit-allowances" element={<EditAllowancesAdmin />} />
-          <Route path="/accounts-dashboard/allowances/approve-allowances" element={<ApproveAllowances />} />
-          <Route path="/accounts-dashboard/leave" element={<ViewEmployeesLeaveCount />} />
+          <Route
+            path="/accounts-dashboard/departments"
+            element={<DepartmentList />}
+          />
+          <Route
+            path="/accounts-dashboard/add-department"
+            element={<AddDepartment />}
+          />
+          <Route
+            path="/accounts-dashboard/departments/viewemployees/:_id"
+            element={<ViewDepartment />}
+          />
+          <Route
+            path="/accounts-dashboard/departments/:_id"
+            element={<EditDepartment />}
+          />
+          <Route
+            path="/accounts-dashboard/employees"
+            element={<EmployeeList />}
+          />
+          <Route
+            path="/accounts-dashboard/employees/:_id"
+            element={<ViewEmployee />}
+          />
+          <Route
+            path="/accounts-dashboard/employees/edit/:_id"
+            element={<EditEmployee />}
+          />
+          <Route
+            path="/accounts-dashboard/employees/salary/:_id"
+            element={<ViewEmployeeSalaryAdmin />}
+          />
+          <Route
+            path="/accounts-dashboard/employees/leave/:_id"
+            element={<ViewEmployeeLeave />}
+          />
+          <Route
+            path="/accounts-dashboard/add-employee"
+            element={<AddEmployee />}
+          />
+          <Route
+            path="/accounts-dashboard/salary"
+            element={<SalaryOptions />}
+          />
+          <Route
+            path="/accounts-dashboard/salary/add"
+            element={<AddSalary />}
+          />
+          <Route
+            path="/accounts-dashboard/salary/edit"
+            element={<EditSalary />}
+          />
+          <Route
+            path="/accounts-dashboard/allowances"
+            element={<ViewAllAllowances />}
+          />
+          <Route
+            path="/accounts-dashboard/allowances/add-allowances"
+            element={<ApplyAllowancesAdmin />}
+          />
+          <Route
+            path="/accounts-dashboard/allowances/edit-allowances"
+            element={<EditAllowancesAdmin />}
+          />
+          <Route
+            path="/accounts-dashboard/allowances/approve-allowances"
+            element={<ApproveAllowances />}
+          />
+          <Route
+            path="/accounts-dashboard/leave"
+            element={<ViewEmployeesLeaveCount />}
+          />
         </Route>
 
         <Route
@@ -120,16 +217,38 @@ const App = () => {
           }
         >
           <Route index element={<AdminSummary />} />
-          <Route path="/hr-dashboard/departments" element={<DepartmentList />} />
-          <Route path="/hr-dashboard/add-department" element={<AddDepartment />} />
-          <Route path="/hr-dashboard/departments/viewemployees/:_id" element={<ViewDepartment />} />
-          <Route path="/hr-dashboard/departments/:_id" element={<EditDepartment />} />
+          <Route
+            path="/hr-dashboard/departments"
+            element={<DepartmentList />}
+          />
+          <Route
+            path="/hr-dashboard/add-department"
+            element={<AddDepartment />}
+          />
+          <Route
+            path="/hr-dashboard/departments/viewemployees/:_id"
+            element={<ViewDepartment />}
+          />
+          <Route
+            path="/hr-dashboard/departments/:_id"
+            element={<EditDepartment />}
+          />
           <Route path="/hr-dashboard/employees" element={<EmployeeList />} />
-          <Route path="/hr-dashboard/employees/:_id" element={<ViewEmployee />} />
-          <Route path="/hr-dashboard/employees/edit/:_id" element={<EditEmployee />} />
-          <Route path="/hr-dashboard/employees/leave/:_id" element={<ViewEmployeeLeave />} />
+          <Route
+            path="/hr-dashboard/employees/:_id"
+            element={<ViewEmployee />}
+          />
+          <Route
+            path="/hr-dashboard/employees/edit/:_id"
+            element={<EditEmployee />}
+          />
+          <Route
+            path="/hr-dashboard/employees/leave/:_id"
+            element={<ViewEmployeeLeave />}
+          />
           <Route path="/hr-dashboard/add-employee" element={<AddEmployee />} />
           <Route path="/hr-dashboard/leave" element={<EditLeaveBalances />} />
+          <Route path="/hr-dashboard/users" element={<UsersData />} />
         </Route>
 
         {/* Employee Dashboard Routes */}
@@ -144,13 +263,34 @@ const App = () => {
           }
         >
           <Route index element={<EmployeeSummary />} />
-          <Route path="/employee-dashboard/salary" element={<ViewEmployeeSalary />} />
-          <Route path="/employee-dashboard/allowances" element={<ViewEmployeeAllowance />} />
-          <Route path="/employee-dashboard/allowances/add" element={<ApplyAllowance />} />
-          <Route path="/employee-dashboard/allowances/edit/:_id" element={<EditAllowances />} />
-          <Route path="/employee-dashboard/leave" element={<ViewLeaveHistory />} />
-          <Route path="/employee-dashboard/leave/apply" element={<ApplyLeave />} />
-          <Route path="/employee-dashboard/leave/edit/:_id" element={<EditLeave />} />
+          <Route
+            path="/employee-dashboard/salary"
+            element={<ViewEmployeeSalary />}
+          />
+          <Route
+            path="/employee-dashboard/allowances"
+            element={<ViewEmployeeAllowance />}
+          />
+          <Route
+            path="/employee-dashboard/allowances/add"
+            element={<ApplyAllowance />}
+          />
+          <Route
+            path="/employee-dashboard/allowances/edit/:_id"
+            element={<EditAllowances />}
+          />
+          <Route
+            path="/employee-dashboard/leave"
+            element={<ViewLeaveHistory />}
+          />
+          <Route
+            path="/employee-dashboard/leave/apply"
+            element={<ApplyLeave />}
+          />
+          <Route
+            path="/employee-dashboard/leave/edit/:_id"
+            element={<EditLeave />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

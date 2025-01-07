@@ -6,6 +6,7 @@ import {
   FaBuilding,
   FaUsers,
   FaSignOutAlt,
+  FaUser,
 } from "react-icons/fa";
 import { useAuth } from "../../context/authContext";
 import KorusImage from "./../../assets/Korus.png";
@@ -81,6 +82,21 @@ const HrSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           >
             <FaBuilding className="mr-3 text-xl" />
             <span>Department</span>
+          </NavLink>
+
+          <NavLink
+            to="/hr-dashboard/users"
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-md transition-colors ${
+                isActive
+                  ? "bg-gray-700 text-white"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              }`
+            }
+            onClick={toggleSidebar} // Close the sidebar when this link is clicked
+          >
+            <FaUser className="mr-3 text-xl" />
+            <span>Users</span>
           </NavLink>
 
           <NavLink

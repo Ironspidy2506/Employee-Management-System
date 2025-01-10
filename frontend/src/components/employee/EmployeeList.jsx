@@ -154,7 +154,7 @@ const EmployeeList = () => {
                   Department
                 </th>
                 <th className="border border-gray-300 px-2 py-1 text-base">
-                  Contact No
+                  Contact No.
                 </th>
                 <th className="border border-gray-300 px-2 py-1 text-base">
                   Actions
@@ -170,7 +170,7 @@ const EmployeeList = () => {
                   <td className="border border-gray-300 px-2 py-1 text-base text-center">
                     {emp.employeeId}
                   </td>
-                  <td className="border border-gray-300 px-2 py-1 text-base text-center">
+                  <td className="border border-gray-300 px-2 py-1 text-base">
                     {emp.name}
                   </td>
                   <td className="border border-gray-300 px-2 py-1 text-base text-center">
@@ -186,7 +186,7 @@ const EmployeeList = () => {
                     <EmployeeButtons
                       _id={emp._id}
                       onEmployeeDelete={onEmployeeDelete}
-                      user = {user}
+                      user={user}
                     />
                   </td>
                 </tr>

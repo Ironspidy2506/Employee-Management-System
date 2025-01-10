@@ -37,6 +37,10 @@ import AccountsDashboard from "./pages/AccountsDashboard";
 import HrDashboard from "./pages/HrDashboard";
 import EditLeaveBalances from "./components/leave/EditLeaveBalances";
 import UsersData from "./components/hr-dashboard/UsersData";
+import Helpdesk from "./components/hr-dashboard/Helpdesk";
+import EmployeeHelpdesk from "./components/helpdesk/EmployeeHelpdesk";
+import ApplyHelp from "./components/helpdesk/ApplyHelp";
+import EditHelp from "./components/helpdesk/EditHelp";
 
 const App = () => {
   return (
@@ -249,6 +253,7 @@ const App = () => {
           <Route path="/hr-dashboard/add-employee" element={<AddEmployee />} />
           <Route path="/hr-dashboard/leave" element={<EditLeaveBalances />} />
           <Route path="/hr-dashboard/users" element={<UsersData />} />
+          <Route path="/hr-dashboard/helpdesk" element={<Helpdesk />} />
         </Route>
 
         {/* Employee Dashboard Routes */}
@@ -290,6 +295,21 @@ const App = () => {
           <Route
             path="/employee-dashboard/leave/edit/:_id"
             element={<EditLeave />}
+          />
+
+          <Route
+            path="/employee-dashboard/helpdesk"
+            element={<EmployeeHelpdesk />}
+          />
+
+          <Route
+            path="/employee-dashboard/helpdesk/apply-help"
+            element={<ApplyHelp />}
+          />
+
+          <Route
+            path="/employee-dashboard/helpdesk/edit-help/:_id"
+            element={<EditHelp />}
           />
         </Route>
       </Routes>

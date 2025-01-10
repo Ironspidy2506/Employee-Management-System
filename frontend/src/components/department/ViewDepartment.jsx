@@ -44,10 +44,9 @@ const ViewDepartment = () => {
     const filtered = employees.filter((employee) => {
       return employee.employeeId.toString().includes(query);
     });
-  
+
     setFilteredEmployees(filtered);
   };
-  
 
   // Function to format date
   const formatDate = (date) => {
@@ -79,7 +78,7 @@ const ViewDepartment = () => {
               <th className="px-5 py-3 text-center text-base font-medium text-gray-700">
                 Employee ID
               </th>
-              <th className="px-5 py-3 text-center text-base font-medium text-gray-700">
+              <th className="px-5 py-3 text-left text-base font-medium text-gray-700">
                 Name
               </th>
               <th className="px-5 py-3 text-center text-base font-medium text-gray-700">
@@ -102,7 +101,7 @@ const ViewDepartment = () => {
                 <td className="px-5 py-2 lg:py-4 text-center text-base text-gray-800">
                   {employee.employeeId}
                 </td>
-                <td className="px-5 py-2 lg:py-4 text-center text-base text-gray-800">
+                <td className="px-5 py-2 lg:py-4 text-base text-gray-800">
                   {employee.name}
                 </td>
                 <td className="px-5 py-2 lg:py-4 text-center text-base text-gray-800">

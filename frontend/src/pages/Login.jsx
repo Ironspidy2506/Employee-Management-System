@@ -21,7 +21,6 @@ const Login = () => {
           password,
         }
       );
-      
 
       if (response.data.success) {
         login(response.data.user);
@@ -79,7 +78,7 @@ const Login = () => {
               type="email"
               id="email"
               name="email"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-500 transition-all sm:text-sm"
               placeholder="Enter your email"
               required
               onChange={(e) => setEmail(e.target.value)}
@@ -97,7 +96,7 @@ const Login = () => {
               type="password"
               id="password"
               name="password"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-500 transition-all sm:text-sm"
               placeholder="Enter your password"
               required
               onChange={(e) => setPassword(e.target.value)}

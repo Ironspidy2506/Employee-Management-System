@@ -17,6 +17,7 @@ const AdminSummary = () => {
   const [leaveApproved, setLeaveApproved] = useState(0);
   const [leavePending, setLeavePending] = useState(0);
   const [leaveRejected, setLeaveRejected] = useState(0);
+  const [upcomingBirthdays, setUpcomingBirthdays] = useState([]);
 
   // Fetch data when the component mounts
   useEffect(() => {
@@ -44,6 +45,38 @@ const AdminSummary = () => {
 
         if (employeeResponse.data.success) {
           setEmployeeCount(employeeResponse.data.employees.length);
+
+          // Process upcoming birthdays
+          const employees = employeeResponse.data.employees;
+          const today = new Date();
+          const upcoming = employees
+            .map((employee) => {
+              const dob = new Date(employee.dob);
+              const birthdayThisYear = new Date(
+                today.getFullYear(),
+                dob.getMonth(),
+                dob.getDate()
+              );
+
+              // Determine if birthday is today or upcoming
+              const isToday =
+                birthdayThisYear.toDateString() === today.toDateString();
+              const isUpcoming = birthdayThisYear >= today;
+
+              return isUpcoming
+                ? {
+                    name: employee.name,
+                    employeeId: employee.employeeId,
+                    dob: birthdayThisYear,
+                    isToday,
+                  }
+                : null;
+            })
+            .filter((entry) => entry !== null)
+            .sort((a, b) => a.dob - b.dob) // Sort by date
+            .slice(0, 5); // Limit to top 5
+
+          setUpcomingBirthdays(upcoming);
         }
 
         if (departmentResponse.data.success) {
@@ -105,6 +138,84 @@ const AdminSummary = () => {
             text={"Leave Rejected"}
             number={leaveRejected}
           />
+        </div>
+      </div>
+
+      {/* Alerts Section */}
+      <div>
+        <h3 className="text-2xl font-bold mb-8 text-gray-800">Alerts</h3>
+
+        <div className="space-y-8">
+          <h4 className="text-xl font-bold text-indigo-600">
+            🎉 Upcoming Birthdays
+          </h4>
+
+          {upcomingBirthdays.length > 0 ? (
+            <div className="flex flex-col gap-6">
+              {upcomingBirthdays.map((employee, index) => (
+                <div
+                  key={index}
+                  className={`flex items-center justify-between p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 ${
+                    employee.isToday
+                      ? "bg-gradient-to-r from-green-400 via-green-300 to-green-200 text-green-900"
+                      : "bg-gradient-to-r from-gray-200 via-gray-100 to-white text-gray-800"
+                  }`}
+                >
+                  {/* Left Section: Cake Icon or Circle */}
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-center w-16 h-16 rounded-full shadow-md">
+                      {employee.isToday ? (
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/854/854878.png"
+                          alt="Cake Icon"
+                          className="w-10 h-10"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-300 shadow-md text-2xl">
+                          🎂
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Employee Name */}
+                    <div className="flex items-center gap-4">
+                      {/* Employee ID */}
+                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500 text-white shadow-md">
+                        <p className="text-lg font-bold">
+                          {employee.employeeId}
+                        </p>
+                      </div>
+
+                      {/* Employee Name */}
+                      <div className="flex-1">
+                        <p className="text-lg font-bold text-gray-800">
+                          {employee.name}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Section: Date of Birth */}
+                  <div className="flex flex-col items-end text-right">
+                    <p className="text-base font-medium">
+                      {new Date(employee.dob).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                    {employee.isToday && (
+                      <p className="mt-1 text-green-800 font-semibold text-sm">
+                        🎉 (Today!)
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600 text-center">No upcoming birthdays.</p>
+          )}
         </div>
       </div>
     </div>

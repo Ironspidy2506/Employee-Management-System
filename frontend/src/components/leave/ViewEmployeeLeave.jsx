@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
+
 const ViewEmployeeLeave = () => {
   const { _id } = useParams(); // Extract employee ID from the URL
   const [employee, setEmployee] = useState({});
@@ -120,6 +121,9 @@ const ViewEmployeeLeave = () => {
           <div className="h-8 w-px bg-gray-300"></div>
           <div className="text-lg font-semibold text-gray-700">
             Sick Leave (SL): {employee.leaveBalance?.sl || 0} {/* Corrected */}
+          </div>
+          <div className="text-lg font-semibold text-gray-700">
+            On Duty (OD): {employee.leaveBalance?.od || 0} {/* Corrected */}
           </div>
         </div>
       </div>

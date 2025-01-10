@@ -6,6 +6,7 @@ import {
   FaMoneyBillWave,
   FaWallet,
   FaSignOutAlt,
+  FaHandsHelping,
 } from "react-icons/fa";
 import { useAuth } from "../../context/authContext";
 import KorusImage from "./../../assets/Korus.png";
@@ -96,6 +97,21 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           >
             <FaWallet className="mr-3 text-xl" />
             <span>Allowances</span>
+          </NavLink>
+
+          <NavLink
+            to="/employee-dashboard/helpdesk"
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-md transition-colors ${
+                isActive
+                  ? "bg-gray-700 text-white"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              }`
+            }
+            onClick={toggleSidebar}
+          >
+            <FaHandsHelping className="mr-3 text-xl" />
+            <span>Helpdesk</span>
           </NavLink>
         </div>
 

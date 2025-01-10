@@ -20,7 +20,6 @@ const ViewEmployeeSalaryAdmin = () => {
             },
           }
         );
-        console.log(response.data);
         
         const data = await response.data.employee;
         setEmployee(data);

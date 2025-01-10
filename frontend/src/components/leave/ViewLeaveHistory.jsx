@@ -113,6 +113,10 @@ const ViewLeaveHistory = () => {
           <div className="text-lg font-semibold text-gray-700">
             Sick Leave (SL): {leaveCounts.sl}
           </div>
+          <div className="h-8 w-px bg-gray-300"></div>
+          <div className="text-lg font-semibold text-gray-700">
+            On Duty (OD): {leaveCounts.od}
+          </div>
         </div>
 
         {/* Apply Leave Button */}
@@ -133,7 +137,7 @@ const ViewLeaveHistory = () => {
               <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
                 S. No.
               </th>
-              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
+              <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
                 Leave Type
               </th>
               <th
@@ -166,8 +170,10 @@ const ViewLeaveHistory = () => {
           <tbody>
             {filteredHistory.map((leave, index) => (
               <tr key={leave._id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-2 text-base text-gray-800">{index + 1}</td>
                 <td className="px-4 py-2 text-base text-gray-800">
+                  {index + 1}
+                </td>
+                <td className="px-4 py-2 text-base text-center text-gray-800">
                   {leave.type.toUpperCase()}
                 </td>
                 <td className="px-4 py-2 text-base text-gray-800">

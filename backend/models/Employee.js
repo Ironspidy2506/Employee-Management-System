@@ -106,9 +106,10 @@ const employeeSchema = new mongoose.Schema({
     required: true,
   },
   leaveBalance: {
-    el: { type: Number, default: 24, min: 0 },
-    sl: { type: Number, default: 7, min: 0 },
-    cl: { type: Number, default: 7, min: 0 },
+    el: { type: Number, default: 30 },
+    sl: { type: Number, default: 6 },
+    cl: { type: Number, default: 6 },
+    od: { type: Number, default: 0 },
   },
   lastUpdated: {
     type: Date,

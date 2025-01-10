@@ -2,17 +2,16 @@ import Salary from "../models/Salary.js";
 import Employee from "../models/Employee.js";
 
 export const addSalary = async (req, res) => {
-  const {
-    employeeId,
-    grossSalary,
-    basicSalary,
-    allowances,
-    deductions,
-    paymentMonth,
-    paymentYear,
-  } = req.body;
-
   try {
+    const {
+      employeeId,
+      grossSalary,
+      basicSalary,
+      allowances,
+      deductions,
+      paymentMonth,
+      paymentYear,
+    } = req.body;
     const employee = await Employee.findById(employeeId);
     if (!employee) {
       return res
@@ -40,10 +39,9 @@ export const addSalary = async (req, res) => {
 };
 
 export const getSalaryDetails = async (req, res) => {
-  const { _id } = req.params; // Get employeeId from URL
-  const { paymentMonth, paymentYear } = req.query; // Access from query instead of body
-
   try {
+    const { _id } = req.params; // Get employeeId from URL
+    const { paymentMonth, paymentYear } = req.query; // Access from query instead of body
     const salary = await Salary.findOne({
       employeeId: _id,
       paymentMonth,
@@ -70,17 +68,16 @@ export const getSalaryDetails = async (req, res) => {
 
 // Update salary details for a specific employee
 export const updateSalary = async (req, res) => {
-  const { _id } = req.params; // Now we get employeeId from URL
-  const {
-    grossSalary,
-    basicSalary,
-    paymentMonth,
-    paymentYear,
-    allowances,
-    deductions,
-  } = req.body;
-
   try {
+    const { _id } = req.params; // Now we get employeeId from URL
+    const {
+      grossSalary,
+      basicSalary,
+      paymentMonth,
+      paymentYear,
+      allowances,
+      deductions,
+    } = req.body;
     // Find the salary document for the given employeeId
     const salary = await Salary.findOne({
       employeeId: _id,
@@ -119,8 +116,8 @@ export const getAllSalaries = async (req, res) => {
 };
 
 export const getEmployeeSalaryDetails = async (req, res) => {
-  const { employeeId } = req.params;
   try {
+    const { employeeId } = req.params;
     const salary = await Salary.find({ employeeId: employeeId }).populate(
       "employeeId"
     );

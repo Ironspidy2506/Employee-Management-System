@@ -2,25 +2,25 @@ import Allowance from "../models/Allowances.js";
 import Employee from "../models/Employee.js";
 
 const addAllowance = async (req, res) => {
-  const { userId } = req.params;
-  const employee = await Employee.findOne({ userId });
-
-  if (!employee) {
-    return res.status(404).json({ message: "Employee not found" });
-  }
-
-  const {
-    allowanceMonth,
-    allowanceYear,
-    allowanceType,
-    client,
-    projectNo,
-    allowanceAmount,
-  } = req.body;
-
-  const empId = employee._id;
-
   try {
+    const { userId } = req.params;
+    const employee = await Employee.findOne({ userId });
+
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    const {
+      allowanceMonth,
+      allowanceYear,
+      allowanceType,
+      client,
+      projectNo,
+      allowanceAmount,
+    } = req.body;
+
+    const empId = employee._id;
+
     // Check if an allowance exists with the same employeeId, month, year, and type
     const existingAllowance = await Allowance.findOne({
       employeeId: empId,
@@ -68,24 +68,24 @@ const addAllowance = async (req, res) => {
 };
 
 const addAllowanceAdmin = async (req, res) => {
-  const { employeeId } = req.params;
-
-  const employee = await Employee.findOne({ employeeId });
-
-  if (!employee) {
-    return res.status(404).json({ message: "Employee not found" });
-  }
-
-  const {
-    allowanceMonth,
-    allowanceYear,
-    allowanceType,
-    client,
-    projectNo,
-    allowanceAmount,
-  } = req.body;
-
   try {
+    const { employeeId } = req.params;
+
+    const employee = await Employee.findOne({ employeeId });
+
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    const {
+      allowanceMonth,
+      allowanceYear,
+      allowanceType,
+      client,
+      projectNo,
+      allowanceAmount,
+    } = req.body;
+
     // If not found, create a new allowance entry
     const newAllowance = new Allowance({
       employeeId: employee._id,
@@ -149,10 +149,9 @@ const getAllAllowance = async (req, res) => {
 };
 
 const approveOrReject = async (req, res) => {
-  const { id } = req.params;
-  const { status, voucherNo } = req.body;
-
   try {
+    const { id } = req.params;
+    const { status, voucherNo } = req.body;
     const updatedAllowance = await Allowance.findByIdAndUpdate(
       id,
       { status, voucherNo },
@@ -165,9 +164,8 @@ const approveOrReject = async (req, res) => {
 };
 
 const getAllowanceById = async (req, res) => {
-  const { _id } = req.params;
-
   try {
+    const { _id } = req.params;
     const allowance = await Allowance.findById(_id).populate("employeeId");
     if (!allowance) {
       return res
@@ -228,22 +226,22 @@ const updateAllowance = async (req, res) => {
 };
 
 const updateAllowanceAdmin = async (req, res) => {
-  const { employeeId } = req.params;
-  const employee = await Employee.findOne({ employeeId });
-
-  if (!employee) {
-    return res.status(404).json({ message: "Employee not found" });
-  }
-
-  const {
-    allowanceMonth,
-    allowanceYear,
-    allowanceType,
-    client,
-    projectNo,
-    allowanceAmount,
-  } = req.body;
   try {
+    const { employeeId } = req.params;
+    const employee = await Employee.findOne({ employeeId });
+
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    const {
+      allowanceMonth,
+      allowanceYear,
+      allowanceType,
+      client,
+      projectNo,
+      allowanceAmount,
+    } = req.body;
     // Find the allowance record and update it
     const empId = employee._id;
 
@@ -255,7 +253,7 @@ const updateAllowanceAdmin = async (req, res) => {
         allowanceType,
         client,
         projectNo,
-        voucherNo: ""
+        voucherNo: "",
       }, // Use findOneAndUpdate instead of findByIdAndUpdate
       {
         allowanceMonth,

@@ -9,6 +9,7 @@ import salaryRouter from "./routes/salary.js";
 import leaveRouter from "./routes/leave.js";
 import allowanceRouter from "./routes/allowance.js";
 import userRouter from "./routes/users.js";
+import helpdeskRouter from "./routes/helpdesk.js";
 
 const app = express();
 app.use(express.json());
@@ -33,6 +34,7 @@ app.use("/api/employees", employeeRouter);
 app.use("/api/salary", salaryRouter);
 app.use("/api/leaves", leaveRouter);
 app.use("/api/allowances", allowanceRouter);
+app.use("/api/helpdesk", helpdeskRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server started on ${process.env.PORT}`);

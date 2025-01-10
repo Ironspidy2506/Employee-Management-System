@@ -288,10 +288,9 @@ const fetchEmployeesByDepId = async (req, res) => {
 };
 
 const getSalaryDetailsOfEmployee = async (req, res) => {
-  const { userId } = req.params; // Extract userId from request parameters
-  const { paymentMonth, paymentYear } = req.query; // Access from query instead of body
-
   try {
+    const { userId } = req.params; // Extract userId from request parameters
+    const { paymentMonth, paymentYear } = req.query; // Access from query instead of body
     // Find employee by userId (adjust query if needed)
     const employee = await Employee.findOne({ userId: userId });
     if (!employee) {
@@ -344,9 +343,8 @@ const getSalaryDetailsOfEmployee = async (req, res) => {
 };
 
 const getEmployeeLeaves = async (req, res) => {
-  const { _id } = req.params;
-
   try {
+    const { _id } = req.params;
     // Fetch leaves for the given employee ID
     const leaves = await Leave.find({ employeeId: _id }).sort({
       startDate: -1,
@@ -381,9 +379,8 @@ const deleteEmployee = async (req, res) => {
 };
 
 const getEmployeeSummaryForAllowances = async (req, res) => {
-  const { employeeId } = req.params;
-
   try {
+    const { employeeId } = req.params;
     const employee = await Employee.findOne({ employeeId }).populate(
       "department"
     );
@@ -404,7 +401,7 @@ const getEmployeeSummaryForAllowances = async (req, res) => {
 const updateEmployeeLeaveBalance = async (req, res) => {
   try {
     const { employeeId } = req.params;
-    const { el, cl, sl } = req.body;
+    const { el, cl, sl, od } = req.body;
 
     const employee = await Employee.findOne({ employeeId: employeeId });
     if (!employee) {
@@ -417,6 +414,7 @@ const updateEmployeeLeaveBalance = async (req, res) => {
       el: el !== undefined ? el : employee.leaveBalance.el,
       cl: cl !== undefined ? cl : employee.leaveBalance.cl,
       sl: sl !== undefined ? sl : employee.leaveBalance.sl,
+      od: od !== undefined ? od : employee.leaveBalance.od,
     };
 
     employee.leaveBalance = updatedLeaveBalance;

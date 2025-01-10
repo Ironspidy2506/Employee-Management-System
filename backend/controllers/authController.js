@@ -3,9 +3,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
 
     if (!user) {

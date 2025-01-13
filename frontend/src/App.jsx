@@ -41,6 +41,9 @@ import Helpdesk from "./components/hr-dashboard/Helpdesk";
 import EmployeeHelpdesk from "./components/helpdesk/EmployeeHelpdesk";
 import ApplyHelp from "./components/helpdesk/ApplyHelp";
 import EditHelp from "./components/helpdesk/EditHelp";
+import AlterHoliday from "./components/holiday/AlterHoliday";
+import ViewPerformanceAdmin from "./components/performance/ViewPerformanceAdmin";
+import ViewPerformanceEmployee from "./components/performance/ViewPerformanceEmployee";
 
 const App = () => {
   return (
@@ -121,6 +124,10 @@ const App = () => {
           <Route
             path="/admin-dashboard/leave/employeesLeaveBalances"
             element={<ViewEmployeesLeaveCount />}
+          />
+          <Route
+            path="/admin-dashboard/performance"
+            element={<ViewPerformanceAdmin />}
           />
         </Route>
 
@@ -208,7 +215,13 @@ const App = () => {
             path="/accounts-dashboard/leave"
             element={<ViewEmployeesLeaveCount />}
           />
+          <Route
+            path="/accounts-dashboard/performance"
+            element={<ViewPerformanceAdmin />}
+          />
         </Route>
+
+        
 
         <Route
           path="/hr-dashboard"
@@ -250,10 +263,16 @@ const App = () => {
             path="/hr-dashboard/employees/leave/:_id"
             element={<ViewEmployeeLeave />}
           />
+
+          <Route path="/hr-dashboard/holiday" element={<AlterHoliday />} />
           <Route path="/hr-dashboard/add-employee" element={<AddEmployee />} />
           <Route path="/hr-dashboard/leave" element={<EditLeaveBalances />} />
           <Route path="/hr-dashboard/users" element={<UsersData />} />
           <Route path="/hr-dashboard/helpdesk" element={<Helpdesk />} />
+          <Route
+            path="/hr-dashboard/performance"
+            element={<ViewPerformanceAdmin />}
+          />
         </Route>
 
         {/* Employee Dashboard Routes */}
@@ -295,6 +314,11 @@ const App = () => {
           <Route
             path="/employee-dashboard/leave/edit/:_id"
             element={<EditLeave />}
+          />
+
+          <Route
+            path="/employee-dashboard/performance"
+            element={<ViewPerformanceEmployee />}
           />
 
           <Route

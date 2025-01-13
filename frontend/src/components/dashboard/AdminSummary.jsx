@@ -58,23 +58,27 @@ const AdminSummary = () => {
                 dob.getDate()
               );
 
-              // Determine if birthday is today or upcoming
+              // Handle cases where the birthday is today or upcoming
               const isToday =
-                birthdayThisYear.toDateString() === today.toDateString();
+                birthdayThisYear.getDate() === today.getDate() &&
+                birthdayThisYear.getMonth() === today.getMonth();
+
               const isUpcoming = birthdayThisYear >= today;
 
-              return isUpcoming
-                ? {
-                    name: employee.name,
-                    employeeId: employee.employeeId,
-                    dob: birthdayThisYear,
-                    isToday,
-                  }
-                : null;
+              if (isToday || isUpcoming) {
+                return {
+                  name: employee.name,
+                  employeeId: employee.employeeId,
+                  dob: birthdayThisYear,
+                  isToday,
+                };
+              }
+
+              return null; // Exclude past birthdays
             })
             .filter((entry) => entry !== null)
             .sort((a, b) => a.dob - b.dob) // Sort by date
-            .slice(0, 5); // Limit to top 5
+            .slice(0, 5); // Limit to top 5 results
 
           setUpcomingBirthdays(upcoming);
         }
@@ -157,7 +161,7 @@ const AdminSummary = () => {
                   key={index}
                   className={`flex items-center justify-between p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 ${
                     employee.isToday
-                      ? "bg-gradient-to-r from-green-400 via-green-300 to-green-200 text-green-900"
+                      ? "bg-gradient-to-r from-green-300 via-green-300 to-green-200 text-green-900"
                       : "bg-gradient-to-r from-gray-200 via-gray-100 to-white text-gray-800"
                   }`}
                 >
@@ -165,11 +169,9 @@ const AdminSummary = () => {
                   <div className="flex items-center gap-4">
                     <div className="flex items-center justify-center w-16 h-16 rounded-full shadow-md">
                       {employee.isToday ? (
-                        <img
-                          src="https://cdn-icons-png.flaticon.com/512/854/854878.png"
-                          alt="Cake Icon"
-                          className="w-10 h-10"
-                        />
+                        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-300 shadow-md text-2xl">
+                          🎂
+                        </div>
                       ) : (
                         <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-300 shadow-md text-2xl">
                           🎂

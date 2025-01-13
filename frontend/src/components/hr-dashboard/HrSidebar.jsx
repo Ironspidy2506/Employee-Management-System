@@ -9,6 +9,8 @@ import {
   FaUser,
   FaQuestion,
   FaHandsHelping,
+  FaChartLine,
+  FaRoute,
 } from "react-icons/fa";
 import { useAuth } from "../../context/authContext";
 import KorusImage from "./../../assets/Korus.png";
@@ -117,6 +119,36 @@ const HrSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
+            to="/hr-dashboard/holiday"
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-md transition-colors ${
+                isActive
+                  ? "bg-gray-700 text-white"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              }`
+            }
+            onClick={toggleSidebar} // Close the sidebar when this link is clicked
+          >
+            <FaRoute className="mr-3 text-xl" />
+            <span>Holiday</span>
+          </NavLink>
+
+          <NavLink
+            to="/hr-dashboard/performance"
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-md transition-colors ${
+                isActive
+                  ? "bg-gray-700 text-white"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              }`
+            }
+            onClick={toggleSidebar} // Close the sidebar when this link is clicked
+          >
+            <FaChartLine className="mr-3 text-xl" />
+            <span>Performance</span>
+          </NavLink>
+
+          <NavLink
             to="/hr-dashboard/helpdesk"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
@@ -128,7 +160,7 @@ const HrSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
             onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
             <FaHandsHelping className="mr-3 text-xl" />
-            <span>HelpDesk</span>
+            <span>Helpdesk</span>
           </NavLink>
         </div>
 

@@ -313,15 +313,15 @@ const EditEmployee = () => {
                 <div>
                   <label
                     className="block text-gray-700 font-medium mb-2"
-                    htmlFor="highestQualification"
+                    htmlFor="qualification"
                   >
                     Qualification
                   </label>
                   <input
                     type="text"
-                    name="highestQualification"
-                    id="highestQualification"
-                    value={employee.highestQualification}
+                    name="qualification"
+                    id="qualification"
+                    value={employee.qualification}
                     placeholder="Enter Highest Qualification"
                     className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                     onChange={handleChange}

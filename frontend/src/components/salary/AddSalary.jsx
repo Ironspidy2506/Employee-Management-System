@@ -8,6 +8,8 @@ import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddSalary = () => {
   const { user } = useAuth();
@@ -118,7 +120,7 @@ const AddSalary = () => {
   );
 
   const currentYear = new Date().getFullYear() - 1;
-  const years = Array.from({ length: 21 }, (_, i) => currentYear + i); // Generate years from current year to 20 years ahead
+  const years = Array.from({ length: 10 }, (_, i) => currentYear + i); // Generate years from current year to 20 years ahead
 
   // List of month names
   const months = [
@@ -141,7 +143,7 @@ const AddSalary = () => {
       <Header />
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-full max-w-4xl p-6 space-y-6 bg-white rounded-lg shadow-lg">
-          <h2 className="text-center text-2xl font-bold">
+          <h2 className="text-center text-2xl font-bold text-gray-800">
             Enter Salary Details
           </h2>
 
@@ -152,7 +154,7 @@ const AddSalary = () => {
               <select
                 value={selectedDepartment}
                 onChange={handleDepartmentChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
               >
                 <option value="">Select Department</option>
                 {departments.map((dept) => (
@@ -169,15 +171,18 @@ const AddSalary = () => {
               <select
                 value={selectedEmployee}
                 onChange={(e) => setSelectedEmployee(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 disabled={!selectedDepartment}
               >
-                <option value="">Select Employee By Id</option>
-                {employees.map((emp) => (
-                  <option key={emp._id} value={emp._id}>
-                    {emp.employeeId}
-                  </option>
-                ))}
+                <option value="">Select Employee By Id & Name</option>
+                {employees
+                  .slice()
+                  .sort((a, b) => a.employeeId - b.employeeId)
+                  .map((emp) => (
+                    <option key={emp._id} value={emp._id}>
+                      {`${emp.employeeId} - ${emp.name}`}
+                    </option>
+                  ))}
               </select>
 
               {/* Display selected employee name below the dropdown */}
@@ -186,7 +191,7 @@ const AddSalary = () => {
                   type="text"
                   value={`Employee Name: ${selectedEmployeeDetails.name}`}
                   readOnly
-                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md bg-gray-100"
+                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
                 />
               )}
             </div>
@@ -198,7 +203,7 @@ const AddSalary = () => {
                 <select
                   value={paymentMonth}
                   onChange={(e) => setPaymentMonth(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                   required
                 >
                   <option value="">Select Month</option>
@@ -215,7 +220,7 @@ const AddSalary = () => {
                 <select
                   value={paymentYear}
                   onChange={(e) => setPaymentYear(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                   required
                 >
                   <option value="">Select Year</option>
@@ -236,7 +241,7 @@ const AddSalary = () => {
                 value={grossSalary}
                 onWheel={(e) => e.target.blur()}
                 onChange={(e) => setGrossSalary(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 placeholder="Enter gross salary"
                 required
               />
@@ -250,7 +255,7 @@ const AddSalary = () => {
                 value={basicSalary}
                 onWheel={(e) => e.target.blur()}
                 readOnly
-                className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
               />
             </div>
 
@@ -270,7 +275,7 @@ const AddSalary = () => {
                         e.target.value
                       )
                     }
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
                     placeholder="Allowance Name"
                   />
                   <input
@@ -285,13 +290,13 @@ const AddSalary = () => {
                         e.target.value
                       )
                     }
-                    className="w-32 px-4 py-2 border border-gray-300 rounded-md"
+                    className="w-32 px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
                     placeholder="Amount"
                   />
                   <button
                     type="button"
                     onClick={() => removeField(index, "allowances")}
-                    className="px-2 py-1 bg-red-500 text-white rounded-md"
+                    className="px-2 py-1 bg-red-500 text-white rounded-md focus:outline-none"
                   >
                     Delete
                   </button>
@@ -300,7 +305,7 @@ const AddSalary = () => {
               <button
                 type="button"
                 onClick={() => addField("allowances")}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md mt-2"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md mt-2 focus:outline-none"
               >
                 Add Allowance
               </button>
@@ -322,7 +327,7 @@ const AddSalary = () => {
                         e.target.value
                       )
                     }
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
                     placeholder="Deduction Name"
                   />
                   <input
@@ -337,7 +342,7 @@ const AddSalary = () => {
                         e.target.value
                       )
                     }
-                    className="w-32 px-4 py-2 border border-gray-300 rounded-md"
+                    className="w-32 px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
                     placeholder="Amount"
                   />
                   <button
@@ -362,7 +367,7 @@ const AddSalary = () => {
             <div className="text-center">
               <button
                 type="submit"
-                className="w-full px-6 py-2 bg-green-500 text-white rounded-md"
+                className="md:w-1/5 px-6 py-2 bg-green-500 text-white rounded-md"
               >
                 Submit
               </button>

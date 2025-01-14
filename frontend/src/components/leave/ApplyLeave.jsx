@@ -96,7 +96,7 @@ const ApplyLeave = () => {
     <div className="mt-5 max-w-auto mx-auto p-6 bg-white shadow-md rounded-md">
       <Header />
 
-      <h2 className="text-2xl md:text-2xl font-semibold text-gray-700 text-center mb-5">
+      <h2 className="text-2xl md:text-2xl font-bold text-gray-700 text-center mb-5">
         Leave Application Form
       </h2>
 

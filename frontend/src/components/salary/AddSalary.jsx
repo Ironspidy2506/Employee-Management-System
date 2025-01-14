@@ -1,26 +1,19 @@
 import React, { useState, useEffect } from "react";
-import {
-  fetchDepartments,
-  fetchEmployees,
-  addSalaries,
-} from "../../utils/SalaryHelper";
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 const AddSalary = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [departments, setDepartments] = useState([]);
-  const [employees, setEmployees] = useState([]);
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState("");
+  const [employeeIdInput, setEmployeeIdInput] = useState("");
+  const [employeeDetails, setEmployeeDetails] = useState(null);
   const [grossSalary, setGrossSalary] = useState("");
-  const [paymentMonth, setPaymentMonth] = useState("");
-  const [paymentYear, setPaymentYear] = useState("");
+  const [basicSalary, setBasicSalary] = useState(0);
   const [allowances, setAllowances] = useState([
     { name: "HRA", amount: 0 },
     { name: "Food Allowance", amount: 0 },
@@ -33,16 +26,34 @@ const AddSalary = () => {
     { name: "Advance Deduction", amount: 0 },
     { name: "Tax Deduction", amount: 0 },
   ]);
-  const [basicSalary, setBasicSalary] = useState(0);
+  const [paymentMonth, setPaymentMonth] = useState("");
+  const [paymentYear, setPaymentYear] = useState("");
+  const [payableDays, setPayableDays] = useState("");
+  const [sundays, setSundays] = useState(0);
+  const [netPayableDays, setNetPayableDays] = useState(0);
 
-  useEffect(() => {
-    const getDepartments = async () => {
-      const departments = await fetchDepartments();
-      setDepartments(departments);
-    };
+  const handleFetchEmployee = async () => {
+    try {
+      const response = await axios.get(
+        `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${employeeIdInput}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-    getDepartments();
-  }, []);
+      if (response.data.success) {
+        setEmployeeDetails(response.data.employee);
+      } else {
+        toast.error("No employee found with this ID.");
+        setEmployeeDetails(null);
+      }
+    } catch (error) {
+      console.error("Error fetching employee details:", error);
+      toast.error("Error fetching employee details.");
+    }
+  };
 
   useEffect(() => {
     if (grossSalary) {
@@ -67,12 +78,31 @@ const AddSalary = () => {
     }
   }, [grossSalary]);
 
-  const handleDepartmentChange = async (e) => {
-    const departmentId = e.target.value;
-    setSelectedDepartment(departmentId);
-    const employees = await fetchEmployees(departmentId);
-    setEmployees(employees);
-  };
+  useEffect(() => {
+    if (paymentMonth && paymentYear) {
+      const monthIndex = new Date(
+        `${paymentMonth} 1, ${paymentYear}`
+      ).getMonth();
+      const daysInMonth = new Date(paymentYear, monthIndex + 1, 0).getDate();
+      let sundaysCount = 0;
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(paymentYear, monthIndex, day);
+        if (date.getDay() === 0) {
+          // Sunday
+          sundaysCount++;
+        }
+      }
+
+      setSundays(sundaysCount);
+    }
+  }, [paymentMonth, paymentYear]);
+
+  useEffect(() => {
+    // Calculate Net Payable Days
+    const totalPayableDays = parseInt(payableDays || 0, 10) + sundays;
+    setNetPayableDays(totalPayableDays);
+  }, [payableDays, sundays]);
 
   const addField = (type) => {
     const target = type === "allowances" ? [...allowances] : [...deductions];
@@ -94,35 +124,50 @@ const AddSalary = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!employeeDetails) {
+      toast.warn("Please fetch employee details before submitting.");
+      return;
+    }
 
     const payload = {
-      employeeId: selectedEmployee,
+      employeeId: employeeDetails._id,
       grossSalary,
       basicSalary,
+      payableDays,
+      sundays,
+      netPayableDays,
       paymentMonth,
-      paymentYear, // Combine month and year
+      paymentYear,
       allowances,
       deductions,
     };
 
     try {
-      const result = await addSalaries(payload);
-      navigate(`/${user.role}-dashboard/salary`);
+      const response = await axios.post(
+        "https://employee-management-system-backend-objq.onrender.com/api/salary/add",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setTimeout(() => {
+          navigate(`/${user.role}-dashboard/salary`);
+        }, 800);
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
-      console.error("Error submitting salary:", error);
-      alert("Error adding salary.");
+      toast.error(error.message);
     }
   };
 
-  // Find the selected employee's name based on the selectedEmployee ID
-  const selectedEmployeeDetails = employees.find(
-    (emp) => emp._id === selectedEmployee
-  );
-
-  const currentYear = new Date().getFullYear() - 1;
-  const years = Array.from({ length: 10 }, (_, i) => currentYear + i); // Generate years from current year to 20 years ahead
-
-  // List of month names
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 10 }, (_, i) => currentYear - 1 + i);
   const months = [
     "January",
     "February",
@@ -141,62 +186,61 @@ const AddSalary = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen flex items-center justify-center">
+      <ToastContainer />
+      <div className="flex items-center justify-center">
         <div className="w-full max-w-4xl p-6 space-y-6 bg-white rounded-lg shadow-lg">
           <h2 className="text-center text-2xl font-bold text-gray-800">
-            Enter Salary Details
+            Add Employee Salary
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Department Selection */}
+            {/* Employee ID Input */}
             <div>
-              <label className="block font-medium mb-2">Department</label>
-              <select
-                value={selectedDepartment}
-                onChange={handleDepartmentChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
-              >
-                <option value="">Select Department</option>
-                {departments.map((dept) => (
-                  <option key={dept._id} value={dept._id}>
-                    {dept.departmentName}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Employee Selection */}
-            <div>
-              <label className="block font-medium mb-2">Employee</label>
-              <select
-                value={selectedEmployee}
-                onChange={(e) => setSelectedEmployee(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
-                disabled={!selectedDepartment}
-              >
-                <option value="">Select Employee By Id & Name</option>
-                {employees
-                  .slice()
-                  .sort((a, b) => a.employeeId - b.employeeId)
-                  .map((emp) => (
-                    <option key={emp._id} value={emp._id}>
-                      {`${emp.employeeId} - ${emp.name}`}
-                    </option>
-                  ))}
-              </select>
-
-              {/* Display selected employee name below the dropdown */}
-              {selectedEmployee && selectedEmployeeDetails && (
+              <label className="block font-medium mb-2">Employee ID</label>
+              <div className="flex space-x-4">
                 <input
                   type="text"
-                  value={`Employee Name: ${selectedEmployeeDetails.name}`}
-                  readOnly
-                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+                  value={employeeIdInput}
+                  onChange={(e) => setEmployeeIdInput(e.target.value)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                  placeholder="Enter Employee ID"
+                  required
                 />
-              )}
+                <button
+                  type="button"
+                  onClick={handleFetchEmployee}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                >
+                  Fetch
+                </button>
+              </div>
             </div>
 
-            {/* Payment Month and Year (Separate Fields) */}
+            {/* Display Employee Details */}
+            {employeeDetails && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block font-medium mb-2">Designation</label>
+                  <input
+                    type="text"
+                    value={employeeDetails.designation}
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium mb-2">Department</label>
+                  <input
+                    type="text"
+                    value={employeeDetails.department.departmentName}
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Payment Month and Year */}
             <div className="flex space-x-4">
               <div className="w-1/2">
                 <label className="block font-medium mb-2">Payment Month</label>
@@ -207,14 +251,13 @@ const AddSalary = () => {
                   required
                 >
                   <option value="">Select Month</option>
-                  {months.map((month, index) => (
-                    <option key={index} value={month}>
+                  {months.map((month) => (
+                    <option key={month} value={month}>
                       {month}
                     </option>
                   ))}
                 </select>
               </div>
-
               <div className="w-1/2">
                 <label className="block font-medium mb-2">Payment Year</label>
                 <select
@@ -239,8 +282,8 @@ const AddSalary = () => {
               <input
                 type="number"
                 value={grossSalary}
-                onWheel={(e) => e.target.blur()}
                 onChange={(e) => setGrossSalary(e.target.value)}
+                onWheel={(e) => e.target.blur()}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 placeholder="Enter gross salary"
                 required
@@ -253,7 +296,41 @@ const AddSalary = () => {
               <input
                 type="number"
                 value={basicSalary}
+                readOnly
+                className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-2">Payable Days</label>
+              <input
+                type="number"
+                value={payableDays}
                 onWheel={(e) => e.target.blur()}
+                onChange={(e) => setPayableDays(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                placeholder="Enter payable days"
+                required
+              />
+            </div>
+
+            {/* Sundays */}
+            <div>
+              <label className="block font-medium mb-2">Sundays</label>
+              <input
+                type="number"
+                value={sundays}
+                readOnly
+                className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+              />
+            </div>
+
+            {/* Net Payable Days */}
+            <div>
+              <label className="block font-medium mb-2">Net Payable Days</label>
+              <input
+                type="number"
+                value={netPayableDays}
                 readOnly
                 className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
               />
@@ -367,7 +444,7 @@ const AddSalary = () => {
             <div className="text-center">
               <button
                 type="submit"
-                className="md:w-1/5 px-6 py-2 bg-green-500 text-white rounded-md"
+                className="w-1/5 px-6 py-2 bg-green-500 text-white rounded-md"
               >
                 Submit
               </button>

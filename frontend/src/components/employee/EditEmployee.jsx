@@ -50,7 +50,7 @@ const EditEmployee = () => {
           const employeeData = response.data.employee;
           setEmployee({
             ...employeeData,
-            department: employeeData.department._id, // Use department ID for the dropdown
+            department: employeeData.department?._id, // Use department ID for the dropdown
           });
         }
       } catch (error) {

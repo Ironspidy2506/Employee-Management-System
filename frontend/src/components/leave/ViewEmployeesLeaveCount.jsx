@@ -93,10 +93,14 @@ const ViewEmployeesLeaveCount = () => {
   return (
     <div className="p-6 space-y-6 bg-white">
       {/* Table Section */}
-      <div className="overflow-x-auto">
-        <h2 className="text-2xl font-bold mb-4">Employee Leave Count</h2>
+      <div className="overflow-y-auto max-h-[525px]">
+        {" "}
+        {/* Set a max height for scrolling */}
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          Employee Leave Count
+        </h2>
         {/* Search Bar */}
-        <div className="mb-2 p-1">
+        <div className="sticky z-0 mb-2 p-1">
           <input
             type="text"
             value={searchQuery}
@@ -105,8 +109,8 @@ const ViewEmployeesLeaveCount = () => {
             className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
-        <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-          <thead className="bg-gray-200 border-b border-gray-300">
+        <table className="min-w-full">
+          <thead className="bg-gray-200 border-b border-gray-300 sticky top-0 z-10">
             <tr>
               <th
                 className="px-4 py-2 text-base text-center font-medium text-gray-700 border border-gray-300 cursor-pointer"
@@ -134,6 +138,7 @@ const ViewEmployeesLeaveCount = () => {
               </th>
             </tr>
           </thead>
+
           <tbody>
             {filteredEmployees.map((employee) => (
               <tr

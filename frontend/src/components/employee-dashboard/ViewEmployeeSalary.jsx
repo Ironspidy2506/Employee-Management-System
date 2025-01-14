@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useAuth } from "../../context/authContext";
 import axios from "axios";
+import korusImg from "../../assets/Korus.png";
 
 const ViewEmployeeSalary = () => {
   const { user } = useAuth();
   const [salary, setSalary] = useState({
     basicSalary: 0,
     allowances: [],
-    approvedAllowances: [],
     deductions: [],
     grossSalary: 0,
     paymentMonth: "",
@@ -20,8 +20,10 @@ const ViewEmployeeSalary = () => {
   const [paymentYear, setPaymentYear] = useState("");
   const [showSalaryDetails, setShowSalaryDetails] = useState(false);
 
+  const salarySlipRef = useRef(null); // Reference to the salary slip section
+
   const currentYear = new Date().getFullYear() - 1;
-  const years = Array.from({ length: 21 }, (_, i) => currentYear + i);
+  const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
   const months = [
     "January",
@@ -50,7 +52,6 @@ const ViewEmployeeSalary = () => {
           },
         }
       );
-
       setSalary(response.data);
       setShowSalaryDetails(true);
     } catch (err) {
@@ -62,67 +63,17 @@ const ViewEmployeeSalary = () => {
   };
 
   const calculateTotalSalary = (salary) => {
-    // Calculate total of default allowances and approved allowances
-    const totalAllowances = [
-      ...salary.defaultAllowances,
-      ...salary.approvedAllowances,
-    ].reduce((total, allowance) => total + (allowance?.amount || 0), 0);
+    const totalAllowances = salary.allowances.reduce(
+      (total, allowance) => total + (allowance?.amount || 0),
+      0
+    );
 
-    // Calculate total deductions
     const totalDeductions = salary.deductions.reduce(
       (total, deduction) => total + (deduction?.amount || 0),
       0
     );
 
-    // Total salary calculation
     return salary.basicSalary + totalAllowances - totalDeductions;
-  };
-
-  const getAllowanceName = (type) => {
-    switch (type.toLowerCase()) {
-      case "epfbyco":
-        return "EPF By Co.";
-      case "esibyco":
-        return "ESI by Co.";
-      case "medpains":
-        return "Med. & P.A. Ins.";
-      case "monthlyinsacc":
-        return "Monthly Ins. & Accidental";
-      case "bonus":
-        return "Bonus";
-      case "earnedleave":
-        return "Earned Leave";
-      case "ltc":
-        return "LTC";
-      case "gratuity":
-        return "Gratuity";
-      case "loyaltybonus":
-        return "Loyalty Bonus";
-      case "resphone":
-        return "Res. Phone";
-      case "mobile":
-        return "Mobile";
-      case "caremi":
-        return "Car EMI";
-      case "petrol":
-        return "Petrol";
-      case "driver":
-        return "Driver";
-      case "carmaint":
-        return "Car Maint.";
-      case "localtravel":
-        return "Local Travel/Metro Fair";
-      case "deferred":
-        return "Deferred";
-      case "specialallowance":
-        return "Special Allowance";
-      case "overtime":
-        return "Over Time";
-      case "others":
-        return "Other Allowances";
-      default:
-        return type; // Return the type if it doesn't match any case
-    }
   };
 
   return (
@@ -134,7 +85,7 @@ const ViewEmployeeSalary = () => {
           <select
             value={paymentMonth}
             onChange={(e) => setPaymentMonth(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
             required
           >
             <option value="">Select Month</option>
@@ -151,7 +102,7 @@ const ViewEmployeeSalary = () => {
           <select
             value={paymentYear}
             onChange={(e) => setPaymentYear(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
             required
           >
             <option value="">Select Year</option>
@@ -164,12 +115,14 @@ const ViewEmployeeSalary = () => {
         </div>
       </div>
 
-      <button
-        onClick={fetchSalary}
-        className="w-full mt-3 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
-      >
-        Fetch Salary
-      </button>
+      <div className="flex justify-center">
+        <button
+          onClick={fetchSalary}
+          className="w-1/5 mt-3 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+        >
+          Fetch Salary
+        </button>
+      </div>
 
       {loading && <div className="text-center text-xl mt-5">Loading...</div>}
       {error && (
@@ -179,11 +132,11 @@ const ViewEmployeeSalary = () => {
       )}
 
       {showSalaryDetails && (
-        <div>
+        <div ref={salarySlipRef}>
           {/* Header */}
           <div className="mt-8 text-center space-y-4">
             <img
-              src="http://korus.co.in/Kimg/Korus.png"
+              src={korusImg}
               alt="Company Logo"
               className="w-28 h-28 mx-auto"
             />
@@ -233,9 +186,17 @@ const ViewEmployeeSalary = () => {
                 <span className="font-bold">Gross Salary:</span>{" "}
                 <span className="font-medium">₹{salary.grossSalary}</span>
               </p>
-              <p className="text-lg">
+              <p className="mb-2 text-lg">
                 <span className="font-bold">Basic Salary:</span>{" "}
                 <span className="font-medium">₹{salary.basicSalary}</span>
+              </p>
+              <p className="mb-2 text-lg">
+                <span className="font-bold">Working Days:</span>{" "}
+                <span className="font-medium">{salary.payableDays}</span>
+              </p>
+              <p className="text-lg">
+                <span className="font-bold">Net Payable Days:</span>{" "}
+                <span className="font-medium">{salary.netPayableDays}</span>
               </p>
             </div>
           </div>
@@ -243,44 +204,14 @@ const ViewEmployeeSalary = () => {
           {/* Default Allowances */}
           <div className="mt-8 text-gray-700">
             <h3 className="text-xl font-semibold mb-4">Allowances</h3>
-            {salary.defaultAllowances.length === 0 ? (
+            {salary.allowances.length === 0 ? (
               <p>No allowances available</p>
             ) : (
               <div className="grid grid-cols-2 gap-4">
-                {salary.defaultAllowances.map((allowance, index) => (
+                {salary.allowances.map((allowance, index) => (
                   <React.Fragment key={index}>
                     <div className="text-center font-semibold bg-blue-200 p-2 rounded-lg shadow-sm">
                       {allowance.name}
-                    </div>
-                    <div className="text-center font-bold text-blue-700 bg-blue-100 p-2 rounded-lg shadow-sm">
-                      ₹{allowance.amount}
-                    </div>
-                  </React.Fragment>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Approved Allowances */}
-          <div className="mt-8 text-gray-700">
-            <h3 className="text-xl font-semibold mb-4">Approved Allowances</h3>
-            {salary.approvedAllowances.length === 0 ? (
-              <p>No approved allowances available</p>
-            ) : (
-              <div className="grid grid-cols-2 gap-4">
-                {salary.approvedAllowances.map((allowance, index) => (
-                  <React.Fragment key={index}>
-                    <div className="flex justify-around items-center bg-blue-200 p-2 rounded-lg shadow-sm">
-                      <span className="font-semibold">
-                        {getAllowanceName(allowance.name)}{" "}
-                        {allowance.name === "others" &&
-                        allowance.voucherNo === "" ? (
-                          <span className=" font-medium">(Admin)</span>
-                        ) : allowance.name === "others" &&
-                          allowance.voucherNo !== "" ? (
-                          <span className=" font-medium">(Employee)</span>
-                        ) : null}
-                      </span>
                     </div>
                     <div className="text-center font-bold text-blue-700 bg-blue-100 p-2 rounded-lg shadow-sm">
                       ₹{allowance.amount}

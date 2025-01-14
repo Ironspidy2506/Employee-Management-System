@@ -1,85 +1,56 @@
 import React, { useState, useEffect } from "react";
-import {
-  fetchDepartments,
-  fetchEmployees,
-  getSalaryDetails,
-  updateSalary,
-} from "../../utils/SalaryHelper";
+import { getSalaryDetails, updateSalary } from "../../utils/SalaryHelper";
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 const EditSalary = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [departments, setDepartments] = useState([]);
-  const [employees, setEmployees] = useState([]);
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState("");
-  const [grossSalary, setGrossSalary] = useState(""); // Initially null
+  const [employeeDetails, setEmployeeDetails] = useState(null);
+  const [employeeIdInput, setEmployeeIdInput] = useState("");
+  const [grossSalary, setGrossSalary] = useState("");
   const [paymentMonth, setPaymentMonth] = useState("");
   const [paymentYear, setPaymentYear] = useState("");
   const [allowances, setAllowances] = useState([]);
   const [deductions, setDeductions] = useState([]);
   const [basicSalary, setBasicSalary] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [payableDays, setPayableDays] = useState("");
+  const [sundays, setSundays] = useState(0);
+  const [netPayableDays, setNetPayableDays] = useState(0);
 
-  useEffect(() => {
-    const getDepartments = async () => {
-      const departments = await fetchDepartments();
-      setDepartments(departments);
-    };
-    getDepartments();
-  }, []);
-
-  useEffect(() => {
-    const fetchSalaryData = async () => {
-      if (selectedEmployee && paymentMonth && paymentYear) {
-        setLoading(true); // Start loading state
-
-        // Fetch salary details using Promise.all or directly
-        try {
-          const salaryDetails = await getSalaryDetails(
-            selectedEmployee,
-            paymentMonth,
-            paymentYear
-          );
-
-          if (salaryDetails) {
-            // Update state with fetched data
-            setSelectedDepartment(salaryDetails.departmentId);
-            setGrossSalary(salaryDetails.grossSalary);
-            setPaymentMonth(salaryDetails.paymentMonth);
-            setPaymentYear(salaryDetails.paymentYear);
-
-            // Ensure allowances and deductions are set correctly
-            setAllowances(salaryDetails.allowances || []);
-            setDeductions(salaryDetails.deductions || []);
-          } else {
-            // Reset fields if no data found
-            setGrossSalary("");
-            setAllowances([]);
-            setDeductions([]);
-          }
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          alert("Error fetching salary data.");
-        } finally {
-          setLoading(false); // Stop loading state
+  const handleFetchEmployee = async () => {
+    try {
+      const response = await axios.get(
+        `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${employeeIdInput}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
-      }
-    };
+      );
 
-    fetchSalaryData();
-  }, [selectedEmployee, paymentMonth, paymentYear]);
+      if (response.data.success) {
+        setEmployeeDetails(response.data.employee);
+      } else {
+        toast.error("No employee found with this ID.");
+        setEmployeeDetails(null);
+      }
+    } catch (error) {
+      console.error("Error fetching employee details:", error);
+      toast.error("Error fetching employee details.");
+    }
+  };
 
   useEffect(() => {
     if (grossSalary) {
-      const basic = (grossSalary * 0.45).toFixed(2);
-      setBasicSalary(basic);
+      // Ensure we don't overwrite the fetched allowances and deductions
+      const calculatedBasic = (grossSalary * 0.45).toFixed(2);
+      setBasicSalary(calculatedBasic);
 
-      // Only set default allowances if no data is available from the backend
+      // Calculate allowances only if they are empty
       if (allowances.length === 0) {
         const updatedAllowances = [
           { name: "HRA", amount: (grossSalary * 0.27).toFixed(2) },
@@ -96,10 +67,10 @@ const EditSalary = () => {
         setAllowances(updatedAllowances);
       }
 
-      // Only set default deductions if no data is available from the backend
+      // Calculate deductions only if they are empty
       if (deductions.length === 0) {
         const updatedDeductions = [
-          { name: "EPF", amount: (basic * 0.12).toFixed(2) },
+          { name: "EPF", amount: (calculatedBasic * 0.12).toFixed(2) },
           { name: "ESI", amount: (grossSalary * 0.0075).toFixed(2) },
           { name: "Advance Deduction", amount: 0 },
           { name: "Tax Deduction", amount: 0 },
@@ -107,40 +78,144 @@ const EditSalary = () => {
         setDeductions(updatedDeductions);
       }
     }
-  }, [grossSalary, allowances, deductions]);
+  }, [grossSalary, allowances, deductions]); // Added allowances and deductions as dependencies
 
-  const handleDepartmentChange = async (e) => {
-    const departmentId = e.target.value;
-    setSelectedDepartment(departmentId);
-    const employees = await fetchEmployees(departmentId);
-    setEmployees(employees);
-  };
+  useEffect(() => {
+    const fetchSalaryData = async () => {
+      if (employeeDetails && paymentMonth && paymentYear) {
+        try {
+          const salaryDetails = await getSalaryDetails({
+            employeeId: employeeDetails._id,
+            paymentMonth,
+            paymentYear,
+          });
+
+          console.log(salaryDetails);
+
+          if (salaryDetails) {
+            setGrossSalary(salaryDetails.grossSalary || "");
+            setBasicSalary(salaryDetails.basicSalary || 0);
+            setPayableDays(salaryDetails.payableDays || "");
+            setSundays(salaryDetails.sundays || 0);
+            setNetPayableDays(salaryDetails.netPayableDays || 0);
+            setAllowances(salaryDetails.allowances);
+            setDeductions(salaryDetails.deductions);
+
+            if (
+              salaryDetails.sundays === undefined ||
+              salaryDetails.sundays === null
+            ) {
+              const daysInMonth = new Date(
+                paymentYear,
+                new Date(paymentMonth + " 1").getMonth() + 1,
+                0
+              ).getDate();
+              let sundaysCount = 0;
+
+              for (let day = 1; day <= daysInMonth; day++) {
+                if (
+                  new Date(
+                    paymentYear,
+                    new Date(paymentMonth + " 1").getMonth(),
+                    day
+                  ).getDay() === 0
+                ) {
+                  sundaysCount++;
+                }
+              }
+
+              setSundays(sundaysCount);
+            } else {
+              setSundays(salaryDetails.sundays);
+            }
+          } else {
+            setGrossSalary("");
+            setAllowances([]);
+            setDeductions([]);
+          }
+        } catch (error) {
+          console.error("Error fetching salary data:", error);
+          toast.error("Error fetching salary details.");
+        }
+      }
+    };
+
+    fetchSalaryData();
+  }, [employeeDetails, paymentMonth, paymentYear]);
+
+  useEffect(() => {
+    if (paymentMonth && paymentYear) {
+      const daysInMonth = new Date(
+        paymentYear,
+        new Date(paymentMonth + " 1").getMonth() + 1,
+        0
+      ).getDate();
+      let sundaysCount = 0;
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        if (
+          new Date(
+            paymentYear,
+            new Date(paymentMonth + " 1").getMonth(),
+            day
+          ).getDay() === 0
+        ) {
+          sundaysCount++;
+        }
+      }
+
+      setSundays(sundaysCount);
+    }
+  }, [paymentMonth, paymentYear]);
+
+  useEffect(() => {
+    // Calculate Net Payable Days
+    const totalPayableDays = parseInt(payableDays || 0, 10) + sundays;
+    setNetPayableDays(totalPayableDays);
+  }, [payableDays, sundays]);
 
   const addField = (type) => {
-    const target = type === "allowances" ? [...allowances] : [...deductions];
-    target.push({ name: "", amount: "" });
-    type === "allowances" ? setAllowances(target) : setDeductions(target);
+    if (type === "allowances") {
+      setAllowances([...allowances, { name: "", amount: 0 }]);
+    } else if (type === "deductions") {
+      setDeductions([...deductions, { name: "", amount: 0 }]);
+    }
   };
 
   const removeField = (index, type) => {
-    const target = type === "allowances" ? [...allowances] : [...deductions];
-    target.splice(index, 1);
-    type === "allowances" ? setAllowances(target) : setDeductions(target);
+    if (type === "allowances") {
+      const updatedAllowances = allowances.filter((_, i) => i !== index);
+      setAllowances(updatedAllowances);
+    } else if (type === "deductions") {
+      const updatedDeductions = deductions.filter((_, i) => i !== index);
+      setDeductions(updatedDeductions);
+    }
   };
 
   const handleFieldChange = (index, type, field, value) => {
-    const target = type === "allowances" ? [...allowances] : [...deductions];
-    target[index][field] = value;
-    type === "allowances" ? setAllowances(target) : setDeductions(target);
+    if (type === "allowances") {
+      const updatedAllowances = allowances.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      );
+      setAllowances(updatedAllowances);
+    } else if (type === "deductions") {
+      const updatedDeductions = deductions.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      );
+      setDeductions(updatedDeductions);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
-      employeeId: selectedEmployee, // Use selectedEmployee here
+      employeeId: employeeDetails._id,
       grossSalary,
       basicSalary,
+      payableDays,
+      sundays,
+      netPayableDays,
       paymentMonth,
       paymentYear,
       allowances,
@@ -148,20 +223,19 @@ const EditSalary = () => {
     };
 
     try {
-      const result = await updateSalary(selectedEmployee, payload);
-      navigate(`/${user.role}-dashboard/salary`);
+      await updateSalary(employeeDetails._id, payload);
+      toast.success("Salary updated successfully!");
+      setTimeout(() => {
+        navigate(`/${user.role}-dashboard/salary`);
+      }, 800);
     } catch (error) {
       console.error("Error updating salary:", error);
-      alert("Error updating salary.");
+      toast.error("Error updating salary.");
     }
   };
 
-  const selectedEmployeeDetails = employees.find(
-    (emp) => emp._id === selectedEmployee
-  );
-
   const currentYear = new Date().getFullYear() - 1;
-  const years = Array.from({ length: 21 }, (_, i) => currentYear + i); // Generate years from current year to 20 years ahead
+  const years = Array.from({ length: 10 }, (_, i) => currentYear + i); // Generate years from current year to 20 years ahead
 
   // List of month names
   const months = [
@@ -182,6 +256,7 @@ const EditSalary = () => {
   return (
     <>
       <Header />
+      <ToastContainer />
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-full max-w-4xl p-6 space-y-6 bg-white rounded-lg shadow-lg">
           <h2 className="text-center text-2xl font-bold">
@@ -189,50 +264,51 @@ const EditSalary = () => {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Department Selection */}
             <div>
-              <label className="block font-medium mb-2">Department</label>
-              <select
-                value={selectedDepartment}
-                onChange={handleDepartmentChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
-              >
-                <option value="">Select Department</option>
-                {departments.map((dept) => (
-                  <option key={dept._id} value={dept._id}>
-                    {dept.departmentName}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Employee Selection */}
-            <div>
-              <label className="block font-medium mb-2">Employee</label>
-              <select
-                value={selectedEmployee}
-                onChange={(e) => setSelectedEmployee(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
-                disabled={!selectedDepartment}
-              >
-                <option value="">Select Employee By Id</option>
-                {employees.map((emp) => (
-                  <option key={emp._id} value={emp._id}>
-                    {emp.employeeId}
-                  </option>
-                ))}
-              </select>
-
-              {/* Display selected employee name below the dropdown */}
-              {selectedEmployee && selectedEmployeeDetails && (
+              <label className="block font-medium mb-2">Employee ID</label>
+              <div className="flex space-x-4">
                 <input
                   type="text"
-                  value={`Employee Name: ${selectedEmployeeDetails.name}`}
-                  readOnly
-                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md bg-gray-100"
+                  value={employeeIdInput}
+                  onWheel={(e) => e.target.blur()}
+                  onChange={(e) => setEmployeeIdInput(e.target.value)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                  placeholder="Enter Employee ID"
+                  required
                 />
-              )}
+                <button
+                  type="button"
+                  onClick={handleFetchEmployee}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                >
+                  Fetch
+                </button>
+              </div>
             </div>
+
+            {/* Display Employee Details */}
+            {employeeDetails && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block font-medium mb-2">Designation</label>
+                  <input
+                    type="text"
+                    value={employeeDetails.designation}
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium mb-2">Department</label>
+                  <input
+                    type="text"
+                    value={employeeDetails.department.departmentName}
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Payment Month and Year */}
             <div className="flex space-x-4">
@@ -241,7 +317,7 @@ const EditSalary = () => {
                 <select
                   value={paymentMonth}
                   onChange={(e) => setPaymentMonth(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                   required
                 >
                   <option value="">Select Month</option>
@@ -258,7 +334,7 @@ const EditSalary = () => {
                 <select
                   value={paymentYear}
                   onChange={(e) => setPaymentYear(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                   required
                 >
                   <option value="">Select Year</option>
@@ -279,7 +355,7 @@ const EditSalary = () => {
                 value={grossSalary}
                 onWheel={(e) => e.target.blur()}
                 onChange={(e) => setGrossSalary(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 placeholder="Enter gross salary"
                 required
               />
@@ -293,53 +369,92 @@ const EditSalary = () => {
                 value={basicSalary}
                 onWheel={(e) => e.target.blur()}
                 readOnly
-                className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-2">Payable Days</label>
+              <input
+                type="number"
+                value={payableDays}
+                onWheel={(e) => e.target.blur()}
+                onChange={(e) => setPayableDays(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                placeholder="Enter payable days"
+                required
+              />
+            </div>
+
+            {/* Sundays */}
+            <div>
+              <label className="block font-medium mb-2">Sundays</label>
+              <input
+                type="number"
+                value={sundays}
+                readOnly
+                className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+              />
+            </div>
+
+            {/* Net Payable Days */}
+            <div>
+              <label className="block font-medium mb-2">Net Payable Days</label>
+              <input
+                type="number"
+                value={netPayableDays}
+                readOnly
+                className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
               />
             </div>
 
             {/* Allowances */}
             <div>
               <label className="block font-medium mb-2">Allowances</label>
-              {allowances.map((allowance, index) => (
-                <div key={index} className="flex space-x-4 mb-2">
-                  <input
-                    type="text"
-                    value={allowance.name}
-                    onChange={(e) =>
-                      handleFieldChange(
-                        index,
-                        "allowances",
-                        "name",
-                        e.target.value
-                      )
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                    placeholder="Allowance Name"
-                  />
-                  <input
-                    type="number"
-                    value={allowance.amount}
-                    onWheel={(e) => e.target.blur()}
-                    onChange={(e) =>
-                      handleFieldChange(
-                        index,
-                        "allowances",
-                        "amount",
-                        e.target.value
-                      )
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                    placeholder="Allowance Amount"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeField(index, "allowances")}
-                    className="px-4 py-2 bg-red-500 text-white rounded-md"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
+              {allowances && allowances.length > 0 ? (
+                allowances.map((allowance, index) => (
+                  <div key={index} className="flex space-x-4 mb-2">
+                    <input
+                      type="text"
+                      value={allowance.name}
+                      onChange={(e) =>
+                        handleFieldChange(
+                          index,
+                          "allowances",
+                          "name",
+                          e.target.value
+                        )
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
+                      placeholder="Allowance Name"
+                    />
+                    <input
+                      type="number"
+                      value={allowance.amount}
+                      onWheel={(e) => e.target.blur()}
+                      onChange={(e) =>
+                        handleFieldChange(
+                          index,
+                          "allowances",
+                          "amount",
+                          e.target.value
+                        )
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
+                      placeholder="Allowance Amount"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeField(index, "allowances")}
+                      className="px-4 py-2 bg-red-500 text-white rounded-md"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p></p>
+              )}
               <button
                 type="button"
                 onClick={() => addField("allowances")}
@@ -352,46 +467,50 @@ const EditSalary = () => {
             {/* Deductions */}
             <div>
               <label className="block font-medium mb-2">Deductions</label>
-              {deductions.map((deduction, index) => (
-                <div key={index} className="flex space-x-4 mb-2">
-                  <input
-                    type="text"
-                    value={deduction.name}
-                    onChange={(e) =>
-                      handleFieldChange(
-                        index,
-                        "deductions",
-                        "name",
-                        e.target.value
-                      )
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                    placeholder="Deduction Name"
-                  />
-                  <input
-                    type="number"
-                    value={deduction.amount}
-                    onWheel={(e) => e.target.blur()}
-                    onChange={(e) =>
-                      handleFieldChange(
-                        index,
-                        "deductions",
-                        "amount",
-                        e.target.value
-                      )
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                    placeholder="Deduction Amount"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeField(index, "deductions")}
-                    className="px-4 py-2 bg-red-500 text-white rounded-md"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
+              {deductions && deductions.length > 0 ? (
+                deductions.map((deduction, index) => (
+                  <div key={index} className="flex space-x-4 mb-2">
+                    <input
+                      type="text"
+                      value={deduction.name}
+                      onChange={(e) =>
+                        handleFieldChange(
+                          index,
+                          "deductions",
+                          "name",
+                          e.target.value
+                        )
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
+                      placeholder="Deduction Name"
+                    />
+                    <input
+                      type="number"
+                      value={deduction.amount}
+                      onWheel={(e) => e.target.blur()}
+                      onChange={(e) =>
+                        handleFieldChange(
+                          index,
+                          "deductions",
+                          "amount",
+                          e.target.value
+                        )
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
+                      placeholder="Deduction Amount"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeField(index, "deductions")}
+                      className="px-4 py-2 bg-red-500 text-white rounded-md"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p></p>
+              )}
               <button
                 type="button"
                 onClick={() => addField("deductions")}
@@ -404,10 +523,9 @@ const EditSalary = () => {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="w-full px-6 py-2 bg-green-500 text-white rounded-md"
-                disabled={loading}
+                className="w-1/5 px-6 py-2 bg-green-500 text-white rounded-md"
               >
-                {loading ? "Saving..." : "Save Changes"}
+                Save Changes
               </button>
             </div>
           </form>

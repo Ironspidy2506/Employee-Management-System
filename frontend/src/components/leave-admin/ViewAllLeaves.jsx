@@ -133,7 +133,7 @@ const ViewAllLeaves = () => {
         </div>
 
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-          <thead className="bg-gray-200 border-b">
+          <thead className="bg-gray-200 border">
             <tr>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                 S. No.

@@ -39,7 +39,7 @@ const EmployeeList = () => {
             employeeId: emp.employeeId,
             name: emp.name,
             dob: new Date(emp.dob).toLocaleDateString(),
-            department: emp.department.departmentName,
+            department: emp.department?.departmentName,
             contactNo: emp.contactNo,
           }));
 

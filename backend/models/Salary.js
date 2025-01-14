@@ -15,6 +15,18 @@ const salarySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  payableDays: {
+    type: Number,
+    required: true,
+  },
+  sundays: {
+    type: Number,
+    required: true,
+  },
+  netPayableDays: {
+    type: Number,
+    required: true,
+  },
   allowances: [
     {
       name: { type: String, required: true },

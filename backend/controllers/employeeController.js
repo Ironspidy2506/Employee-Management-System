@@ -330,39 +330,23 @@ const getSalaryDetailsOfEmployee = async (req, res) => {
 
     const empId = employee._id;
 
-    // Find the salary record based on employeeId, paymentMonth, and paymentYear
     const salary = await Salary.findOne({
       employeeId: empId,
       paymentMonth,
       paymentYear,
-    }).populate("employeeId"); // Optional: populate employee details if needed
+    }).populate("employeeId");
 
     if (!salary) {
       return res.status(404).json({ message: "Salary record not found." });
     }
 
-    // Fetch approved allowances for the same employee, month, and year
-    const approvedAllowances = await Allowance.find({
-      employeeId: empId,
-      allowanceMonth: paymentMonth,
-      allowanceYear: paymentYear,
-      status: "approved",
-    });
-
-    // Combine the default allowances from salary and approved allowances separately
-    const defaultAllowances = salary.allowances;
-    const approvedAllowancesList = approvedAllowances.map((allowance) => ({
-      name: allowance.allowanceType,
-      amount: allowance.allowanceAmount,
-      voucherNo: allowance.voucherNo,
-    }));
-
-    // Return salary details with both default and approved allowances separately
     return res.json({
       grossSalary: salary.grossSalary,
       basicSalary: salary.basicSalary,
-      defaultAllowances: defaultAllowances, // Default allowances from salary
-      approvedAllowances: approvedAllowancesList, // Approved allowances from the Allowance model
+      payableDays: salary.payableDays,
+      sundays: salary.sundays,
+      netPayableDays: salary.netPayableDays,
+      allowances: salary.allowances,
       deductions: salary.deductions,
       paymentMonth: salary.paymentMonth,
       paymentYear: salary.paymentYear,
@@ -422,7 +406,9 @@ const getEmployeeSummaryForAllowances = async (req, res) => {
 
     return res.status(200).json({ success: true, employee });
   } catch (error) {
-    return res.status(500).json({ success: false, error: "Backend Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, error: "Backend Server Error" });
   }
 };
 

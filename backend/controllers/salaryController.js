@@ -7,11 +7,15 @@ export const addSalary = async (req, res) => {
       employeeId,
       grossSalary,
       basicSalary,
+      payableDays,
+      sundays,
+      netPayableDays,
       allowances,
       deductions,
       paymentMonth,
       paymentYear,
     } = req.body;
+
     const employee = await Employee.findById(employeeId);
     if (!employee) {
       return res
@@ -19,10 +23,26 @@ export const addSalary = async (req, res) => {
         .json({ success: false, message: "Employee not found" });
     }
 
+    const salary = await Salary.findOne({
+      employeeId,
+      paymentMonth,
+      paymentYear,
+    });
+
+    if (salary) {
+      return res.json({
+        success: false,
+        message: "Salary Details Already Available!",
+      });
+    }
+
     const newSalary = new Salary({
       employeeId,
       grossSalary,
       basicSalary,
+      payableDays,
+      sundays,
+      netPayableDays,
       allowances,
       deductions,
       paymentMonth,
@@ -31,7 +51,9 @@ export const addSalary = async (req, res) => {
 
     await newSalary.save();
 
-    res.status(201).json({ success: true, salary: newSalary });
+    res
+      .status(201)
+      .json({ success: true, message: "Salary Added Successfully!" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -49,17 +71,10 @@ export const getSalaryDetails = async (req, res) => {
     }).populate("employeeId"); // Optional: populate employee details if needed
 
     if (!salary) {
-      return res.status(404).json({ message: "Salary record not found." });
+      return res.status(404).json({ message: "Salary Details not found!" });
     }
 
-    return res.json({
-      grossSalary: salary.grossSalary,
-      basicSalary: salary.basicSalary,
-      allowances: salary.allowances,
-      deductions: salary.deductions,
-      paymentMonth: salary.paymentMonth,
-      paymentYear: salary.paymentYear,
-    });
+    return res.json({ salary });
   } catch (error) {
     console.error("Error fetching salary details:", error);
     return res.status(500).json({ message: "Error fetching salary details." });
@@ -73,6 +88,9 @@ export const updateSalary = async (req, res) => {
     const {
       grossSalary,
       basicSalary,
+      payableDays,
+      sundays,
+      netPayableDays,
       paymentMonth,
       paymentYear,
       allowances,
@@ -92,6 +110,9 @@ export const updateSalary = async (req, res) => {
     // Update the salary details
     if (grossSalary !== undefined) salary.grossSalary = grossSalary;
     if (basicSalary !== undefined) salary.basicSalary = basicSalary;
+    if (payableDays !== undefined) salary.payableDays = payableDays;
+    if (sundays !== undefined) salary.sundays = sundays;
+    if (netPayableDays !== undefined) salary.netPayableDays = netPayableDays;
     if (paymentMonth !== undefined) salary.paymentMonth = paymentMonth;
     if (paymentYear !== undefined) salary.paymentYear = paymentYear;
     if (allowances !== undefined) salary.allowances = allowances;

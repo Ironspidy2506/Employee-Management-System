@@ -4,6 +4,8 @@ import Allowance from "./Allowances.js";
 import Leave from "./Leave.js";
 import User from "./User.js";
 import Salary from "./Salary.js";
+import Helpdesk from "./Helpdesk.js";
+import Performance from "./Performance.js";
 
 const employeeSchema = new mongoose.Schema({
   userId: {
@@ -23,6 +25,10 @@ const employeeSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    trim: true,
+  },
+  korusEmail: {
+    type: String,
     trim: true,
   },
   dob: {
@@ -49,14 +55,25 @@ const employeeSchema = new mongoose.Schema({
     ref: "department",
     required: true,
   },
-  qualification: {
+  hod: {
+    type: String,
+    trim: true,
+  },
+  highestQualification: {
     type: String,
     required: true,
+    trim: true,
+  },
+  yop: {
+    type: String,
     trim: true,
   },
   contactNo: {
     type: Number,
     required: true,
+  },
+  altContactNo: {
+    type: Number,
   },
   aadharNo: {
     type: String,
@@ -67,6 +84,27 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     trim: true,
     required: true,
+  },
+  passportNo: {
+    type: String,
+    trim: true,
+  },
+  passportType: {
+    type: String,
+    trim: true,
+  },
+  passportpoi: {
+    type: String,
+    trim: true,
+  },
+  passportdoi: {
+    type: Date,
+  },
+  passportdoe: {
+    type: Date,
+  },
+  nationality: {
+    type: String,
   },
   uan: {
     type: String,
@@ -85,25 +123,42 @@ const employeeSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
+  branch: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  ifsc: {
+    type: String,
+    trim: true,
+    required: true,
+  },
   accountNo: {
     type: String,
     trim: true,
+    required: true,
+  },
+  repperson: {
+    type: String,
+    trim: true,
+  },
+  role: {
+    type: String,
     required: true,
   },
   password: {
     type: String,
     required: true,
   },
-  role: {
-    type: String,
-    required: true,
-  },
-  profileImage: {
-    type: String,
-  },
   doj: {
     type: Date,
     required: true,
+  },
+  dol: {
+    type: Date,
+  },
+  profileImage: {
+    type: String,
   },
   leaveBalance: {
     el: { type: Number, default: 30 },
@@ -115,18 +170,6 @@ const employeeSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-});
-
-employeeSchema.pre("save", function (next) {
-  const oneYear = 365 * 24 * 60 * 60 * 1000; // Milliseconds in a year
-  const currentTime = Date.now();
-
-  if (currentTime - this.lastUpdated >= oneYear) {
-    this.leaveBalance.el += 24; // Increment EL balance annually
-    this.lastUpdated = currentTime; // Update the timestamp
-  }
-
-  next();
 });
 
 employeeSchema.pre(
@@ -142,6 +185,8 @@ employeeSchema.pre(
       await Leave.deleteMany({ employeeId: this._id });
       await Salary.deleteMany({ employeeId: this._id });
       await Allowance.deleteMany({ employeeId: this._id });
+      await Helpdesk.deleteMany({ employeeId: this._id });
+      await Performance.deleteMany({ employeeId: this._id });
 
       await User.deleteOne({ _id: userId });
 

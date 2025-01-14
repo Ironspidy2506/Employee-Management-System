@@ -25,22 +25,35 @@ const addEmployee = async (req, res) => {
       employeeId,
       name,
       email,
+      korusEmail,
       dob,
       gender,
       maritalStatus,
       designation,
       department,
-      qualification,
+      hod,
+      highestQualification,
+      yop,
       contactNo,
-      password,
-      role,
+      altContactNo,
       aadharNo,
       pan,
+      passportNo,
+      passportType,
+      passportpoi,
+      passportdoi,
+      passportdoe,
+      nationality,
       uan,
       pfNo,
       esiNo,
       bank,
+      branch,
+      ifsc,
       accountNo,
+      repperson,
+      role,
+      password,
       doj,
     } = req.body;
 
@@ -73,30 +86,44 @@ const addEmployee = async (req, res) => {
       employeeId,
       name,
       email,
+      korusEmail,
       dob,
       gender,
       maritalStatus,
       designation,
       department,
-      qualification,
+      hod,
+      highestQualification,
+      yop,
       contactNo,
+      altContactNo,
       aadharNo,
       pan,
+      passportNo,
+      passportType,
+      passportpoi,
+      passportdoi,
+      passportdoe,
+      nationality,
       uan,
       pfNo,
       esiNo,
       bank,
-      password: hashPassword,
+      branch,
+      ifsc,
       accountNo,
-      doj,
+      repperson,
       role: role ? role.toLowerCase() : undefined,
+      password: hashPassword,
+      doj,
     });
 
     await newEmployee.save();
 
-    return res.status(200).json({ success: true, message: "Employee Created" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Employee Added Successfully!" });
   } catch (error) {
-    console.error("Error in addEmployee:", error); // Log the error for debugging
     return res
       .status(500)
       .json({ success: false, error: "Add Employee Server Error" });
@@ -110,7 +137,6 @@ const getEmployees = async (req, res) => {
       .populate("department");
     return res.status(200).json({ success: true, employees });
   } catch (error) {
-    console.error("Error in getEmployees:", error);
     return res
       .status(500)
       .json({ success: false, error: "Get Employee Server Error" });
@@ -154,28 +180,39 @@ const updateEmployee = async (req, res) => {
   try {
     const { _id } = req.params;
 
-    // Destructure all possible fields from req.body
     const {
+      employeeId,
       name,
       email,
-      employeeId,
+      korusEmail,
       dob,
       gender,
       maritalStatus,
       designation,
       department,
-      qualification,
+      hod,
+      highestQualification,
+      yop,
       contactNo,
-      role,
+      altContactNo,
       aadharNo,
       pan,
+      passportNo,
+      passportType,
+      passportpoi,
+      passportdoi,
+      passportdoe,
+      nationality,
       uan,
       pfNo,
       esiNo,
       bank,
+      branch,
+      ifsc,
       accountNo,
+      repperson,
+      role,
       doj,
-      leaveBalance, // Optional: If updating leave balances directly
     } = req.body;
 
     const profileImage = req.file ? req.file.path : null;
@@ -209,42 +246,37 @@ const updateEmployee = async (req, res) => {
     const updatedEmployeeFields = {
       ...(name && { name }),
       ...(email && { email }),
+      ...(korusEmail && { korusEmail }),
       ...(employeeId && { employeeId }),
       ...(dob && { dob }),
       ...(gender && { gender }),
       ...(maritalStatus && { maritalStatus }),
       ...(designation && { designation }),
       ...(department && { department }),
-      ...(qualification && { qualification }),
+      ...(hod && { hod }),
+      ...(highestQualification && { highestQualification }),
+      ...(yop && { yop }),
       ...(contactNo && { contactNo }),
-      ...(role && { role }),
+      ...(altContactNo && { altContactNo }),
       ...(aadharNo && { aadharNo }),
       ...(pan && { pan }),
+      ...(passportNo && { passportNo }),
+      ...(passportType && { passportType }),
+      ...(passportpoi && { passportpoi }),
+      ...(passportdoi && { passportdoi }),
+      ...(passportdoe && { passportdoe }),
+      ...(nationality && { nationality }),
       ...(uan && { uan }),
       ...(pfNo && { pfNo }),
       ...(esiNo && { esiNo }),
-      ...(bank && { bank }), // Match frontend "bankName" with backend "bank"
+      ...(bank && { bank }),
+      ...(branch && { branch }),
+      ...(ifsc && { ifsc }),
       ...(accountNo && { accountNo }),
+      ...(repperson && { repperson }),
+      ...(role && { role }),
       ...(doj && { doj }),
     };
-
-    // If leaveBalance is provided, merge it with the existing leave balance
-    if (leaveBalance) {
-      updatedEmployeeFields.leaveBalance = {
-        el:
-          leaveBalance.el !== undefined
-            ? leaveBalance.el
-            : employee.leaveBalance.el,
-        sl:
-          leaveBalance.sl !== undefined
-            ? leaveBalance.sl
-            : employee.leaveBalance.sl,
-        cl:
-          leaveBalance.cl !== undefined
-            ? leaveBalance.cl
-            : employee.leaveBalance.cl,
-      };
-    }
 
     // Update the employee document
     const updatedEmployee = await Employee.findByIdAndUpdate(
@@ -261,11 +293,10 @@ const updateEmployee = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Employee Updated",
+      message: "Employee Updated Successfully!",
       data: updatedEmployee,
     });
   } catch (error) {
-    console.error("Error updating employee:", error);
     return res
       .status(500)
       .json({ success: false, error: "Edit Employee Server Error" });
@@ -351,7 +382,6 @@ const getEmployeeLeaves = async (req, res) => {
     }); // Sort by latest start date
     res.status(200).json(leaves);
   } catch (error) {
-    console.error("Error fetching leave history:", error);
     res.status(500).json({ error: "Failed to fetch leave history" });
   }
 };
@@ -371,9 +401,8 @@ const deleteEmployee = async (req, res) => {
 
     res
       .status(200)
-      .json({ success: true, message: "Employee deleted successfully" });
+      .json({ success: true, message: "Employee Deleted Successfully!" });
   } catch (error) {
-    console.error("Error deleting employee:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
@@ -393,8 +422,7 @@ const getEmployeeSummaryForAllowances = async (req, res) => {
 
     return res.status(200).json({ success: true, employee });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, error: "Server Error" });
+    return res.status(500).json({ success: false, error: "Backend Server Error" });
   }
 };
 
@@ -427,7 +455,6 @@ const updateEmployeeLeaveBalance = async (req, res) => {
       data: employee,
     });
   } catch (error) {
-    console.error("Error updating leave balance:", error);
     return res.status(500).json({
       success: false,
       error: "Server error while updating leave balance",

@@ -14,10 +14,5 @@ router.get("/admin/getLeaves", authMiddleware, getAllLeaves);
 router.post('/:action/:leaveId', authMiddleware, approveOrReject);
 router.get('/fetch/summary', authMiddleware, getSummary)
 
-// router.post('/add', authMiddleware, addSalary);
-
-// router.get('/:employeeId', authMiddleware, getSalaryDetails);
-
-// router.put('/:employeeId', authMiddleware, updateSalary);
 
 export default router;

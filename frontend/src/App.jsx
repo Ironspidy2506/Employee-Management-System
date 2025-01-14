@@ -44,6 +44,7 @@ import EditHelp from "./components/helpdesk/EditHelp";
 import AlterHoliday from "./components/holiday/AlterHoliday";
 import ViewPerformanceAdmin from "./components/performance/ViewPerformanceAdmin";
 import ViewPerformanceEmployee from "./components/performance/ViewPerformanceEmployee";
+import ViewHoliday from "./components/holiday/ViewHoliday";
 
 const App = () => {
   return (
@@ -221,8 +222,6 @@ const App = () => {
           />
         </Route>
 
-        
-
         <Route
           path="/hr-dashboard"
           element={
@@ -334,6 +333,11 @@ const App = () => {
           <Route
             path="/employee-dashboard/helpdesk/edit-help/:_id"
             element={<EditHelp />}
+          />
+
+          <Route
+            path="/employee-dashboard/holiday"
+            element={<ViewHoliday />}
           />
         </Route>
       </Routes>

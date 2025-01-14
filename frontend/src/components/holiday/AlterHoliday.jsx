@@ -145,7 +145,7 @@ const AlterHoliday = () => {
 
         {showForm && (
           <div className="bg-white p-6 mt-6 rounded-lg shadow-lg">
-            <h3 className="text-lg font-semibold mb-4">Add Holiday</h3>
+            <h3 className="text-lg font-bold mb-4">Add Holiday</h3>
             <div className="space-y-4">
               <input
                 type="text"
@@ -171,7 +171,7 @@ const AlterHoliday = () => {
         )}
 
         <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-4">Holiday List</h3>
+          <h3 className="text-xl text-gray-800 font-bold mb-4">Holiday List</h3>
           <div className="bg-white rounded-lg shadow-lg p-6">
             {holidays.length > 0 ? (
               holidays.map((holiday) => (

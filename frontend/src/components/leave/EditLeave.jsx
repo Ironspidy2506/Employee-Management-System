@@ -106,7 +106,7 @@ const EditLeave = () => {
     <Header/>
     
       <div className="mt-5 max-w-auto mx-auto p-6 bg-white shadow-md rounded-md">
-        <h2 className="text-2xl font-semibold text-center mb-6">Edit Leave</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Edit Leave</h2>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col lg:flex-row lg:space-x-4">
             <div className="mb-4 lg:w-1/2">

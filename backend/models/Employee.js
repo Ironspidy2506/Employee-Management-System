@@ -59,7 +59,7 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  highestQualification: {
+  qualification: {
     type: String,
     required: true,
     trim: true,

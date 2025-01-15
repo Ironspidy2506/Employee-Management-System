@@ -11,9 +11,9 @@ import {
 
 const router = express.Router();
 
-router.get("/:month/:year", authMiddleware, getPerformances);
+router.get("/month-year-basis/:month/:year", authMiddleware, getPerformances);
 router.get(
-  "/get-user-performance/:userId",
+  "/get-user-performances/:userId",
   authMiddleware,
   getUserPerformances
 );

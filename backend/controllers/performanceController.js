@@ -18,11 +18,25 @@ const getUserPerformances = async (req, res) => {
     const { userId } = req.params;
 
     const employee = await Employee.findOne({ userId });
-    const employeeId = employee._id;
+    if (!employee) {
+      return res.json({
+        success: false,
+        message: "No employee found for the given userId.",
+      });
+    }
 
-    const performances = await Performance.find({ employeeId });
+    const performances = await Performance.find({ employeeId: employee._id });
+
+    if (!performances.length) {
+      return res.json({
+        success: false,
+        message: "No performances found for this user.",
+      });
+    }
+
     return res.json({ success: true, performances });
   } catch (error) {
+    console.error("Error fetching performances:", error.message);
     return res.json({ success: false, message: error.message });
   }
 };
@@ -50,7 +64,16 @@ const getEmployeePerformance = async (req, res) => {
 
 const addPerformance = async (req, res) => {
   try {
-    const { _id, month, year, drawings, tasks } = req.body;
+    const {
+      _id,
+      month,
+      year,
+      projectName,
+      projectTitle,
+      drawingType,
+      drawingReleased,
+      drawings,
+    } = req.body;
 
     const employee = await Employee.findOne({ userId: _id });
     const employeeId = employee._id;
@@ -59,8 +82,11 @@ const addPerformance = async (req, res) => {
       employeeId,
       month,
       year,
+      projectName,
+      projectTitle,
+      drawingType,
+      drawingReleased,
       drawings,
-      tasks,
     });
 
     await newPerformance.save();
@@ -76,11 +102,28 @@ const addPerformance = async (req, res) => {
 
 const editPerformance = async (req, res) => {
   try {
-    const { month, year, drawings, tasks } = req.body;
+    const {
+      month,
+      year,
+      projectName,
+      projectTitle,
+      drawingType,
+      drawingReleased,
+      drawings,
+    } = req.body;
     const { performanceId } = req.params;
     await Performance.findByIdAndUpdate(
-      { _id: performanceId },
-      { month, year, drawings, tasks }
+      performanceId,
+      {
+        month,
+        year,
+        projectName,
+        projectTitle,
+        drawingType,
+        drawingReleased,
+        drawings,
+      },
+      { new: true } // This ensures the updated document is returned
     );
 
     return res.json({

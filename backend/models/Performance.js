@@ -15,11 +15,23 @@ const performanceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  drawings: {
-    type: Number,
+  projectName: {
+    type: String,
     required: true,
   },
-  tasks: {
+  projectTitle: {
+    type: String,
+    required: true,
+  },
+  drawingType: {
+    type: String,
+    required: true,
+  },
+  drawingReleased: {
+    type: String,
+    required: true,
+  },
+  drawings: {
     type: Number,
     required: true,
   },

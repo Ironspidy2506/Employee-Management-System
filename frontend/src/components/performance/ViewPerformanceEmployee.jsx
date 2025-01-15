@@ -8,8 +8,11 @@ const ViewPerformanceEmployee = () => {
   const [performances, setPerformances] = useState([]);
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
+  const [projectName, setProjectName] = useState("");
+  const [projectTitle, setProjectTitle] = useState("");
+  const [drawingType, setDrawingType] = useState("");
+  const [drawingReleased, setDrawingReleased] = useState("");
   const [drawings, setDrawings] = useState("");
-  const [tasks, setTasks] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
   const [editedPerformance, setEditedPerformance] = useState({});
   const { user } = useAuth();
@@ -19,7 +22,7 @@ const ViewPerformanceEmployee = () => {
   const getUserPerformance = async () => {
     try {
       const { data } = await axios.get(
-        `https://employee-management-system-backend-objq.onrender.com/api/performance/get-user-performance/${_id}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/performance/get-user-performances/${_id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -44,7 +47,15 @@ const ViewPerformanceEmployee = () => {
   // Add performance
   const handleAddPerformance = async () => {
     try {
-      if (!month || !year || !drawings || !tasks) {
+      if (
+        !month ||
+        !year ||
+        !drawings ||
+        !projectName ||
+        !projectTitle ||
+        !drawingType ||
+        !drawingReleased
+      ) {
         toast.warn("Please fill in all fields.");
         return;
       }
@@ -55,8 +66,11 @@ const ViewPerformanceEmployee = () => {
           _id,
           month,
           year,
+          projectName,
+          projectTitle,
+          drawingType,
+          drawingReleased,
           drawings,
-          tasks,
         },
         {
           headers: {
@@ -74,7 +88,6 @@ const ViewPerformanceEmployee = () => {
       setMonth("");
       setYear("");
       setDrawings("");
-      setTasks("");
     } catch (error) {
       toast.error(error.message);
     }
@@ -88,13 +101,23 @@ const ViewPerformanceEmployee = () => {
 
   // Save edited performance
   const handleSaveEdit = async () => {
-    const { _id, drawings, tasks } = editedPerformance;
+    const {
+      _id,
+      projectName,
+      projectTitle,
+      drawingType,
+      drawingReleased,
+      drawings,
+    } = editedPerformance;
     try {
       const { data } = await axios.put(
         `https://employee-management-system-backend-objq.onrender.com/api/performance/edit-performance/${_id}`,
         {
+          projectName,
+          projectTitle,
+          drawingType,
+          drawingReleased,
           drawings,
-          tasks,
         },
         {
           headers: {
@@ -151,7 +174,7 @@ const ViewPerformanceEmployee = () => {
       <ToastContainer />
       <div className="flex flex-col items-center p-4">
         <div className="bg-white p-6 rounded-lg shadow-md w-full">
-          <h1 className="text-xl text-gray-800 font-bold text-center mb-8">
+          <h1 className="text-2xl text-gray-800 font-bold text-center mb-8">
             Employee Performance Tracker
           </h1>
 
@@ -213,6 +236,72 @@ const ViewPerformanceEmployee = () => {
 
             <div className="flex flex-col">
               <label
+                htmlFor="projectName"
+                className="text-gray-700 font-medium mb-2"
+              >
+                Project Name
+              </label>
+              <input
+                type="text"
+                id="projectName"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                className="px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label
+                htmlFor="projectTitle"
+                className="text-gray-700 font-medium mb-2"
+              >
+                Project Title
+              </label>
+              <input
+                type="text"
+                id="projectTitle"
+                value={projectTitle}
+                onChange={(e) => setProjectTitle(e.target.value)}
+                className="px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="drawingType"
+                className="text-gray-700 font-medium mb-2"
+              >
+                Drawing Type
+              </label>
+              <select
+                id="drawingType"
+                value={drawingType}
+                onChange={(e) => setDrawingType(e.target.value)}
+                className="px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Type</option>
+                <option value="New">New</option>
+                <option value="Revised">Revised</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col">
+              <label
+                htmlFor="drawingReleased"
+                className="text-gray-700 font-medium mb-2"
+              >
+                Drawings Released
+              </label>
+              <input
+                type="text"
+                id="drawingReleased"
+                value={drawingReleased}
+                onChange={(e) => setDrawingReleased(e.target.value)}
+                className="px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label
                 htmlFor="drawings"
                 className="text-gray-700 font-medium mb-2"
               >
@@ -223,19 +312,6 @@ const ViewPerformanceEmployee = () => {
                 id="drawings"
                 value={drawings}
                 onChange={(e) => setDrawings(e.target.value)}
-                className="px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label htmlFor="tasks" className="text-gray-700 font-medium mb-2">
-                Tasks Completed
-              </label>
-              <input
-                type="number"
-                id="tasks"
-                value={tasks}
-                onChange={(e) => setTasks(e.target.value)}
                 className="px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -262,10 +338,19 @@ const ViewPerformanceEmployee = () => {
                     Year
                   </th>
                   <th className="px-4 py-3 text-center border border-gray-300 text-gray-700 font-bold">
-                    Drawings
+                    Project Name
                   </th>
                   <th className="px-4 py-3 text-center border border-gray-300 text-gray-700 font-bold">
-                    Tasks
+                    Project Title
+                  </th>
+                  <th className="px-4 py-3 text-center border border-gray-300 text-gray-700 font-bold">
+                    Drawing Type
+                  </th>
+                  <th className="px-4 py-3 text-center border border-gray-300 text-gray-700 font-bold">
+                    Drawings Released
+                  </th>
+                  <th className="px-4 py-3 text-center border border-gray-300 text-gray-700 font-bold">
+                    Drawings
                   </th>
                   <th className="px-4 py-3 text-center border border-gray-300 text-gray-700 font-bold">
                     Actions
@@ -275,15 +360,86 @@ const ViewPerformanceEmployee = () => {
               <tbody>
                 {performances.length > 0 ? (
                   performances.map((performance, index) => (
-                    <tr
-                      key={index}
-                      className={`hover:bg-gray-100`}
-                    >
+                    <tr key={index} className={`hover:bg-gray-100`}>
                       <td className="px-4 py-2 text-center border border-gray-300">
                         {performance.month}
                       </td>
                       <td className="px-4 py-2 text-center border border-gray-300">
                         {performance.year}
+                      </td>
+                      <td className="px-4 py-2 text-center border border-gray-300">
+                        {editingIndex === index ? (
+                          <input
+                            type="text"
+                            value={editedPerformance.projectName}
+                            onChange={(e) =>
+                              handleEditFieldChange(
+                                "projectName",
+                                e.target.value
+                              )
+                            }
+                            onWheel={(e) => e.target.blur()}
+                            className="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        ) : (
+                          performance.projectName
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-center border border-gray-300">
+                        {editingIndex === index ? (
+                          <input
+                            type="text"
+                            value={editedPerformance.projectTitle}
+                            onChange={(e) =>
+                              handleEditFieldChange(
+                                "projectTitle",
+                                e.target.value
+                              )
+                            }
+                            onWheel={(e) => e.target.blur()}
+                            className="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        ) : (
+                          performance.projectTitle
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-center border border-gray-300">
+                        {editingIndex === index ? (
+                          <select
+                            value={editedPerformance.drawingType}
+                            onChange={(e) =>
+                              handleEditFieldChange(
+                                "drawingType",
+                                e.target.value
+                              )
+                            }
+                            className="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">Select Type</option>
+                            <option value="New">New</option>
+                            <option value="Revised">Revised</option>
+                          </select>
+                        ) : (
+                          performance.drawingType
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-center border border-gray-300">
+                        {editingIndex === index ? (
+                          <input
+                            type="text"
+                            value={editedPerformance.drawingReleased}
+                            onChange={(e) =>
+                              handleEditFieldChange(
+                                "drawingReleased",
+                                e.target.value
+                              )
+                            }
+                            onWheel={(e) => e.target.blur()}
+                            className="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        ) : (
+                          performance.drawingReleased
+                        )}
                       </td>
                       <td className="px-4 py-2 text-center border border-gray-300">
                         {editingIndex === index ? (
@@ -298,21 +454,6 @@ const ViewPerformanceEmployee = () => {
                           />
                         ) : (
                           performance.drawings
-                        )}
-                      </td>
-                      <td className="px-4 py-2 text-center border border-gray-300">
-                        {editingIndex === index ? (
-                          <input
-                            type="number"
-                            value={editedPerformance.tasks}
-                            onChange={(e) =>
-                              handleEditFieldChange("tasks", e.target.value)
-                            }
-                            onWheel={(e) => e.target.blur()}
-                            className="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                        ) : (
-                          performance.tasks
                         )}
                       </td>
                       <td className="px-4 py-2 text-center border border-gray-300">

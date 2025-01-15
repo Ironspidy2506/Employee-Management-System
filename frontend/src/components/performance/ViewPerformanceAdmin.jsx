@@ -22,7 +22,7 @@ const ViewPerformanceAdmin = () => {
         }
 
         const { data } = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/performance/${month}/${year}`,
+          `https://employee-management-system-backend-objq.onrender.com/api/performance/month-year-basis/${month}/${year}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -223,8 +223,15 @@ const ViewPerformanceAdmin = () => {
                   </th>
                   <th className="border px-4 py-2 text-center">Month</th>
                   <th className="border px-4 py-2 text-center">Year</th>
+                  <th className="border px-4 py-2 text-center">Project Name</th>
+                  <th className="border px-4 py-2 text-center">
+                    Project Title
+                  </th>
+                  <th className="border px-4 py-2 text-center">Drawing Type</th>
+                  <th className="border px-4 py-2 text-center">
+                    Drawings Released
+                  </th>
                   <th className="border px-4 py-2 text-center">Drawings</th>
-                  <th className="border px-4 py-2 text-center">Tasks</th>
                 </tr>
               </thead>
               <tbody>
@@ -242,17 +249,26 @@ const ViewPerformanceAdmin = () => {
                       </td>
                       <td className="border text-center px-4 py-2">{p.year}</td>
                       <td className="border text-center px-4 py-2">
-                        {p.drawings}
+                        {p.projectName}
                       </td>
                       <td className="border text-center px-4 py-2">
-                        {p.tasks}
+                        {p.projectTitle}
+                      </td>
+                      <td className="border text-center px-4 py-2">
+                        {p.drawingType}
+                      </td>
+                      <td className="border text-center px-4 py-2">
+                        {p.drawingReleased}
+                      </td>
+                      <td className="border text-center px-4 py-2">
+                        {p.drawings}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
                     <td
-                      colSpan="6"
+                      colSpan="8"
                       className="border px-4 py-2 text-center text-gray-500"
                     >
                       No performance data found.

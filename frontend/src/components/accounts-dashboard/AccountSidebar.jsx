@@ -11,6 +11,8 @@ import {
   FaChartLine
 } from "react-icons/fa";
 import { GiMoneyStack } from "react-icons/gi";
+import { MdGpsFixed } from "react-icons/md";
+import { MdGpsNotFixed } from "react-icons/md";
 import { useAuth } from "../../context/authContext";
 import KorusImage from "./../../assets/Korus.png";
 
@@ -133,6 +135,21 @@ const AccountSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
+            to="/accounts-dashboard/fixed-allowances"
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-md transition-colors ${
+                isActive
+                  ? "bg-gray-700 text-white"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              }`
+            }
+            onClick={toggleSidebar} // Close the sidebar when this link is clicked
+          >
+            <MdGpsFixed className="mr-3 text-xl" />
+            <span>Fixed Allowances</span>
+          </NavLink>
+
+          <NavLink
             to="/accounts-dashboard/allowances"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
@@ -143,8 +160,8 @@ const AccountSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
             }
             onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
-            <FaWallet className="mr-3 text-xl" />
-            <span>Allowances</span>
+            <MdGpsNotFixed className="mr-3 text-xl" />
+            <span>Variable Allowances</span>
           </NavLink>
 
           <NavLink

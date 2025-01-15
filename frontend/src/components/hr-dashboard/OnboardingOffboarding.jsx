@@ -5,11 +5,16 @@ import Footer from "../HeaderFooter/Footer.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const EditLeaveBalances = () => {
+const OnboardingOffboarding = () => {
   const [employeeId, setEmployeeId] = useState("");
   const [employeeData, setEmployeeData] = useState(null);
 
   const handleFetchEmployee = async () => {
+    if (!localStorage.getItem("token")) {
+      toast.error("Authentication token is missing.");
+      return;
+    }
+
     try {
       const response = await axios.get(
         `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${employeeId}`,
@@ -22,27 +27,26 @@ const EditLeaveBalances = () => {
 
       if (response.data.success) {
         setEmployeeData(response.data.employee);
-        toast.success("Leave data fetched successfully!");
+        toast.success("Employee data fetched successfully!");
       }
     } catch (err) {
       setEmployeeData(null);
-      if (err.response && err.response.data.error) {
-        toast.error(err.response.data.error);
-      } else {
-        toast.error("Error fetching employee data.");
-      }
+      toast.error(err.response?.data?.error || "Error fetching employee data.");
     }
   };
 
-  const handleUpdateLeaveBalance = async () => {
+  const handleUpdateJourney = async () => {
+    if (!localStorage.getItem("token")) {
+      toast.error("Authentication token is missing.");
+      return;
+    }
+
     try {
       const response = await axios.put(
-        `https://employee-management-system-backend-objq.onrender.com/api/employees/edit-leave-balance/${employeeId}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/employees/update-journey/${employeeId}`,
         {
-          el: employeeData.leaveBalance.el,
-          cl: employeeData.leaveBalance.cl,
-          sl: employeeData.leaveBalance.sl,
-          od: employeeData.leaveBalance.od,
+          doj: employeeData.doj,
+          dol: employeeData.dol,
         },
         {
           headers: {
@@ -52,14 +56,10 @@ const EditLeaveBalances = () => {
       );
 
       if (response.data.success) {
-        toast.success("Leave balance updated successfully!");
+        toast.success("Details updated successfully!");
       }
     } catch (err) {
-      if (err.response && err.response.data.error) {
-        toast.error(err.response.data.error);
-      } else {
-        toast.error("Error updating leave balance.");
-      }
+      toast.error(err.response?.data?.error || "Error updating details.");
     }
   };
 
@@ -67,10 +67,7 @@ const EditLeaveBalances = () => {
     const { name, value } = e.target;
     setEmployeeData((prevData) => ({
       ...prevData,
-      leaveBalance: {
-        ...prevData.leaveBalance,
-        [name]: value,
-      },
+      [name]: value,
     }));
   };
 
@@ -81,10 +78,9 @@ const EditLeaveBalances = () => {
       <div className="flex items-center justify-center">
         <div className="max-w-xl w-full bg-white rounded-lg shadow-md p-8">
           <h2 className="text-2xl text-center font-bold text-gray-700 mb-6">
-            Edit Employee Leave Balances
+            Onboarding & Offboarding Status
           </h2>
 
-          {/* Employee ID Input */}
           <div className="mb-6">
             <label
               htmlFor="employeeId"
@@ -110,7 +106,6 @@ const EditLeaveBalances = () => {
             </div>
           </div>
 
-          {/* Leave Balance Form */}
           {employeeData && (
             <div className="space-y-6">
               <div>
@@ -122,46 +117,14 @@ const EditLeaveBalances = () => {
                 </p>
               </div>
 
-              {/* Earned Leave (EL) Input */}
               <div>
                 <label className="block text-sm font-medium text-gray-600">
-                  Earned Leave (EL)
+                  Date of Joining
                 </label>
                 <input
-                  type="number"
-                  name="el"
-                  value={employeeData.leaveBalance.el}
-                  onWheel={(e) => e.target.blur()}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
-                />
-              </div>
-
-              {/* Casual Leave (CL) Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Casual Leave (CL)
-                </label>
-                <input
-                  type="number"
-                  name="cl"
-                  value={employeeData.leaveBalance.cl}
-                  onWheel={(e) => e.target.blur()}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
-                />
-              </div>
-
-              {/* Sick Leave (SL) Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Sick Leave (SL)
-                </label>
-                <input
-                  type="number"
-                  name="sl"
-                  value={employeeData.leaveBalance.sl}
-                  onWheel={(e) => e.target.blur()}
+                  type="date"
+                  name="doj"
+                  value={employeeData?.doj?.split("T")[0] || ""}
                   onChange={handleChange}
                   className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
                 />
@@ -169,24 +132,22 @@ const EditLeaveBalances = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-600">
-                  On Duty (OD)
+                  Date of Leaving
                 </label>
                 <input
-                  type="number"
-                  name="od"
-                  value={employeeData.leaveBalance?.od || 0}
-                  onWheel={(e) => e.target.blur()}
+                  type="date"
+                  name="dol"
+                  value={employeeData?.dol?.split("T")[0] || ""}
                   onChange={handleChange}
                   className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
                 />
               </div>
 
-              {/* Update Button */}
               <button
-                onClick={handleUpdateLeaveBalance}
+                onClick={handleUpdateJourney}
                 className="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 shadow-md transition-all"
               >
-                Update Leave Balance
+                Update Details
               </button>
             </div>
           )}
@@ -197,4 +158,4 @@ const EditLeaveBalances = () => {
   );
 };
 
-export default EditLeaveBalances;
+export default OnboardingOffboarding;

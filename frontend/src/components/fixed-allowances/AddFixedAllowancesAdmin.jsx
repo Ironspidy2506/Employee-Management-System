@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
 
-const EditAllowancesAdmin = () => {
+const AddFixedAllowanceAdmin = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -21,10 +21,8 @@ const EditAllowancesAdmin = () => {
     allowanceAmount: "",
   });
 
-  const [employeeId, setEmployeeId] = useState("");
   useEffect(() => {
-    const fetchEmployeeData = async () => {
-      if (!employeeId) return;
+    const fetchEmployeeData = async (employeeId) => {
       try {
         const response = await axios.get(
           `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${employeeId}`,
@@ -35,6 +33,7 @@ const EditAllowancesAdmin = () => {
           }
         );
         const employee = response.data.employee;
+
         setFormData((prev) => ({
           ...prev,
           employeeId: employee.employeeId,
@@ -47,12 +46,11 @@ const EditAllowancesAdmin = () => {
       }
     };
 
-    fetchEmployeeData();
-  }, [employeeId]);
-
-  const handleEmployeeIdChange = (e) => {
-    setEmployeeId(e.target.value);
-  };
+    // If employeeId is set and changes, fetch employee data
+    if (formData.employeeId) {
+      fetchEmployeeData(formData.employeeId);
+    }
+  }, [formData.employeeId, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,8 +64,8 @@ const EditAllowancesAdmin = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.put(
-        `https://employee-management-system-backend-objq.onrender.com/api/allowances/admin/edit-allowance/${formData.employeeId}`,
+      const response = await axios.post(
+        `https://employee-management-system-backend-objq.onrender.com/api/allowances/admin/add-allowance/${formData.employeeId}`,
         formData,
         {
           headers: {
@@ -85,7 +83,6 @@ const EditAllowancesAdmin = () => {
       } else {
         console.error("Submission Error:", err.message);
       }
-      alert("There was an error submitting the form. Please try again.");
     }
   };
 
@@ -97,7 +94,7 @@ const EditAllowancesAdmin = () => {
       <Header />
       <div className="mt-2 max-w-full mx-auto p-6 bg-white shadow-md rounded-md">
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Edit Allowance Form
+          Add Fixed Allowance Form
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4 grid grid-cols-2 gap-4">
@@ -108,9 +105,9 @@ const EditAllowancesAdmin = () => {
               <input
                 type="text"
                 name="employeeId"
-                value={employeeId}
-                onChange={handleEmployeeIdChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={formData.employeeId}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -122,7 +119,7 @@ const EditAllowancesAdmin = () => {
                 name="empName"
                 value={formData.empName}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 readOnly
               />
             </div>
@@ -138,7 +135,7 @@ const EditAllowancesAdmin = () => {
                 name="designation"
                 value={formData.designation}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 readOnly
               />
             </div>
@@ -151,35 +148,8 @@ const EditAllowancesAdmin = () => {
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 readOnly
-              />
-            </div>
-          </div>
-
-          <div className="mb-4 grid grid-cols-2 gap-4">
-            <div>
-              <label className="block font-semibold text-gray-700 mb-2">
-                Project No.
-              </label>
-              <input
-                type="text"
-                name="projectNo"
-                onChange={handleChange}
-                placeholder="(If Any)"
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
-            <div>
-              <label className="block font-semibold text-gray-700 mb-2">
-                Client
-              </label>
-              <input
-                type="text"
-                name="client"
-                placeholder="(If Any)"
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
           </div>
@@ -192,7 +162,7 @@ const EditAllowancesAdmin = () => {
               <select
                 name="allowanceMonth"
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md select-scrollable focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 border rounded-md select-scrollable focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
                 <option value="">Select Month</option>
@@ -215,7 +185,7 @@ const EditAllowancesAdmin = () => {
               <select
                 name="allowanceYear" // Add this attribute
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 select-scrollable"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 select-scrollable"
                 required
               >
                 <option value="">Select Year</option>
@@ -237,21 +207,13 @@ const EditAllowancesAdmin = () => {
                 name="allowanceType"
                 value={formData.allowanceType}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
                 <option value="">Select Allowance Type</option>
-                <option value="epfByCo">E.P.F By Co.</option>
-                <option value="esiByCo">E.S.I By Co.</option>
-                <option value="medPAIns">Med.& P.A. Ins.</option>
-                <option value="monthlyInsAcc">Monthly Ins. & Accidental</option>
                 <option value="bonus">Bonus</option>
-                <option value="gratuity">Gratuity</option>
-                <option value="resPhone">Res. Phone</option>
-                <option value="mobile ">Mobile</option>
-                <option value="carEmi">Car EMI</option>
-                <option value="specialAllowance">Special Allowance</option>
-                <option value="others">Other Allowances</option>
+                <option value="ltc">LTC</option>
+                <option value="resPhone">Loyalty Bonus</option>
               </select>
             </div>
             <div>
@@ -264,18 +226,20 @@ const EditAllowancesAdmin = () => {
                 value={formData.allowanceAmount}
                 onChange={handleChange}
                 onWheel={(e) => e.target.blur()}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
-          >
-            Update Allowance
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="md:w-1/5 bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
+            >
+              Submit Allowance
+            </button>
+          </div>
         </form>
       </div>
       <Footer />
@@ -283,4 +247,4 @@ const EditAllowancesAdmin = () => {
   );
 };
 
-export default EditAllowancesAdmin;
+export default AddFixedAllowanceAdmin;

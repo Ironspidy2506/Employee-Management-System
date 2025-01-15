@@ -45,6 +45,9 @@ import AlterHoliday from "./components/holiday/AlterHoliday";
 import ViewPerformanceAdmin from "./components/performance/ViewPerformanceAdmin";
 import ViewPerformanceEmployee from "./components/performance/ViewPerformanceEmployee";
 import ViewHoliday from "./components/holiday/ViewHoliday";
+import ViewAllFixedAllowance from "./components/fixed-allowances/ViewAllFixedAllowance";
+import AddFixedAllowanceAdmin from "./components/fixed-allowances/AddFixedAllowancesAdmin";
+import OnboardingOffboarding from "./components/hr-dashboard/OnboardingOffboarding";
 
 const App = () => {
   return (
@@ -212,6 +215,26 @@ const App = () => {
             path="/accounts-dashboard/allowances/approve-allowances"
             element={<ApproveAllowances />}
           />
+
+          <Route
+            path="/accounts-dashboard/fixed-allowances"
+            element={<ViewAllFixedAllowance />}
+          />
+
+          <Route
+            path="/accounts-dashboard/fixed-allowances/add-allowances"
+            element={<AddFixedAllowanceAdmin />}
+          />
+
+          <Route
+            path="/accounts-dashboard/fixed-allowances/edit-allowances"
+            element={<AddFixedAllowanceAdmin />}
+          />
+
+          <Route
+            path="/accounts-dashboard/fixed-allowances/approve-allowances"
+            element={<AddFixedAllowanceAdmin />}
+          />
           <Route
             path="/accounts-dashboard/leave"
             element={<ViewEmployeesLeaveCount />}
@@ -271,6 +294,10 @@ const App = () => {
           <Route
             path="/hr-dashboard/performance"
             element={<ViewPerformanceAdmin />}
+          />
+          <Route
+            path="/hr-dashboard/onboarding-offboarding"
+            element={<OnboardingOffboarding />}
           />
         </Route>
 
@@ -335,10 +362,7 @@ const App = () => {
             element={<EditHelp />}
           />
 
-          <Route
-            path="/employee-dashboard/holiday"
-            element={<ViewHoliday />}
-          />
+          <Route path="/employee-dashboard/holiday" element={<ViewHoliday />} />
         </Route>
       </Routes>
     </BrowserRouter>

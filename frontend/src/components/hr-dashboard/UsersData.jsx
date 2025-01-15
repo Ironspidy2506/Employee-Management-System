@@ -41,8 +41,8 @@ const UsersData = () => {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
+    <div className="p-6 max-w-full mx-auto">
+      <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
         Users List
       </h1>
       <div className="overflow-x-auto shadow-md rounded-lg">

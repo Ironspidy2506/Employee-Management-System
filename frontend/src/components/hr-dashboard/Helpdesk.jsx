@@ -97,7 +97,7 @@ const Helpdesk = () => {
     <>
       <ToastContainer />
       <div className="p-6 max-w-7xl mx-auto">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Helpdesk</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Helpdesk</h2>
 
         {/* Search Bar */}
         <div className="mb-6">
@@ -115,24 +115,26 @@ const Helpdesk = () => {
           <table className="min-w-full bg-white rounded-md shadow-md">
             <thead className="bg-gray-100">
               <tr>
-                <th className="py-3 px-6 text-center">Employee ID</th>
-                <th className="py-3 px-6 text-left">Employee Name</th>
-                <th className="py-3 px-6 text-left">Help ID</th>
-                <th className="py-3 px-6 text-left">Query</th>
-                <th className="py-3 px-6 text-center">Status</th>
-                <th className="py-3 px-6 text-center">Actions</th>
+                <th className="py-3 px-6 border text-center">Employee ID</th>
+                <th className="py-3 px-6 border text-left">Employee Name</th>
+                <th className="py-3 px-6 border text-left">Help ID</th>
+                <th className="py-3 px-6 border text-center">Query</th>
+                <th className="py-3 px-6 border text-center">Status</th>
+                <th className="py-3 px-6 border text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredHelpRequests.map((helpRequest) => (
                 <tr key={helpRequest.helpId} className="border-t">
-                  <td className="py-3 px-6 text-center">
+                  <td className="py-3 px-6 border text-center">
                     {helpRequest.employeeId?.employeeId}
                   </td>
-                  <td className="py-3 px-6">{helpRequest.employeeId?.name}</td>
-                  <td className="py-3 px-6">{helpRequest.helpId}</td>
-                  <td className="py-3 px-6">{helpRequest.query}</td>
-                  <td className="py-3 px-6 text-center">
+                  <td className="py-3 px-6 border">
+                    {helpRequest.employeeId?.name}
+                  </td>
+                  <td className="py-3 px-6 border">{helpRequest.helpId}</td>
+                  <td className="py-3 px-6 border">{helpRequest.query}</td>
+                  <td className="py-3 px-6 border text-center">
                     <span
                       className={`py-1 px-3 rounded-full text-sm ${
                         helpRequest.status
@@ -143,7 +145,7 @@ const Helpdesk = () => {
                       {helpRequest.status ? "Resolved" : "Pending"}
                     </span>
                   </td>
-                  <td className="py-3 px-6 text-center">
+                  <td className="py-3 px-6 border text-center">
                     {!helpRequest.status && (
                       <button
                         onClick={() => handleResolve(helpRequest._id)}

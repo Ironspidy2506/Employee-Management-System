@@ -1,6 +1,6 @@
 import express from 'express';
 import authMiddleware from '../middleware/authMiddleware.js'
-import { addEmployee, upload, getEmployee, getEmployees, updateEmployee, fetchEmployeesByDepId, getEmployeeForSummary, getSalaryDetailsOfEmployee, getEmployeeLeaves, deleteEmployee, getEmployeeSummaryForAllowances, updateEmployeeLeaveBalance } from '../controllers/employeeController.js';
+import { addEmployee, upload, getEmployee, getEmployees, updateEmployee, fetchEmployeesByDepId, getEmployeeForSummary, getSalaryDetailsOfEmployee, getEmployeeLeaves, deleteEmployee, getEmployeeSummaryForAllowances, updateEmployeeLeaveBalance, updateEmployeeJourney } from '../controllers/employeeController.js';
 
 const router = express.Router();
 
@@ -12,6 +12,7 @@ router.get('/allowances/summary/:employeeId', authMiddleware, getEmployeeSummary
 router.get('/salary/:userId', authMiddleware, getSalaryDetailsOfEmployee);
 router.put('/:_id', authMiddleware, updateEmployee);
 router.put('/edit-leave-balance/:employeeId', authMiddleware, updateEmployeeLeaveBalance);
+router.put('/update-journey/:employeeId',authMiddleware, updateEmployeeJourney)
 router.get('/department/:_id', authMiddleware, fetchEmployeesByDepId);
 router.get('/leaves/:_id', authMiddleware, getEmployeeLeaves);
 router.delete('/delete/:_id', authMiddleware, deleteEmployee);

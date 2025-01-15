@@ -448,6 +448,39 @@ const updateEmployeeLeaveBalance = async (req, res) => {
   }
 };
 
+const updateEmployeeJourney = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    const { doj, dol } = req.body;
+
+    // Find the employee by ID
+    const employee = await Employee.findOne({ employeeId: employeeId });
+    if (!employee) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Employee not found" });
+    }
+
+    // Update only if provided
+    if (doj !== undefined) employee.doj = doj;
+    if (dol !== undefined) employee.dol = dol;
+
+    // Save updated details
+    await employee.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Employee details updated successfully",
+      data: employee,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Server error while updating employee details",
+    });
+  }
+};
+
 export {
   addEmployee,
   upload,
@@ -461,4 +494,5 @@ export {
   deleteEmployee,
   getEmployeeSummaryForAllowances,
   updateEmployeeLeaveBalance,
+  updateEmployeeJourney,
 };

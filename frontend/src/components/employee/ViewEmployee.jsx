@@ -155,6 +155,18 @@ const ViewEmployee = () => {
                 </p>
               </div>
               <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+                <p className="text-sm text-gray-500">Permanent Address</p>
+                <p className="text-xl font-semibold text-gray-700">
+                  {employee.permanentAddress || "NA"}
+                </p>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+                <p className="text-sm text-gray-500">Local Address</p>
+                <p className="text-xl font-semibold text-gray-700">
+                  {employee.localAddress || "NA"}
+                </p>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
                 <p className="text-sm text-gray-500">Role</p>
                 <p className="text-xl font-semibold text-gray-700">
                   {capitalizeFirstLetter(employee.role) || "NA"}

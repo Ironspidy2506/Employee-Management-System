@@ -41,7 +41,7 @@ const EmployeeSummary = () => {
 
   return (
     <>
-      <Header/>
+      <Header />
       <div className="w-full mx-auto bg-white shadow-lg rounded-2xl p-8">
         <div className="flex flex-col md:flex-row items-start gap-10">
           {/* Employee Photo */}
@@ -60,7 +60,7 @@ const EmployeeSummary = () => {
               {employee.name}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+              <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
                 <p className="text-sm text-gray-500">Employee ID</p>
                 <p className="text-xl font-semibold text-gray-700">
                   {employee.employeeId}
@@ -141,6 +141,20 @@ const EmployeeSummary = () => {
                 <p className="text-sm text-gray-500">Alternate Contact No.</p>
                 <p className="text-xl font-semibold text-gray-700">
                   {employee.altContactNo || "NA"}
+                </p>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+                <p className="text-sm text-gray-500">Permanent Address</p>
+                <p className="text-xl font-semibold text-gray-700">
+                  {employee.permanentAddress || "NA"}
+                </p>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+                <p className="text-sm text-gray-500">Local Address</p>
+                <p className="text-xl font-semibold text-gray-700">
+                  {employee.localAddress || "NA"}
                 </p>
               </div>
               <div className="p-4 bg-gray-50 rounded-lg shadow-sm">

@@ -36,6 +36,8 @@ const addEmployee = async (req, res) => {
       yop,
       contactNo,
       altContactNo,
+      permanentAddress,
+      localAddress,
       aadharNo,
       pan,
       passportNo,
@@ -97,6 +99,8 @@ const addEmployee = async (req, res) => {
       yop,
       contactNo,
       altContactNo,
+      permanentAddress,
+      localAddress,
       aadharNo,
       pan,
       passportNo,
@@ -195,6 +199,8 @@ const updateEmployee = async (req, res) => {
       yop,
       contactNo,
       altContactNo,
+      permanentAddress,
+      localAddress,
       aadharNo,
       pan,
       passportNo,
@@ -216,9 +222,6 @@ const updateEmployee = async (req, res) => {
     } = req.body;
 
     const profileImage = req.file ? req.file.filename : null;
-
-    console.log(profileImage);
-    
 
     // Find the employee document by ID
     const employee = await Employee.findById(_id);
@@ -261,6 +264,8 @@ const updateEmployee = async (req, res) => {
       ...(yop && { yop }),
       ...(contactNo && { contactNo }),
       ...(altContactNo && { altContactNo }),
+      ...(permanentAddress && { permanentAddress }),
+      ...(localAddress && { localAddress }),
       ...(aadharNo && { aadharNo }),
       ...(pan && { pan }),
       ...(passportNo && { passportNo }),

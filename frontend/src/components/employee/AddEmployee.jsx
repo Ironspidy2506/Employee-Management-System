@@ -339,6 +339,40 @@ const AddEmployee = () => {
             <div>
               <label
                 className="block text-gray-700 font-medium mb-2"
+                htmlFor="permanentAddress"
+              >
+                Permanent Address
+              </label>
+              <input
+                type="text"
+                name="permanentAddress"
+                id="permanentAddress"
+                placeholder="Enter Permanent Address"
+                className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label
+                className="block text-gray-700 font-medium mb-2"
+                htmlFor="localAddress"
+              >
+                Local Address
+              </label>
+              <input
+                type="text"
+                name="localAddress"
+                id="localAddress"
+                placeholder="Enter Local Address"
+                className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label
+                className="block text-gray-700 font-medium mb-2"
                 htmlFor="aadharNo"
               >
                 Aadhar No.

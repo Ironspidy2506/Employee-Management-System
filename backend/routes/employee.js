@@ -10,7 +10,7 @@ router.get('/:_id', authMiddleware, getEmployee);
 router.get('/summary/:_id', authMiddleware, getEmployeeForSummary);
 router.get('/allowances/summary/:employeeId', authMiddleware, getEmployeeSummaryForAllowances);
 router.get('/salary/:userId', authMiddleware, getSalaryDetailsOfEmployee);
-router.put('/:_id', authMiddleware, updateEmployee);
+router.put('/:_id', authMiddleware, upload.single("profileImage"), updateEmployee);
 router.put('/edit-leave-balance/:employeeId', authMiddleware, updateEmployeeLeaveBalance);
 router.put('/update-journey/:employeeId',authMiddleware, updateEmployeeJourney)
 router.get('/department/:_id', authMiddleware, fetchEmployeesByDepId);

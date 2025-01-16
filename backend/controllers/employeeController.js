@@ -215,7 +215,10 @@ const updateEmployee = async (req, res) => {
       doj,
     } = req.body;
 
-    const profileImage = req.file ? req.file.path : null;
+    const profileImage = req.file ? req.file.filename : null;
+
+    console.log(profileImage);
+    
 
     // Find the employee document by ID
     const employee = await Employee.findById(_id);

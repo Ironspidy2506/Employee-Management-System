@@ -66,16 +66,27 @@ const EditEmployee = () => {
   }, [_id]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEmployee((employee) => ({ ...employee, [name]: value }));
+    const { name, value, files, type } = e.target;
+
+    setEmployee((prev) => ({
+      ...prev,
+      [name]: type === "file" ? files[0] : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formDataObj = new FormData();
+
+    Object.keys(employee).forEach((key) => {
+      formDataObj.append(key, employee[key]);
+    });
+
     try {
       const response = await axios.put(
         `https://employee-management-system-backend-objq.onrender.com/api/employees/${_id}`,
-        employee,
+        formDataObj,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -110,6 +121,21 @@ const EditEmployee = () => {
             </h3>
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    className="block text-gray-700 font-medium mb-2"
+                    htmlFor="profileImage"
+                  >
+                    Profile Image
+                  </label>
+                  <input
+                    type="file"
+                    name="profileImage"
+                    id="profileImage"
+                    className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                    onChange={handleChange}
+                  />
+                </div>
                 <div>
                   <label
                     className="block text-gray-700 font-medium mb-2"

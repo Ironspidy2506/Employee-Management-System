@@ -148,7 +148,7 @@ const ViewAllLeaves = () => {
                 Leave Type
               </th>
               <th
-                className="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer"
+                className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer"
                 onClick={() => handleSort("startDate")}
               >
                 Start Date
@@ -156,7 +156,7 @@ const ViewAllLeaves = () => {
                   (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
               </th>
               <th
-                className="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer"
+                className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer"
                 onClick={() => handleSort("endDate")}
               >
                 End Date
@@ -169,10 +169,10 @@ const ViewAllLeaves = () => {
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                 Reason
               </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Status
               </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Actions
               </th>
             </tr>
@@ -180,14 +180,16 @@ const ViewAllLeaves = () => {
           <tbody>
             {filteredHistory.map((leave, index) => (
               <tr key={leave._id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-2 text-sm text-gray-800">{index + 1}</td>
-                <td className="px-4 py-2 text-sm text-gray-800">
+                <td className="px-4 py-2 text-center text-sm text-gray-800">
+                  {index + 1}
+                </td>
+                <td className="px-4 py-2 text-center text-sm text-gray-800">
                   {leave.employeeId.employeeId}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-800">
                   {leave.employeeId.name}
                 </td>
-                <td className="px-4 py-2 text-sm text-gray-800">
+                <td className="px-4 py-2 text-center text-sm text-gray-800">
                   {leave.type.toUpperCase()}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-800">
@@ -196,14 +198,14 @@ const ViewAllLeaves = () => {
                 <td className="px-4 py-2 text-sm text-gray-800">
                   {formatDate(leave.endDate)}
                 </td>
-                <td className="px-4 py-2 text-sm text-gray-800">
+                <td className="px-4 py-2 text-center text-sm text-gray-800">
                   {leave.days}
                 </td>
-                <td className="px-4 py-2 text-sm text-gray-800">
+                <td className="px-4 py-2 text-sm text-justify text-gray-800">
                   {leave.reason}
                 </td>
                 <td
-                  className={`px-4 py-2 text-sm font-semibold ${getStatusColor(
+                  className={`px-4 py-2 text-center text-sm font-semibold ${getStatusColor(
                     leave.status
                   )}`}
                 >

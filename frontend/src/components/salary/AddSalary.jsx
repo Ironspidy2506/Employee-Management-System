@@ -422,6 +422,17 @@ const AddSalary = () => {
                     className="w-32 px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
                     placeholder="Amount"
                   />
+                  {deduction.name === "ESI" || deduction.name === "EPF" ? (
+                    <select
+                      name=""
+                      id=""
+                      className="px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                    >
+                      <option value="Employee">Employee</option>
+                      <option value="Director">Director</option>
+                    </select>
+                  ) : null}
+
                   <button
                     type="button"
                     onClick={() => removeField(index, "deductions")}

@@ -10,6 +10,7 @@ import {
   FaChartLine,
   FaRoute,
 } from "react-icons/fa";
+import { FaKey } from "react-icons/fa6";
 import { IoIosMail } from "react-icons/io";
 import { useAuth } from "../../context/authContext";
 import KorusImage from "./../../assets/Korus.png";
@@ -161,6 +162,21 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           >
             <FaHandsHelping className="mr-3 text-xl" />
             <span>Helpdesk</span>
+          </NavLink>
+
+          <NavLink
+            to="/employee-dashboard/change-password"
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-md transition-colors ${
+                isActive
+                  ? "bg-gray-700 text-white"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              }`
+            }
+            onClick={toggleSidebar}
+          >
+            <FaKey className="mr-3 text-lg" />
+            <span>Change Password</span>
           </NavLink>
         </div>
 

@@ -48,6 +48,7 @@ import ViewHoliday from "./components/holiday/ViewHoliday";
 import ViewAllFixedAllowance from "./components/fixed-allowances/ViewAllFixedAllowance";
 import AddFixedAllowanceAdmin from "./components/fixed-allowances/AddFixedAllowancesAdmin";
 import OnboardingOffboarding from "./components/hr-dashboard/OnboardingOffboarding";
+import Password from "./components/employee-dashboard/Password";
 
 const App = () => {
   return (
@@ -363,6 +364,10 @@ const App = () => {
           />
 
           <Route path="/employee-dashboard/holiday" element={<ViewHoliday />} />
+          <Route
+            path="/employee-dashboard/change-password"
+            element={<Password />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

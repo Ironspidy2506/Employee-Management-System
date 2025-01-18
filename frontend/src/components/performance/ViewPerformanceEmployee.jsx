@@ -32,8 +32,6 @@ const ViewPerformanceEmployee = () => {
 
       if (data.success) {
         setPerformances(data.performances);
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.message);
@@ -489,7 +487,7 @@ const ViewPerformanceEmployee = () => {
                 ) : (
                   <tr>
                     <td
-                      colSpan="5"
+                      colSpan="8"
                       className="px-4 py-3 text-center text-gray-600"
                     >
                       No performance records found.

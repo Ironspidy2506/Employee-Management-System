@@ -142,7 +142,6 @@ const AddEmployee = () => {
                 id="korusEmail"
                 placeholder="Enter Korus Email (If Available)"
                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
-                required
                 onChange={handleChange}
               />
             </div>
@@ -278,6 +277,7 @@ const AddEmployee = () => {
                 name="qualification"
                 id="qualification"
                 placeholder="Enter Highest Qualification"
+                required
                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 onChange={handleChange}
               />
@@ -311,6 +311,7 @@ const AddEmployee = () => {
                 type="number"
                 name="contactNo"
                 id="contactNo"
+                required
                 placeholder="Enter Contact No."
                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 onChange={handleChange}
@@ -381,6 +382,7 @@ const AddEmployee = () => {
                 type="text"
                 name="aadharNo"
                 id="aadharNo"
+                required
                 placeholder="Enter Aadhar No."
                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 onChange={handleChange}
@@ -398,6 +400,7 @@ const AddEmployee = () => {
                 type="text"
                 name="pan"
                 id="pan"
+                required
                 placeholder="Enter PAN No."
                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 onChange={handleChange}
@@ -573,6 +576,7 @@ const AddEmployee = () => {
                 type="text"
                 name="bank"
                 id="bank"
+                required
                 placeholder="Enter Bank Name"
                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 onChange={handleChange}
@@ -590,6 +594,7 @@ const AddEmployee = () => {
                 type="text"
                 name="branch"
                 id="branch"
+                required
                 placeholder="Enter Bank Branch Name"
                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 onChange={handleChange}
@@ -607,6 +612,7 @@ const AddEmployee = () => {
                 type="text"
                 name="ifsc"
                 id="ifsc"
+                required
                 placeholder="Enter Bank IFSC Code"
                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 onChange={handleChange}
@@ -624,6 +630,7 @@ const AddEmployee = () => {
                 type="text"
                 name="accountNo"
                 id="accountNo"
+                required
                 placeholder="Enter Account No."
                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                 onChange={handleChange}

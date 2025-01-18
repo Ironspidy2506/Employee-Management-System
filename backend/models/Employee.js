@@ -78,12 +78,10 @@ const employeeSchema = new mongoose.Schema({
   permanentAddress: {
     type: String,
     trim: true,
-    required: true,
   },
   localAddress: {
     type: String,
     trim: true,
-    required: true,
   },
   aadharNo: {
     type: String,

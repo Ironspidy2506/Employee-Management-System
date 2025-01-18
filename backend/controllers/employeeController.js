@@ -240,6 +240,7 @@ const updateEmployee = async (req, res) => {
     // Update the user document
     const updatedUserFields = {
       ...(name && { name }),
+      ...(email && { email }),
       ...(role && { role }),
       ...(profileImage && { profileImage }),
     };

@@ -25,35 +25,33 @@ const getLeaveHistory = async (req, res) => {
 const applyForLeave = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { startDate, endDate, reason, leaveType, days } = req.body;
+    const { startDate, startTime, endDate, endTime, reason, leaveType, days } =
+      req.body;
 
-    // Validate if the employee has enough leave balance
     const employee = await Employee.findOne({ userId });
     if (!employee) {
       return res.status(404).json({ error: "Employee not found" });
     }
 
-    // Check if the employee has enough leave balance
     const leaveBalance = employee.leaveBalance[leaveType];
     if (leaveBalance < days) {
       return res.status(400).json({ message: "Not enough leave balance" });
     }
 
-    // Create a new leave entry
     const newLeave = new Leave({
       employeeId: employee._id,
       startDate,
+      startTime,
       endDate,
+      endTime,
       reason,
       type: leaveType,
       days,
     });
 
     await newLeave.save();
-
     await employee.save();
 
-    // Return success response
     res
       .status(201)
       .json({ message: "Leave applied successfully", leave: newLeave });
@@ -77,23 +75,24 @@ const getLeaveById = async (req, res) => {
 const updateLeaveById = async (req, res) => {
   try {
     const { _id } = req.params;
-    const { leaveType, startDate, endDate, days } = req.body;
+    const { leaveType, startDate, startTime, endDate, endTime, days, reason } =
+      req.body;
 
     const leaveHistory = await Leave.findById(_id);
     if (!leaveHistory) {
       return res.status(404).json({ error: "Leave record not found" });
     }
 
-    // Update the leave document with new data
-    leaveHistory.leaveType = leaveType;
+    leaveHistory.type = leaveType;
     leaveHistory.startDate = startDate;
+    leaveHistory.startTime = startTime;
     leaveHistory.endDate = endDate;
+    leaveHistory.endTime = endTime;
     leaveHistory.days = days;
+    leaveHistory.reason = reason;
 
-    // Save the updated leave document
     const updatedLeave = await leaveHistory.save();
-
-    res.status(200).json(updatedLeave); // Respond with the updated leave document
+    res.status(200).json(updatedLeave);
   } catch (error) {
     console.error("Error updating leave record:", error);
     res.status(500).json({ error: "Failed to update leave record" });
@@ -103,7 +102,6 @@ const updateLeaveById = async (req, res) => {
 const deleteLeaveById = async (req, res) => {
   try {
     const { _id } = req.params;
-    // Find the leave record
     const leave = await Leave.findById(_id);
 
     if (!leave) {
@@ -113,7 +111,6 @@ const deleteLeaveById = async (req, res) => {
       });
     }
 
-    // Delete the leave record
     await Leave.findByIdAndDelete(_id);
 
     res.status(200).json({
@@ -132,7 +129,6 @@ const deleteLeaveById = async (req, res) => {
 const getLeaveBalance = async (req, res) => {
   try {
     const { userId } = req.params;
-    // Find the employee by userId
     const employee = await Employee.findOne({ userId });
 
     if (!employee) {
@@ -142,7 +138,6 @@ const getLeaveBalance = async (req, res) => {
       });
     }
 
-    // Return the leave balance
     res.status(200).json({
       success: true,
       leaveBalance: employee.leaveBalance,
@@ -170,14 +165,14 @@ const getAllLeaves = async (req, res) => {
 
 const approveOrReject = async (req, res) => {
   try {
-    const { leaveId, action } = req.params; // Extract `leaveId` and `action` from params
+    const { leaveId, action } = req.params;
 
     if (!["approved", "rejected"].includes(action)) {
       return res
         .status(400)
         .json({ error: "Invalid action. Must be 'approve' or 'reject'." });
     }
-    // Find the leave request by ID
+
     const leave = await Leave.findById(leaveId).populate("employeeId");
     if (!leave) {
       return res.status(404).json({ error: "Leave request not found." });
@@ -189,25 +184,22 @@ const approveOrReject = async (req, res) => {
         .json({ error: "Only pending leave requests can be updated." });
     }
 
-    const employee = leave.employeeId; // Populated employee document
+    const employee = leave.employeeId;
 
     if (action === "approved") {
-      // Deduct leave days from the appropriate leave type
       const leaveType = leave.type.toLowerCase();
       if (employee.leaveBalance[leaveType] < leave.days) {
         return res.status(400).json({ error: "Insufficient leave balance." });
       }
 
-      employee.leaveBalance[leaveType] -= leave.days; // Deduct leave balance
-      leave.status = "approved"; // Update leave status
+      employee.leaveBalance[leaveType] -= leave.days;
+      leave.status = "approved";
 
-      // Save updated employee document
       await employee.save();
     } else if (action === "rejected") {
-      leave.status = "rejected"; // Update leave status
+      leave.status = "rejected";
     }
 
-    // Save updated leave document
     await leave.save();
 
     res.status(200).json({ message: `Leave successfully ${action}d.`, leave });
@@ -219,13 +211,11 @@ const approveOrReject = async (req, res) => {
 
 const getSummary = async (req, res) => {
   try {
-    // Calculate the total number of applied, approved, pending, and rejected leaves
     const leaveApplied = await Leave.countDocuments();
     const leaveApproved = await Leave.countDocuments({ status: "approved" });
     const leavePending = await Leave.countDocuments({ status: "pending" });
     const leaveRejected = await Leave.countDocuments({ status: "rejected" });
 
-    // Respond with the leave data
     return res.json({
       success: true,
       leaveApplied,

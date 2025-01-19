@@ -10,9 +10,17 @@ const leaveSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
+    startTime: {
+        type: String, // e.g., "09:00"
+        required: true, // Make it required if you always expect this field
+    },
     endDate: {
         type: Date,
         required: true,
+    },
+    endTime: {
+        type: String, // e.g., "18:00"
+        required: true, // Make it required if you always expect this field
     },
     reason: {
         type: String,

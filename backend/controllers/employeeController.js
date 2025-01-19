@@ -350,6 +350,7 @@ const getSalaryDetailsOfEmployee = async (req, res) => {
     }
 
     return res.json({
+      employeeId: salary.employeeId,
       grossSalary: salary.grossSalary,
       basicSalary: salary.basicSalary,
       payableDays: salary.payableDays,

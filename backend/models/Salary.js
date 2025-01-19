@@ -7,6 +7,10 @@ const salarySchema = new mongoose.Schema({
     ref: "employee",
     required: true,
   },
+  employeeType: {
+    type: String,
+    required: true,
+  },
   grossSalary: {
     type: Number,
     required: true,

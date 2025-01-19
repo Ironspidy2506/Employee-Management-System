@@ -76,7 +76,9 @@ const updateHelp = async (req, res) => {
 
 const getAllHelps = async (req, res) => {
   try {
-    const helpdata = await Helpdesk.find().populate("employeeId");
+    const helpdata = await Helpdesk.find()
+      .populate("employeeId")
+      .sort({ date: -1 });
 
     return res.json({
       success: true,
@@ -113,4 +115,28 @@ const deleteHelp = async (req, res) => {
   }
 };
 
-export { applyHelp, getMyHelps, getHelp, updateHelp, getAllHelps, resolveHelp, deleteHelp };
+const addResponse = async (req, res) => {
+  try {
+    const { helpId } = req.params;
+    const { response } = req.body;
+
+    await Helpdesk.findByIdAndUpdate(helpId, { response, status: true });
+    return res.json({
+      success: true,
+      message: "Response Updated Successfully!",
+    });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+export {
+  applyHelp,
+  getMyHelps,
+  getHelp,
+  updateHelp,
+  getAllHelps,
+  resolveHelp,
+  deleteHelp,
+  addResponse,
+};

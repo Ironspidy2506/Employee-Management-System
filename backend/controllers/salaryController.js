@@ -5,6 +5,7 @@ export const addSalary = async (req, res) => {
   try {
     const {
       employeeId,
+      employeeType,
       grossSalary,
       basicSalary,
       payableDays,
@@ -38,6 +39,7 @@ export const addSalary = async (req, res) => {
 
     const newSalary = new Salary({
       employeeId,
+      employeeType,
       grossSalary,
       basicSalary,
       payableDays,
@@ -86,6 +88,7 @@ export const updateSalary = async (req, res) => {
   try {
     const { _id } = req.params; // Now we get employeeId from URL
     const {
+      employeeType,
       grossSalary,
       basicSalary,
       payableDays,
@@ -108,6 +111,7 @@ export const updateSalary = async (req, res) => {
     }
 
     // Update the salary details
+    if (employeeType !== undefined) salary.employeeType = employeeType;
     if (grossSalary !== undefined) salary.grossSalary = grossSalary;
     if (basicSalary !== undefined) salary.basicSalary = basicSalary;
     if (payableDays !== undefined) salary.payableDays = payableDays;
@@ -127,12 +131,44 @@ export const updateSalary = async (req, res) => {
   }
 };
 
-export const getAllSalaries = async (req, res) => {
+export const getMonthWiseSalaries = async (req, res) => {
   try {
-    const salaries = await Salary.find().populate("employeeId");
+    const { month, year } = req.params;
+
+    const salaries = await Salary.find({
+      paymentMonth: month,
+      paymentYear: year,
+    }).populate("employeeId");
+
     res.status(200).json(salaries);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch salaries", error });
+  }
+};
+
+export const getEmployeeWiseSalaryDetails = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+
+    const employee = await Employee.findOne({employeeId});
+    if(!employee) {
+      return res.json({success: false, message: "Employee not found"})
+    }
+
+    const empId = employee._id;
+
+    const salary = await Salary.find({ employeeId: empId }).populate(
+      "employeeId"
+    );
+
+    if (!salary) {
+      return res.status(404).json({ message: "Salary details not found" });
+    }
+
+    res.status(200).json(salary);
+  } catch (error) {
+    console.error("Error fetching salary details:", error);
+    res.status(500).json({ message: "Fetch Salary Server error" });
   }
 };
 

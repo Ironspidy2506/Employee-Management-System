@@ -11,9 +11,16 @@ const helpdeskSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
   query: {
     type: String,
     required: true,
+  },
+  response: {
+    type: String,
   },
   status: {
     type: Boolean,

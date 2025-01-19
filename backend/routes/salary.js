@@ -1,10 +1,12 @@
 import express from 'express';
 import authMiddleware from '../middleware/authMiddleware.js'
-import { addSalary, getAllSalaries, getEmployeeSalaryDetails, getSalaryDetails, updateSalary } from '../controllers/salaryController.js';
+import { addSalary, getMonthWiseSalaries, getEmployeeSalaryDetails, getSalaryDetails, updateSalary, getEmployeeWiseSalaryDetails } from '../controllers/salaryController.js';
 
 const router = express.Router();
 
-router.get("/", authMiddleware, getAllSalaries);
+router.get("/monthly-wise/:month/:year", authMiddleware, getMonthWiseSalaries);
+
+router.get("/employee-wise/:employeeId", authMiddleware, getEmployeeWiseSalaryDetails);
 
 router.post('/add', authMiddleware, addSalary);
 

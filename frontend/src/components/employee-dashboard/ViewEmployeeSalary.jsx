@@ -52,6 +52,7 @@ const ViewEmployeeSalary = () => {
           },
         }
       );
+      
       setSalary(response.data);
       setShowSalaryDetails(true);
     } catch (err) {
@@ -77,7 +78,7 @@ const ViewEmployeeSalary = () => {
   };
 
   return (
-    <div className="max-w-full mx-auto mt-10 p-8 bg-white shadow-xl rounded-lg">
+    <div className="max-w-full mx-auto mt-5 p-6 bg-white shadow-lg rounded-lg">
       {/* Month and Year Selector */}
       <div className="flex space-x-4 mb-6">
         <div className="w-1/2">
@@ -127,7 +128,7 @@ const ViewEmployeeSalary = () => {
       {loading && <div className="text-center text-xl mt-5">Loading...</div>}
       {error && (
         <div className="text-center mt-5">
-          <h2 className="text-2xl font-semibold mb-6 text-red-600">{error}</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-red-500">{error}</h2>
         </div>
       )}
 
@@ -163,8 +164,10 @@ const ViewEmployeeSalary = () => {
               { label: "Employee Name", value: salary.employeeId?.name },
               { label: "PF No.", value: salary.employeeId?.pfNo },
               { label: "Designation", value: salary.employeeId?.designation },
-              { label: "ESI No.", value: salary.employeeId?.esiNo },
+              { label: "ESIC No.", value: salary.employeeId?.esiNo },
               { label: "Bank", value: salary.employeeId?.bank },
+              { label: "Branch Name", value: salary.employeeId?.branch },
+              { label: "IFSC Code", value: salary.employeeId?.ifsc },
               { label: "Account No.", value: salary.employeeId?.accountNo },
             ].map((item, index) => (
               <div

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import axios from "axios";
+import * as XLSX from "xlsx";
 
 const ViewAllFixedAllowances = () => {
   const navigate = useNavigate();
@@ -9,23 +10,18 @@ const ViewAllFixedAllowances = () => {
   const [allowanceHistory, setAllowanceHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
 
-  // Merge records with the same empId, allowanceMonth, and allowanceYear
   const mergeAllowanceRecords = (data) => {
     const merged = {};
-
     data.forEach((record) => {
       const key = `${record.employeeId.employeeId}-${record.allowanceMonth}-${record.allowanceYear}`;
-
       if (!merged[key]) {
         merged[key] = { ...record };
-        // Initialize fields that might need to be turned into arrays
         Object.keys(record).forEach((field) => {
           if (["allowanceType", "allowanceAmount", "status"].includes(field)) {
             merged[key][field] = [record[field]];
           }
         });
       } else {
-        // Merge fields into arrays for duplicates
         Object.keys(record).forEach((field) => {
           if (["allowanceType", "allowanceAmount", "status"].includes(field)) {
             merged[key][field].push(record[field]);
@@ -33,16 +29,14 @@ const ViewAllFixedAllowances = () => {
         });
       }
     });
-
     return Object.values(merged);
   };
 
-  // Fetch allowance history data
   useEffect(() => {
     const fetchAllowanceData = async () => {
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/allowances/fetchAllHistory`,
+          `https://employee-management-system-backend-objq.onrender.com/api/fixed-allowances/fetchAllHistory`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -59,18 +53,13 @@ const ViewAllFixedAllowances = () => {
     fetchAllowanceData();
   }, [user._id]);
 
-  // Handle search by Employee ID
   const handleSearch = (e) => {
     const value = e.target.value;
-
     if (value) {
-      // Convert value to number if it's not empty
       const numericValue = Number(value);
-
       const filtered = allowanceHistory.filter(
         (allowance) => allowance?.employeeId?.employeeId === numericValue
       );
-
       setFilteredHistory(filtered);
     } else {
       setFilteredHistory(allowanceHistory);
@@ -85,8 +74,53 @@ const ViewAllFixedAllowances = () => {
     navigate(`/${user.role}-dashboard/fixed-allowances/edit-allowances`);
   };
 
-  const handleApproveAllowance = () => {
-    navigate(`/${user.role}-dashboard/fixed-allowances/approve-allowances`);
+  const exportToExcel = () => {
+    const worksheetData = [
+      [
+        "S. No.",
+        "Emp ID",
+        "Emp Name",
+        "Allowance Month",
+        "Allowance Year",
+        "Bonus",
+        "Loyalty Bonus",
+        "Special Allowance",
+        "Other Allowances",
+      ],
+      ...filteredHistory.map((allowance, index) => {
+        const allowanceMap = {};
+        if (
+          allowance.allowanceType &&
+          allowance.allowanceAmount &&
+          allowance.status
+        ) {
+          allowance.allowanceType.forEach((type, idx) => {
+            if (allowance.status[idx] === "approved") {
+              const key = type.toLowerCase();
+              allowanceMap[key] =
+                (allowanceMap[key] || 0) + allowance.allowanceAmount[idx];
+            }
+          });
+        }
+
+        return [
+          index + 1,
+          allowance.employeeId.employeeId,
+          allowance.employeeId.name,
+          allowance.allowanceMonth,
+          allowance.allowanceYear,
+          allowanceMap["bonus"] || allowance.bonus || 0,
+          allowanceMap["loyaltybonus"] || allowance.loyaltyBonus || 0,
+          allowanceMap["specialallowance"] || allowance.specialAllowance || 0,
+          allowanceMap["others"] || allowance.others || 0,
+        ];
+      }),
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Fixed Allowances");
+    XLSX.writeFile(workbook, "Fixed_Allowances.xlsx");
   };
 
   return (
@@ -113,17 +147,19 @@ const ViewAllFixedAllowances = () => {
             Edit Allowance
           </button>
           <button
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-            onClick={handleApproveAllowance}
+            className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+            onClick={exportToExcel}
           >
-            Approve Allowance
+            Download as Excel
           </button>
         </div>
       </div>
 
       {/* Table Section */}
       <div className="overflow-x-auto">
-        <h2 className="text-2xl font-bold mb-4">Allowance History</h2>
+        <h2 className="text-2xl text-gray-800 font-bold mb-4">
+          Fixed Allowance History
+        </h2>
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead className="bg-gray-200 border-b">
             <tr>
@@ -146,16 +182,18 @@ const ViewAllFixedAllowances = () => {
                 Bonus
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                LTC
+                Loyalty Bonus
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Loyalty Bonus
+                Special Allowance
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Other Allowances
               </th>
             </tr>
           </thead>
           <tbody>
             {filteredHistory.map((allowance, index) => {
-              // Create a map of allowance types to amounts for easier access
               const allowanceMap = {};
               if (
                 allowance.allowanceType &&
@@ -163,9 +201,7 @@ const ViewAllFixedAllowances = () => {
                 allowance.status
               ) {
                 allowance.allowanceType.forEach((type, idx) => {
-                  // Check if the allowance status is "approved"
                   if (allowance.status[idx] === "approved") {
-                    // Add the allowance amount to the map for the corresponding type
                     const key = type.toLowerCase();
                     allowanceMap[key] =
                       (allowanceMap[key] || 0) + allowance.allowanceAmount[idx];
@@ -190,19 +226,21 @@ const ViewAllFixedAllowances = () => {
                   <td className="px-4 py-2 text-center text-sm text-gray-800">
                     {allowance.allowanceYear}
                   </td>
-
                   <td className="px-4 py-2 text-center text-sm text-gray-800">
                     {allowanceMap["bonus"] || allowance.bonus || 0}
                   </td>
-
-                  <td className="px-4 py-2 text-center text-sm text-gray-800">
-                    {allowanceMap["ltc"] || allowance.ltc || 0}
-                  </td>
-
                   <td className="px-4 py-2 text-center text-sm text-gray-800">
                     {allowanceMap["loyaltybonus"] ||
                       allowance.loyaltyBonus ||
                       0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["specialallowance"] ||
+                      allowance.specialAllowance ||
+                      0}
+                  </td>
+                  <td className="px-4 py-2 text-center text-sm text-gray-800">
+                    {allowanceMap["others"] || allowance.others || 0}
                   </td>
                 </tr>
               );

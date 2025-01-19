@@ -74,16 +74,3 @@ export const updateSalary = async (employeeId, payload) => {
   }
 };
 
-export const getAllSalaries = async () => {
-  try {
-    const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/salary", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    return response.data; // Assuming the backend sends an array of salaries
-  } catch (error) {
-    console.error("Error fetching salaries:", error);
-    throw error;
-  }
-};

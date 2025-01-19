@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export const fetchDepartments = async () => {
   let departments;
@@ -40,12 +38,11 @@ export const EmployeeButtons = ({ _id, onEmployeeDelete, user }) => {
         );
 
         if (response.data.success) {
-          toast.success(response.data.message);
           onEmployeeDelete(_id);
         }
       } catch (error) {
         if (error.response && error.response.data.error) {
-          toast.error(error.response.data.error);
+          console.error(error.response.data.error);
         }
       }
     }

@@ -9,29 +9,32 @@ const Helpdesk = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const [responseData, setResponseData] = useState({}); // State to track response for each help request
+  const [showTextArea, setShowTextArea] = useState(null); // State to track which query's response textarea is shown
+
+  const fetchHelpRequests = async () => {
+    try {
+      const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/helpdesk", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.data.success) {
+        setHelpRequests(response.data.helpdata);
+        setFilteredHelpRequests(response.data.helpdata); // Initialize filtered list
+      } else {
+        toast.error("Failed to fetch help requests.");
+      }
+      setLoading(false);
+    } catch (err) {
+      toast.error("Error fetching help requests.");
+      setLoading(false);
+    }
+  };
+
   // Fetch all help requests
   useEffect(() => {
-    const fetchHelpRequests = async () => {
-      try {
-        const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/helpdesk", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        if (response.data.success) {
-          setHelpRequests(response.data.helpdata);
-          setFilteredHelpRequests(response.data.helpdata); // Initialize filtered list
-        } else {
-          toast.error("Failed to fetch help requests.");
-        }
-        setLoading(false);
-      } catch (err) {
-        toast.error("Error fetching help requests.");
-        setLoading(false);
-      }
-    };
-
     fetchHelpRequests();
   }, []);
 
@@ -91,6 +94,68 @@ const Helpdesk = () => {
     setFilteredHelpRequests(filtered);
   };
 
+  const formatDateTime = (dateTime) => {
+    const dateObj = new Date(dateTime);
+
+    // Format date
+    const day = dateObj.getDate().toString().padStart(2, "0");
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+    const year = dateObj.getFullYear();
+
+    // Format time
+    let hours = dateObj.getHours();
+    const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12 || 12; // Convert to 12-hour format
+
+    return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
+  };
+
+  // Handle response change
+  const handleResponseChange = (e, helpId) => {
+    setResponseData((prev) => ({
+      ...prev,
+      [helpId]: e.target.value,
+    }));
+  };
+
+  // Handle save response
+  // Handle save response
+  const handleSaveResponse = async (helpId) => {
+    const responseText = responseData[helpId];
+    if (!responseText) {
+      toast.error("Please write a response.");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `https://employee-management-system-backend-objq.onrender.com/api/helpdesk/add-response/${helpId}`,
+        { response: responseText },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        toast.success("Response saved successfully.");
+        fetchHelpRequests();
+      } else {
+        toast.error("Failed to save the response.");
+      }
+    } catch (err) {
+      toast.error("Error saving the response.");
+    }
+  };
+
+  // Handle closing the response textarea
+  const handleCloseResponse = (helpId) => {
+    setShowTextArea(null);
+  };
+
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -118,6 +183,7 @@ const Helpdesk = () => {
                 <th className="py-3 px-6 border text-center">Employee ID</th>
                 <th className="py-3 px-6 border text-left">Employee Name</th>
                 <th className="py-3 px-6 border text-left">Help ID</th>
+                <th className="py-3 px-6 border text-center">Date</th>
                 <th className="py-3 px-6 border text-center">Query</th>
                 <th className="py-3 px-6 border text-center">Status</th>
                 <th className="py-3 px-6 border text-center">Actions</th>
@@ -133,7 +199,56 @@ const Helpdesk = () => {
                     {helpRequest.employeeId?.name}
                   </td>
                   <td className="py-3 px-6 border">{helpRequest.helpId}</td>
-                  <td className="py-3 px-6 border">{helpRequest.query}</td>
+                  <td className="py-3 px-2 w-44 border">
+                    {formatDateTime(helpRequest.date)}
+                  </td>
+                  <td className="py-3 px-6 border">
+                    {helpRequest.query}
+                    {/* "Write a response" Button */}
+                    {!helpRequest.status && (
+                      <div>
+                        <button
+                          onClick={() => setShowTextArea(helpRequest._id)}
+                          className="mt-2 bg-blue-500 text-white px-2 py-1 rounded-md"
+                        >
+                          Write a response
+                        </button>
+
+                        {/* Response Textarea */}
+                        {showTextArea === helpRequest._id && (
+                          <div className="mt-2">
+                            <textarea
+                              rows="4"
+                              value={responseData[helpRequest._id] || ""}
+                              onChange={(e) =>
+                                handleResponseChange(e, helpRequest._id)
+                              }
+                              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Write your response here..."
+                            />
+                            <div className="mt-2 flex justify-end gap-1">
+                              <button
+                                onClick={() =>
+                                  handleSaveResponse(helpRequest._id)
+                                }
+                                className="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleCloseResponse(helpRequest._id)
+                                }
+                                className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
+                              >
+                                Close
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </td>
                   <td className="py-3 px-6 border text-center">
                     <span
                       className={`py-1 px-3 rounded-full text-sm ${

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getLeaveById, updateLeave } from "../../utils/LeaveHelper.jsx"; // Adjust import according to your actual API helpers
+import { getLeaveById, updateLeave } from "../../utils/LeaveHelper.jsx";
 import Footer from "../HeaderFooter/Footer.jsx";
 import Header from "../HeaderFooter/Header.jsx";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditLeave = () => {
-  const { _id } = useParams(); // Get the leave ID from the route parameters
+  const { _id } = useParams();
   const navigate = useNavigate();
 
   const initialFormData = {
@@ -19,20 +21,21 @@ const EditLeave = () => {
   };
 
   const [formData, setFormData] = useState(initialFormData);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchLeaveData = async () => {
       try {
         const data = await getLeaveById(_id);
+        console.log(data);
+
         setFormData({
           startDate: new Date(data.startDate).toISOString().split("T")[0],
           startTime: data.startTime,
           endDate: new Date(data.endDate).toISOString().split("T")[0],
           endTime: data.endTime,
           reason: data.reason,
-          leaveType: data.leaveType,
+          leaveType: data.type,
           days: data.days,
         });
         setLoading(false);
@@ -44,7 +47,7 @@ const EditLeave = () => {
     };
 
     fetchLeaveData();
-  }, []);
+  }, [_id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -67,12 +70,12 @@ const EditLeave = () => {
       let totalDays = totalMilliseconds / (1000 * 60 * 60 * 24);
 
       if (totalDays % 1 > 0.5) {
-        totalDays = Math.ceil(totalDays); // Round up
+        totalDays = Math.ceil(totalDays);
       } else if (totalDays % 1 > 0 && totalDays % 1 <= 0.5) {
-        totalDays = Math.floor(totalDays) + 0.5; // Round down to .5
+        totalDays = Math.floor(totalDays) + 0.5;
       }
 
-      totalDays = Math.max(totalDays, 0); // Ensure no negative values
+      totalDays = Math.max(totalDays, 0);
       setFormData((prev) => ({ ...prev, days: totalDays }));
     }
   }, [
@@ -84,29 +87,33 @@ const EditLeave = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
+    console.log(formData);
+
     try {
       await updateLeave(_id, formData);
-      navigate("/employee-dashboard/leave");
+      toast.success("Leave updated successfully!");
+      setTimeout(() => {
+        navigate("/employee-dashboard/leave");
+      }, 800);
     } catch (err) {
       console.error("Error updating leave:", err);
-      setError("Failed to update leave. Please try again.");
+      toast.error("Failed to update leave. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>; // Display loading state while data is being fetched
-  }
-
-  if (error) {
-    return <div className="text-red-600">{error}</div>; // Display error message if any
-  }
-
   return (
     <>
-    <Header/>
-    
+      <Header />
+      <ToastContainer />
+
       <div className="mt-5 max-w-auto mx-auto p-6 bg-white shadow-md rounded-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Edit Leave</h2>
+        <h2 className="text-2xl text-gray-700 font-bold text-center mb-6">
+          Edit Leave Application
+        </h2>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col lg:flex-row lg:space-x-4">
             <div className="mb-4 lg:w-1/2">
@@ -116,7 +123,7 @@ const EditLeave = () => {
                 name="startDate"
                 value={formData.startDate}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -127,7 +134,7 @@ const EditLeave = () => {
                 name="startTime"
                 value={formData.startTime}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -140,7 +147,7 @@ const EditLeave = () => {
                 name="endDate"
                 value={formData.endDate}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -151,7 +158,7 @@ const EditLeave = () => {
                 name="endTime"
                 value={formData.endTime}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -162,7 +169,7 @@ const EditLeave = () => {
               name="reason"
               value={formData.reason}
               onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows="3"
               required
             />
@@ -174,7 +181,7 @@ const EditLeave = () => {
               name="leaveType"
               value={formData.leaveType}
               onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="el">Earned Leave (EL)</option>
               <option value="sl">Sick Leave (SL)</option>
@@ -192,16 +199,21 @@ const EditLeave = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-          >
-            Update Leave
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full md:w-1/5 py-2 px-4 rounded-md text-white ${
+                isSubmitting ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-700"
+              }`}
+            >
+              {isSubmitting ? "Updating..." : "Update Leave"}
+            </button>
+          </div>
         </form>
       </div>
 
-      <Footer/>
+      <Footer />
     </>
   );
 };

@@ -7,7 +7,7 @@ import Header from "../HeaderFooter/Header";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ApplyAllowancesAdmin = () => {
+const EditFixedAllowancesAdmin = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -24,11 +24,6 @@ const ApplyAllowancesAdmin = () => {
   });
 
   const fetchEmployeeData = async () => {
-    if (!formData.employeeId) {
-      alert("Please enter Employee ID to fetch data.");
-      return;
-    }
-
     try {
       const response = await axios.get(
         `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${formData.employeeId}`,
@@ -39,7 +34,6 @@ const ApplyAllowancesAdmin = () => {
         }
       );
       const employee = response.data.employee;
-
       setFormData((prev) => ({
         ...prev,
         empName: employee.name,
@@ -48,7 +42,6 @@ const ApplyAllowancesAdmin = () => {
       }));
     } catch (err) {
       console.error("Error fetching employee data:", err);
-      alert("Failed to fetch employee data. Please check the Employee ID.");
     }
   };
 
@@ -64,8 +57,8 @@ const ApplyAllowancesAdmin = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        `https://employee-management-system-backend-objq.onrender.com/api/allowances/admin/add-allowance/${formData.employeeId}`,
+      const response = await axios.put(
+        `https://employee-management-system-backend-objq.onrender.com/api/fixed-allowances/admin/edit-fixed-allowance/${formData.employeeId}`,
         formData,
         {
           headers: {
@@ -74,28 +67,29 @@ const ApplyAllowancesAdmin = () => {
         }
       );
 
-      if (response.status === 200 || response.status === 201) {
-        toast.success("Employee allowance added successfully");
+      if (response.data.success) {
+        toast.success("Employee allowance updated successfully");
         setTimeout(() => {
-          navigate(`/${user.role}-dashboard/allowances`);
+          navigate(`/${user.role}-dashboard/fixed-allowances`);
         }, 500);
+      } else {
+        toast.error(response.data.message);
       }
     } catch (err) {
       toast.error("There was an error submitting the form. Please try again.");
-      console.log(err);
     }
   };
 
   const currentYear = new Date().getFullYear() - 1;
-  const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
+  const years = Array.from({ length: 10 }, (_, i) => currentYear + i); // Generate years from current year to 20 years ahead
 
   return (
     <>
       <Header />
       <ToastContainer />
       <div className="mt-2 max-w-full mx-auto p-6 bg-white shadow-md rounded-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Add Allowance Form
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+          Edit Allowance Form
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4 grid grid-cols-2 gap-4">
@@ -201,38 +195,30 @@ const ApplyAllowancesAdmin = () => {
               <select
                 name="allowanceMonth"
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md select-scrollable focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               >
                 <option value="">Select Month</option>
-                {[
-                  "January",
-                  "February",
-                  "March",
-                  "April",
-                  "May",
-                  "June",
-                  "July",
-                  "August",
-                  "September",
-                  "October",
-                  "November",
-                  "December",
-                ].map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
               </select>
             </div>
             <div>
-              <label className="block font-semibold text-gray-700 mb-2">
-                Payment Year
-              </label>
+              <label className="block font-semibold mb-2">Payment Year</label>
               <select
-                name="allowanceYear"
+                name="allowanceYear" // Add this attribute
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 select-scrollable"
                 required
               >
                 <option value="">Select Year</option>
@@ -254,18 +240,13 @@ const ApplyAllowancesAdmin = () => {
                 name="allowanceType"
                 value={formData.allowanceType}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               >
                 <option value="">Select Allowance Type</option>
-                <option value="epfByCo">E.P.F By Co.</option>
-                <option value="esiByCo">E.S.I By Co.</option>
-                <option value="medPAIns">Med. & P.A. Ins.</option>
-                <option value="monthlyInsAcc">Monthly Ins. & Accidental</option>
-                <option value="gratuity">Gratuity</option>
-                <option value="resPhone">Res. Phone</option>
-                <option value="mobile">Mobile</option>
-                <option value="carEmi">Car EMI</option>
+                <option value="bonus">Bonus</option>
+                <option value="resPhone">Loyalty Bonus</option>
+                <option value="specialAllowance">Special Allowance</option>
                 <option value="others">Other Allowances</option>
               </select>
             </div>
@@ -279,7 +260,7 @@ const ApplyAllowancesAdmin = () => {
                 value={formData.allowanceAmount}
                 onChange={handleChange}
                 onWheel={(e) => e.target.blur()}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
             </div>
@@ -288,9 +269,9 @@ const ApplyAllowancesAdmin = () => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="md:w-2/5 bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full md:w-2/5 bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
             >
-              Submit Allowance
+              Update Allowance
             </button>
           </div>
         </form>
@@ -300,4 +281,4 @@ const ApplyAllowancesAdmin = () => {
   );
 };
 
-export default ApplyAllowancesAdmin;
+export default EditFixedAllowancesAdmin;

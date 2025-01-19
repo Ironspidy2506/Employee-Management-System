@@ -3,6 +3,8 @@ import { getLeaveHistory, deleteLeave } from "../../utils/LeaveHelper.jsx";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext.jsx";
 import { fetchLeaveBalance } from "../../utils/LeaveHelper.jsx";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ViewLeaveHistory = () => {
   const { user } = useAuth();
@@ -44,6 +46,7 @@ const ViewLeaveHistory = () => {
   const handleDelete = async (leaveId) => {
     try {
       await deleteLeave(leaveId);
+      toast.success("Leave deleted successfully");
       const updatedHistory = leaveHistory.filter(
         (leave) => leave._id !== leaveId
       );
@@ -97,133 +100,148 @@ const ViewLeaveHistory = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 bg-white">
-      {/* Leave Counts and Buttons Section */}
-      <div className="flex flex-wrap items-center justify-between p-6 rounded-lg shadow-md bg-white gap-4">
-        {/* Leave Counts */}
-        <div className="flex space-x-6 items-center">
-          <div className="text-lg font-semibold text-gray-700">
-            Earned Leave (EL): {leaveCounts.el}
+    <>
+      <ToastContainer />
+      <div className="p-6 space-y-6 bg-white">
+        {/* Leave Counts and Buttons Section */}
+        <div className="flex flex-wrap items-center justify-between p-6 rounded-lg shadow-md bg-white gap-4">
+          {/* Leave Counts */}
+          <div className="flex space-x-6 items-center">
+            <div className="text-lg font-semibold text-gray-700">
+              Earned Leave (EL): {leaveCounts.el}
+            </div>
+            <div className="h-8 w-px bg-gray-300"></div>
+            <div className="text-lg font-semibold text-gray-700">
+              Casual Leave (CL): {leaveCounts.cl}
+            </div>
+            <div className="h-8 w-px bg-gray-300"></div>
+            <div className="text-lg font-semibold text-gray-700">
+              Sick Leave (SL): {leaveCounts.sl}
+            </div>
+            <div className="h-8 w-px bg-gray-300"></div>
+            <div className="text-lg font-semibold text-gray-700">
+              On Duty (OD): {leaveCounts.od}
+            </div>
           </div>
-          <div className="h-8 w-px bg-gray-300"></div>
-          <div className="text-lg font-semibold text-gray-700">
-            Casual Leave (CL): {leaveCounts.cl}
-          </div>
-          <div className="h-8 w-px bg-gray-300"></div>
-          <div className="text-lg font-semibold text-gray-700">
-            Sick Leave (SL): {leaveCounts.sl}
-          </div>
-          <div className="h-8 w-px bg-gray-300"></div>
-          <div className="text-lg font-semibold text-gray-700">
-            On Duty (OD): {leaveCounts.od}
-          </div>
+
+          {/* Apply Leave Button */}
+          <button
+            onClick={() => navigate("/employee-dashboard/leave/apply")}
+            className="px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+          >
+            Apply Leave
+          </button>
         </div>
 
-        {/* Apply Leave Button */}
-        <button
-          onClick={() => navigate("/employee-dashboard/leave/apply")}
-          className="px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-        >
-          Apply Leave
-        </button>
-      </div>
-
-      {/* Table Section */}
-      <div className="overflow-x-auto">
-        <h2 className="text-2xl font-bold mb-4">Leave History</h2>
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-          <thead className="bg-gray-200 border-b">
-            <tr>
-              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
-                S. No.
-              </th>
-              <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
-                Leave Type
-              </th>
-              <th
-                className="px-4 py-2 text-left text-base font-medium text-gray-700 cursor-pointer"
-                onClick={() => handleSort("startDate")}
-              >
-                Start Date
-                {sortConfig.key === "startDate" &&
-                  (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
-              </th>
-              <th
-                className="px-4 py-2 text-left text-base font-medium text-gray-700 cursor-pointer"
-                onClick={() => handleSort("endDate")}
-              >
-                End Date
-                {sortConfig.key === "endDate" &&
-                  (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
-              </th>
-              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
-                No. of Days
-              </th>
-              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
-                Status
-              </th>
-              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredHistory.map((leave, index) => (
-              <tr key={leave._id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-2 text-base text-gray-800">
-                  {index + 1}
-                </td>
-                <td className="px-4 py-2 text-base text-center text-gray-800">
-                  {leave.type.toUpperCase()}
-                </td>
-                <td className="px-4 py-2 text-base text-gray-800">
-                  {formatDate(leave.startDate)}
-                </td>
-                <td className="px-4 py-2 text-base text-gray-800">
-                  {formatDate(leave.endDate)}
-                </td>
-
-                <td className="px-4 py-2 text-base text-gray-800">
-                  {leave.days}
-                </td>
-                <td
-                  className={`px-4 py-2 text-base font-semibold ${getStatusColor(
-                    leave.status
-                  )}`}
+        {/* Table Section */}
+        <div className="overflow-x-auto">
+          <h2 className="text-2xl text-gray-800 font-bold mb-4">Leave History</h2>
+          <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+            <thead className="bg-gray-200 border-b">
+              <tr>
+                <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
+                  S. No.
+                </th>
+                <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
+                  Leave Type
+                </th>
+                <th
+                  className="px-4 py-2 text-center text-base font-medium text-gray-700 cursor-pointer"
+                  onClick={() => handleSort("startDate")}
                 >
-                  {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
-                </td>
-                <td className="flex px-4 py-2 text-base text-gray-800 space-x-2">
-                  {leave.status !== "approved" &&
-                  leave.status !== "rejected" ? (
-                    <>
-                      <button
-                        onClick={() =>
-                          navigate(
-                            `/employee-dashboard/leave/edit/${leave._id}`
-                          )
-                        }
-                        className="px-4 py-2 text-base font-semibold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(leave._id)}
-                        className="px-4 py-2 text-base font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
-                      >
-                        Delete
-                      </button>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </td>
+                  Start Date
+                  {sortConfig.key === "startDate" &&
+                    (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
+                </th>
+                <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
+                  Start Time
+                </th>
+                <th
+                  className="px-4 py-2 text-center text-base font-medium text-gray-700 cursor-pointer"
+                  onClick={() => handleSort("endDate")}
+                >
+                  End Date
+                  {sortConfig.key === "endDate" &&
+                    (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
+                </th>
+                <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
+                  End Time
+                </th>
+                <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
+                  No. of Days
+                </th>
+                <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
+                  Status
+                </th>
+                <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
+                  Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredHistory.map((leave, index) => (
+                <tr key={leave._id} className="border-b hover:bg-gray-50">
+                  <td className="px-4 py-2 text-base text-center text-gray-800">
+                    {index + 1}
+                  </td>
+                  <td className="px-4 py-2 text-base text-center text-gray-800">
+                    {leave.type.toUpperCase()}
+                  </td>
+                  <td className="px-4 py-2 text-base text-center text-gray-800">
+                    {formatDate(leave.startDate)}
+                  </td>
+                  <td className="px-4 py-2 text-base text-center text-gray-800">
+                    {leave.startTime}
+                  </td>
+                  <td className="px-4 py-2 text-base text-center text-gray-800">
+                    {formatDate(leave.endDate)}
+                  </td>
+                  <td className="px-4 py-2 text-base text-center text-gray-800">
+                    {leave.endTime}
+                  </td>
+                  <td className="px-4 py-2 text-base  text-center text-gray-800">
+                    {leave.days}
+                  </td>
+                  <td
+                    className={`px-4 py-2 text-base text-center font-semibold ${getStatusColor(
+                      leave.status
+                    )}`}
+                  >
+                    {leave.status.charAt(0).toUpperCase() +
+                      leave.status.slice(1)}
+                  </td>
+                  <td className="flex justify-center px-4 py-2 text-base text-gray-800 space-x-2">
+                    {leave.status !== "approved" &&
+                    leave.status !== "rejected" ? (
+                      <>
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/employee-dashboard/leave/edit/${leave._id}`
+                            )
+                          }
+                          className="px-4 py-2 text-base font-semibold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(leave._id)}
+                          className="px-4 py-2 text-base font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                        >
+                          Delete
+                        </button>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

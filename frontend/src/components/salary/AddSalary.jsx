@@ -12,6 +12,7 @@ const AddSalary = () => {
   const navigate = useNavigate();
   const [employeeIdInput, setEmployeeIdInput] = useState("");
   const [employeeDetails, setEmployeeDetails] = useState(null);
+  const [employeeType, setEmployeeType] = useState("Employee");
   const [grossSalary, setGrossSalary] = useState("");
   const [basicSalary, setBasicSalary] = useState(0);
   const [allowances, setAllowances] = useState([
@@ -22,7 +23,7 @@ const AddSalary = () => {
   ]);
   const [deductions, setDeductions] = useState([
     { name: "EPF", amount: 0 },
-    { name: "ESI", amount: 0 },
+    { name: "ESIC", amount: 0 },
     { name: "Advance Deduction", amount: 0 },
     { name: "Tax Deduction", amount: 0 },
   ]);
@@ -57,9 +58,13 @@ const AddSalary = () => {
 
   useEffect(() => {
     if (grossSalary) {
-      const basic = (grossSalary * 0.45).toFixed(2);
+      const basic =
+        employeeType === "Employee"
+          ? (grossSalary * 0.45).toFixed(2)
+          : (grossSalary * 0.6).toFixed(2);
       setBasicSalary(basic);
 
+      // Update allowances
       const updatedAllowances = [
         { name: "HRA", amount: (grossSalary * 0.27).toFixed(2) },
         { name: "Food Allowance", amount: (grossSalary * 0.1).toFixed(2) },
@@ -68,15 +73,19 @@ const AddSalary = () => {
       ];
       setAllowances(updatedAllowances);
 
+      // Update deductions
       const updatedDeductions = [
         { name: "EPF", amount: (basic * 0.12).toFixed(2) },
-        { name: "ESI", amount: (grossSalary * 0.0075).toFixed(2) },
+        {
+          name: "ESIC",
+          amount: basic > 21000 ? (grossSalary * 0.0075).toFixed(2) : 0,
+        },
         { name: "Advance Deduction", amount: 0 },
         { name: "Tax Deduction", amount: 0 },
       ];
       setDeductions(updatedDeductions);
     }
-  }, [grossSalary]);
+  }, [grossSalary, employeeType]);
 
   useEffect(() => {
     if (paymentMonth && paymentYear) {
@@ -89,7 +98,6 @@ const AddSalary = () => {
       for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(paymentYear, monthIndex, day);
         if (date.getDay() === 0) {
-          // Sunday
           sundaysCount++;
         }
       }
@@ -99,28 +107,9 @@ const AddSalary = () => {
   }, [paymentMonth, paymentYear]);
 
   useEffect(() => {
-    // Calculate Net Payable Days
     const totalPayableDays = parseInt(payableDays || 0, 10) + sundays;
     setNetPayableDays(totalPayableDays);
   }, [payableDays, sundays]);
-
-  const addField = (type) => {
-    const target = type === "allowances" ? [...allowances] : [...deductions];
-    target.push({ name: "", amount: "" });
-    type === "allowances" ? setAllowances(target) : setDeductions(target);
-  };
-
-  const removeField = (index, type) => {
-    const target = type === "allowances" ? [...allowances] : [...deductions];
-    target.splice(index, 1);
-    type === "allowances" ? setAllowances(target) : setDeductions(target);
-  };
-
-  const handleFieldChange = (index, type, field, value) => {
-    const target = type === "allowances" ? [...allowances] : [...deductions];
-    target[index][field] = value;
-    type === "allowances" ? setAllowances(target) : setDeductions(target);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -131,6 +120,7 @@ const AddSalary = () => {
 
     const payload = {
       employeeId: employeeDetails._id,
+      employeeType,
       grossSalary,
       basicSalary,
       payableDays,
@@ -239,6 +229,19 @@ const AddSalary = () => {
                 </div>
               </div>
             )}
+
+            <div>
+              <label className="block font-medium mb-2">Employee Type</label>
+              <select
+                value={employeeType}
+                onChange={(e) => setEmployeeType(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                required
+              >
+                <option value="Employee">Employee</option>
+                <option value="Director">Director</option>
+              </select>
+            </div>
 
             {/* Payment Month and Year */}
             <div className="flex space-x-4">
@@ -422,16 +425,6 @@ const AddSalary = () => {
                     className="w-32 px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
                     placeholder="Amount"
                   />
-                  {deduction.name === "ESI" || deduction.name === "EPF" ? (
-                    <select
-                      name=""
-                      id=""
-                      className="px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
-                    >
-                      <option value="Employee">Employee</option>
-                      <option value="Director">Director</option>
-                    </select>
-                  ) : null}
 
                   <button
                     type="button"

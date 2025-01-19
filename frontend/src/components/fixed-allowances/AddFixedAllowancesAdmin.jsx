@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../../context/authContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -21,36 +21,34 @@ const AddFixedAllowanceAdmin = () => {
     allowanceAmount: "",
   });
 
-  useEffect(() => {
-    const fetchEmployeeData = async (employeeId) => {
-      try {
-        const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${employeeId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        const employee = response.data.employee;
-
-        setFormData((prev) => ({
-          ...prev,
-          employeeId: employee.employeeId,
-          empName: employee.name,
-          designation: employee.designation,
-          department: employee.department.departmentName,
-        }));
-      } catch (err) {
-        console.error("Error fetching employee data:", err);
-      }
-    };
-
-    // If employeeId is set and changes, fetch employee data
-    if (formData.employeeId) {
-      fetchEmployeeData(formData.employeeId);
+  const fetchEmployeeData = async () => {
+    if (!formData.employeeId) {
+      alert("Please enter an Employee ID.");
+      return;
     }
-  }, [formData.employeeId, user]);
+
+    try {
+      const response = await axios.get(
+        `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${formData.employeeId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const employee = response.data.employee;
+
+      setFormData((prev) => ({
+        ...prev,
+        empName: employee.name,
+        designation: employee.designation,
+        department: employee.department.departmentName,
+      }));
+    } catch (err) {
+      console.error("Error fetching employee data:", err);
+      alert("Failed to fetch employee data. Please check the Employee ID.");
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,7 +63,7 @@ const AddFixedAllowanceAdmin = () => {
 
     try {
       const response = await axios.post(
-        `https://employee-management-system-backend-objq.onrender.com/api/allowances/admin/add-allowance/${formData.employeeId}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/fixed-allowances/admin/add-fixed-allowance/${formData.employeeId}`,
         formData,
         {
           headers: {
@@ -74,20 +72,16 @@ const AddFixedAllowanceAdmin = () => {
         }
       );
 
-      if (response.status === 200 || response.status === 201) {
-        navigate(`/${user.role}-dashboard/allowances`);
+      if (response.data.success) {
+        navigate(`/${user.role}-dashboard/fixed-allowances`);
       }
     } catch (err) {
-      if (err.response) {
-        console.error("Submission Error:", err.response.data.message);
-      } else {
-        console.error("Submission Error:", err.message);
-      }
+      console.error("Submission Error:", err);
     }
   };
 
   const currentYear = new Date().getFullYear() - 1;
-  const years = Array.from({ length: 10 }, (_, i) => currentYear + i); // Generate years from current year to 20 years ahead
+  const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
   return (
     <>
@@ -110,6 +104,18 @@ const AddFixedAllowanceAdmin = () => {
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+            <div className="flex items-end">
+              <button
+                type="button"
+                onClick={fetchEmployeeData}
+                className=" px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Fetch Employee Data
+              </button>
+            </div>
+          </div>
+
+          <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
                 Employee Name
@@ -119,13 +125,10 @@ const AddFixedAllowanceAdmin = () => {
                 name="empName"
                 value={formData.empName}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md bg-gray-100 focus:outline-none"
                 readOnly
               />
             </div>
-          </div>
-
-          <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
                 Designation
@@ -135,10 +138,13 @@ const AddFixedAllowanceAdmin = () => {
                 name="designation"
                 value={formData.designation}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md bg-gray-100 focus:outline-none"
                 readOnly
               />
             </div>
+          </div>
+
+          <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
                 Department
@@ -147,9 +153,37 @@ const AddFixedAllowanceAdmin = () => {
                 type="text"
                 name="department"
                 value={formData.department}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 readOnly
+                className="w-full px-3 py-2 border rounded-md bg-gray-100 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Project No.
+              </label>
+              <input
+                type="text"
+                name="projectNo"
+                value={formData.projectNo}
+                onChange={handleChange}
+                placeholder="(If Any)"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 grid grid-cols-2 gap-4">
+            <div>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Client
+              </label>
+              <input
+                type="text"
+                name="client"
+                value={formData.client}
+                onChange={handleChange}
+                placeholder="(If Any)"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -183,7 +217,7 @@ const AddFixedAllowanceAdmin = () => {
             <div>
               <label className="block font-semibold mb-2">Payment Year</label>
               <select
-                name="allowanceYear" // Add this attribute
+                name="allowanceYear"
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 select-scrollable"
                 required
@@ -212,8 +246,9 @@ const AddFixedAllowanceAdmin = () => {
               >
                 <option value="">Select Allowance Type</option>
                 <option value="bonus">Bonus</option>
-                <option value="ltc">LTC</option>
-                <option value="resPhone">Loyalty Bonus</option>
+                <option value="loyaltyBonus">Loyalty Bonus</option>
+                <option value="specialAllowance">Special Allowance</option>
+                <option value="others">Other Allowances</option>
               </select>
             </div>
             <div>
@@ -235,7 +270,7 @@ const AddFixedAllowanceAdmin = () => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="md:w-1/5 bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
+              className="w-full md:w-2/5 bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
             >
               Submit Allowance
             </button>

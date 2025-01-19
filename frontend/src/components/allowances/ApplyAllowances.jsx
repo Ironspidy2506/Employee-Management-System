@@ -4,6 +4,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ApplyAllowances = () => {
   const { user } = useAuth();
@@ -75,7 +77,10 @@ const ApplyAllowances = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        navigate("/employee-dashboard/allowances");
+        toast.success("Allowance added successfully");
+        setTimeout(() => {
+          navigate("/employee-dashboard/allowances");
+        }, 800);
       }
     } catch (err) {
       if (err.response) {
@@ -83,16 +88,17 @@ const ApplyAllowances = () => {
       } else {
         console.error("Submission Error:", err.message);
       }
-      alert("There was an error submitting the form. Please try again.");
+      toast.error("There was an error submitting the form. Please try again.");
     }
   };
 
   const currentYear = new Date().getFullYear() - 1;
-  const years = Array.from({ length: 10 }, (_, i) => currentYear + i); // Generate years from current year to 20 years ahead
+  const years = Array.from({ length: 10 }, (_, i) => currentYear + i);
 
   return (
     <>
       <Header />
+      <ToastContainer />
       <div className="mt-2 max-w-full mx-auto p-6 bg-white shadow-md rounded-md">
         <h2 className="text-2xl font-bold text-center mb-6">
           Add Allowance Form
@@ -108,7 +114,7 @@ const ApplyAllowances = () => {
                 name="employeeId"
                 value={formData.employeeId}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 readOnly
               />
             </div>
@@ -121,7 +127,7 @@ const ApplyAllowances = () => {
                 name="empName"
                 value={formData.empName}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 readOnly
               />
             </div>
@@ -137,7 +143,7 @@ const ApplyAllowances = () => {
                 name="designation"
                 value={formData.designation}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 readOnly
               />
             </div>
@@ -150,7 +156,7 @@ const ApplyAllowances = () => {
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 readOnly
               />
             </div>
@@ -166,7 +172,7 @@ const ApplyAllowances = () => {
                 name="projectNo"
                 placeholder="(If Any)"
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
               />
             </div>
             <div>
@@ -178,7 +184,7 @@ const ApplyAllowances = () => {
                 name="client"
                 placeholder="(If Any)"
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
               />
             </div>
           </div>
@@ -191,30 +197,36 @@ const ApplyAllowances = () => {
               <select
                 name="allowanceMonth"
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md select-scrollable"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 required
               >
                 <option value="">Select Month</option>
-                <option value="January">January</option>
-                <option value="February">February</option>
-                <option value="March">March</option>
-                <option value="April">April</option>
-                <option value="May">May</option>
-                <option value="June">June</option>
-                <option value="July">July</option>
-                <option value="August">August</option>
-                <option value="September">September</option>
-                <option value="October">October</option>
-                <option value="November">November</option>
-                <option value="December">December</option>
+                {[
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ].map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
               <label className="block font-semibold mb-2">Payment Year</label>
               <select
-                name="allowanceYear" // Add this attribute
+                name="allowanceYear"
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 select-scrollable"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 required
               >
                 <option value="">Select Year</option>
@@ -236,14 +248,13 @@ const ApplyAllowances = () => {
                 name="allowanceType"
                 value={formData.allowanceType}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 required
               >
                 <option value="">Select Allowance Type</option>
                 <option value="site">Site Allowance</option>
                 <option value="earnedLeave">Earned Leave</option>
                 <option value="ltc">LTC</option>
-                <option value="loyaltyBonus">Loyalty Bonus</option>
                 <option value="petrol">Petrol</option>
                 <option value="driver">Driver Allowance</option>
                 <option value="carMaint">Car Maintenance</option>
@@ -263,18 +274,20 @@ const ApplyAllowances = () => {
                 value={formData.allowanceAmount}
                 onChange={handleChange}
                 onWheel={(e) => e.target.blur()}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 required
               />
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
-          >
-            Submit Allowance
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="w-full md:w-1/5 bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
+            >
+              Submit Allowance
+            </button>
+          </div>
         </form>
       </div>
       <Footer />

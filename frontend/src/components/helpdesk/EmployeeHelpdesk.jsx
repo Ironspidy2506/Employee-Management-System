@@ -69,6 +69,24 @@ const EmployeeHelpdesk = () => {
     }
   };
 
+  const formatDateTime = (dateTime) => {
+    const dateObj = new Date(dateTime);
+
+    // Format date
+    const day = dateObj.getDate().toString().padStart(2, "0");
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+    const year = dateObj.getFullYear();
+
+    // Format time
+    let hours = dateObj.getHours();
+    const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12 || 12; // Convert to 12-hour format
+
+    return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
+  };
+
   return (
     <>
       <ToastContainer />
@@ -91,7 +109,13 @@ const EmployeeHelpdesk = () => {
                 Help ID
               </th>
               <th className="py-3 px-6 text-center text-sm font-semibold text-gray-700">
+                Date
+              </th>
+              <th className="py-3 px-6 text-center text-sm font-semibold text-gray-700">
                 Query
+              </th>
+              <th className="py-3 px-6 text-center text-sm font-semibold text-gray-700">
+                Response
               </th>
               <th className="py-3 px-6 text-center text-sm font-semibold text-gray-700">
                 Actions
@@ -105,8 +129,14 @@ const EmployeeHelpdesk = () => {
                   <td className="py-3 px-6 text-center text-sm text-gray-800">
                     {query.helpId}
                   </td>
+                  <td className="py-3 px-6 text-center text-sm text-gray-800">
+                    {formatDateTime(query.date) || ""}
+                  </td>
                   <td className="py-3 px-6 text-justify text-sm text-gray-800">
                     {query.query}
+                  </td>
+                  <td className="py-3 px-6 text-justify text-sm text-gray-800">
+                    {query.response}
                   </td>
                   <td className="py-3 px-6 flex flex-col md:flex-row justify-center text-center text-sm gap-1">
                     {query.status === false ? (
@@ -135,8 +165,8 @@ const EmployeeHelpdesk = () => {
             ) : (
               <tr>
                 <td
-                  colSpan="3"
-                  className="py-3 px-6 text-sm text-center text-gray-600"
+                  colSpan="4"
+                  className="py-3 px-6 text-sm text-center text-red-600"
                 >
                   No queries found.
                 </td>

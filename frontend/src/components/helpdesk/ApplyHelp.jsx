@@ -80,7 +80,7 @@ const ApplyHelp = () => {
       <Header />
       <ToastContainer />
       <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-xl text-center font-bold text-gray-800 mb-4">
+        <h2 className="text-2xl text-center font-bold text-gray-800 mb-4">
           Apply for Help
         </h2>
 

@@ -4,6 +4,8 @@ import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditAllowances = () => {
   const { user } = useAuth();
@@ -65,6 +67,7 @@ const EditAllowances = () => {
             },
           }
         );
+
         const allowance = response.data.allowance;
 
         setFormData((prev) => ({
@@ -106,10 +109,13 @@ const EditAllowances = () => {
       );
 
       if (response.status === 200) {
-        navigate("/employee-dashboard/allowances");
+        toast.success("Allowance updated successfully");
+        setTimeout(() => {
+          navigate("/employee-dashboard/allowances");
+        }, 800);
       }
     } catch (err) {
-      console.error("Error updating allowance:", err);
+      toast.error(err);
     }
   };
 
@@ -119,8 +125,11 @@ const EditAllowances = () => {
   return (
     <>
       <Header />
+      <ToastContainer />
       <div className="mt-2 max-w-full mx-auto p-6 bg-white shadow-md rounded-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Edit Allowance</h2>
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+          Edit Allowance
+        </h2>
         <form onSubmit={handleSubmit}>
           {/* Employee Information */}
           <div className="mb-4 grid grid-cols-2 gap-4">
@@ -132,7 +141,7 @@ const EditAllowances = () => {
                 type="text"
                 name="employeeId"
                 value={formData.employeeId}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 readOnly
               />
             </div>
@@ -144,7 +153,7 @@ const EditAllowances = () => {
                 type="text"
                 name="empName"
                 value={formData.empName}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 readOnly
               />
             </div>
@@ -160,7 +169,7 @@ const EditAllowances = () => {
                 type="text"
                 name="designation"
                 value={formData.designation}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 readOnly
               />
             </div>
@@ -172,7 +181,7 @@ const EditAllowances = () => {
                 type="text"
                 name="department"
                 value={formData.department}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 readOnly
               />
             </div>
@@ -189,7 +198,7 @@ const EditAllowances = () => {
                 name="projectNo"
                 value={formData.projectNo}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
               />
             </div>
             <div>
@@ -201,7 +210,7 @@ const EditAllowances = () => {
                 name="client"
                 value={formData.client}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
               />
             </div>
           </div>
@@ -215,7 +224,7 @@ const EditAllowances = () => {
                 name="allowanceMonth"
                 value={formData.allowanceMonth}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md select-scrollable"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 required
               >
                 <option value="">Select Month</option>
@@ -247,7 +256,7 @@ const EditAllowances = () => {
                 name="allowanceYear"
                 value={formData.allowanceYear}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md select-scrollable"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 required
               >
                 <option value="">Select Year</option>
@@ -269,14 +278,13 @@ const EditAllowances = () => {
                 name="allowanceType"
                 value={formData.allowanceType}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 required
               >
                 <option value="">Select Allowance Type</option>
                 <option value="site">Site Allowance</option>
                 <option value="earnedLeave">Earned Leave</option>
                 <option value="ltc">LTC</option>
-                <option value="loyaltyBonus">Loyalty Bonus</option>
                 <option value="petrol">Petrol</option>
                 <option value="driver">Driver Allowance</option>
                 <option value="carMaint">Car Maintenance</option>
@@ -296,18 +304,20 @@ const EditAllowances = () => {
                 value={formData.allowanceAmount}
                 onChange={handleChange}
                 onWheel={(e) => e.target.blur()}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                 required
               />
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
-          >
-            Update Allowance
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="w-full md:w-1/5 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300"
+            >
+              Update Allowance
+            </button>
+          </div>
         </form>
       </div>
       <Footer />

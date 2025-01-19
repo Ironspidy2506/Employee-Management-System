@@ -49,6 +49,8 @@ import ViewAllFixedAllowance from "./components/fixed-allowances/ViewAllFixedAll
 import AddFixedAllowanceAdmin from "./components/fixed-allowances/AddFixedAllowancesAdmin";
 import OnboardingOffboarding from "./components/hr-dashboard/OnboardingOffboarding";
 import Password from "./components/employee-dashboard/Password";
+import EditFixedAllowancesAdmin from "./components/fixed-allowances/EditFixedAllowancesAdmin";
+import ViewEmployeeCTC from "./components/employee-dashboard/ViewEmployeeCTC";
 
 const App = () => {
   return (
@@ -134,7 +136,28 @@ const App = () => {
             path="/admin-dashboard/performance"
             element={<ViewPerformanceAdmin />}
           />
+          <Route
+            path="/admin-dashboard/ctc"
+            element={<ViewEmployeeCTC />}
+          />
+
+<Route
+            path="/admin-dashboard/fixed-allowances"
+            element={<ViewAllFixedAllowance />}
+          />
+
+          <Route
+            path="/admin-dashboard/fixed-allowances/add-allowances"
+            element={<AddFixedAllowanceAdmin />}
+          />
+
+          <Route
+            path="/admin-dashboard/fixed-allowances/edit-allowances"
+            element={<EditFixedAllowancesAdmin />}
+          />
         </Route>
+
+        
 
         {/* Accounts Dashboard Routes */}
         <Route
@@ -189,6 +212,10 @@ const App = () => {
             element={<AddEmployee />}
           />
           <Route
+            path="/accounts-dashboard/ctc"
+            element={<ViewEmployeeCTC />}
+          />
+          <Route
             path="/accounts-dashboard/salary"
             element={<SalaryOptions />}
           />
@@ -229,13 +256,9 @@ const App = () => {
 
           <Route
             path="/accounts-dashboard/fixed-allowances/edit-allowances"
-            element={<AddFixedAllowanceAdmin />}
+            element={<EditFixedAllowancesAdmin />}
           />
 
-          <Route
-            path="/accounts-dashboard/fixed-allowances/approve-allowances"
-            element={<AddFixedAllowanceAdmin />}
-          />
           <Route
             path="/accounts-dashboard/leave"
             element={<ViewEmployeesLeaveCount />}

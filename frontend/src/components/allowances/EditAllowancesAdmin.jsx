@@ -4,6 +4,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Footer from "../HeaderFooter/Footer";
 import Header from "../HeaderFooter/Header";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditAllowancesAdmin = () => {
   const { user } = useAuth();
@@ -21,37 +23,26 @@ const EditAllowancesAdmin = () => {
     allowanceAmount: "",
   });
 
-  const [employeeId, setEmployeeId] = useState("");
-  useEffect(() => {
-    const fetchEmployeeData = async () => {
-      if (!employeeId) return;
-      try {
-        const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${employeeId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        const employee = response.data.employee;
-        setFormData((prev) => ({
-          ...prev,
-          employeeId: employee.employeeId,
-          empName: employee.name,
-          designation: employee.designation,
-          department: employee.department.departmentName,
-        }));
-      } catch (err) {
-        console.error("Error fetching employee data:", err);
-      }
-    };
-
-    fetchEmployeeData();
-  }, [employeeId]);
-
-  const handleEmployeeIdChange = (e) => {
-    setEmployeeId(e.target.value);
+  const fetchEmployeeData = async () => {
+    try {
+      const response = await axios.get(
+        `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${formData.employeeId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const employee = response.data.employee;
+      setFormData((prev) => ({
+        ...prev,
+        empName: employee.name,
+        designation: employee.designation,
+        department: employee.department.departmentName,
+      }));
+    } catch (err) {
+      console.error("Error fetching employee data:", err);
+    }
   };
 
   const handleChange = (e) => {
@@ -76,16 +67,16 @@ const EditAllowancesAdmin = () => {
         }
       );
 
-      if (response.status === 200 || response.status === 201) {
-        navigate(`/${user.role}-dashboard/allowances`);
+      if (response.data.success) {
+        toast.success("Employee allowance updated successfully");
+        setTimeout(() => {
+          navigate(`/${user.role}-dashboard/allowances`);
+        }, 500);
+      } else {
+        toast.error(response.data.message);
       }
     } catch (err) {
-      if (err.response) {
-        console.error("Submission Error:", err.response.data.message);
-      } else {
-        console.error("Submission Error:", err.message);
-      }
-      alert("There was an error submitting the form. Please try again.");
+      toast.error("There was an error submitting the form. Please try again.");
     }
   };
 
@@ -95,6 +86,7 @@ const EditAllowancesAdmin = () => {
   return (
     <>
       <Header />
+      <ToastContainer />
       <div className="mt-2 max-w-full mx-auto p-6 bg-white shadow-md rounded-md">
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Edit Allowance Form
@@ -108,11 +100,23 @@ const EditAllowancesAdmin = () => {
               <input
                 type="text"
                 name="employeeId"
-                value={employeeId}
-                onChange={handleEmployeeIdChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={formData.employeeId}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+            <div className="flex items-end">
+              <button
+                type="button"
+                onClick={fetchEmployeeData}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Fetch Employee Data
+              </button>
+            </div>
+          </div>
+
+          <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
                 Employee Name
@@ -121,14 +125,10 @@ const EditAllowancesAdmin = () => {
                 type="text"
                 name="empName"
                 value={formData.empName}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 readOnly
+                className="w-full px-3 py-2 border rounded-md bg-gray-100 focus:outline-none"
               />
             </div>
-          </div>
-
-          <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
                 Designation
@@ -137,11 +137,13 @@ const EditAllowancesAdmin = () => {
                 type="text"
                 name="designation"
                 value={formData.designation}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 readOnly
+                className="w-full px-3 py-2 border rounded-md bg-gray-100 focus:outline-none"
               />
             </div>
+          </div>
+
+          <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
                 Department
@@ -150,14 +152,10 @@ const EditAllowancesAdmin = () => {
                 type="text"
                 name="department"
                 value={formData.department}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 readOnly
+                className="w-full px-3 py-2 border rounded-md bg-gray-100 focus:outline-none"
               />
             </div>
-          </div>
-
-          <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
                 Project No.
@@ -165,11 +163,15 @@ const EditAllowancesAdmin = () => {
               <input
                 type="text"
                 name="projectNo"
+                value={formData.projectNo}
                 onChange={handleChange}
                 placeholder="(If Any)"
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+          </div>
+
+          <div className="mb-4 grid grid-cols-2 gap-4">
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
                 Client
@@ -177,9 +179,10 @@ const EditAllowancesAdmin = () => {
               <input
                 type="text"
                 name="client"
-                placeholder="(If Any)"
+                value={formData.client}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="(If Any)"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -243,14 +246,12 @@ const EditAllowancesAdmin = () => {
                 <option value="">Select Allowance Type</option>
                 <option value="epfByCo">E.P.F By Co.</option>
                 <option value="esiByCo">E.S.I By Co.</option>
-                <option value="medPAIns">Med.& P.A. Ins.</option>
+                <option value="medPAIns">Med. & P.A. Ins.</option>
                 <option value="monthlyInsAcc">Monthly Ins. & Accidental</option>
-                <option value="bonus">Bonus</option>
                 <option value="gratuity">Gratuity</option>
                 <option value="resPhone">Res. Phone</option>
                 <option value="mobile ">Mobile</option>
                 <option value="carEmi">Car EMI</option>
-                <option value="specialAllowance">Special Allowance</option>
                 <option value="others">Other Allowances</option>
               </select>
             </div>
@@ -270,12 +271,14 @@ const EditAllowancesAdmin = () => {
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
-          >
-            Update Allowance
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="w-full md:w-2/5 bg-green-600 text-white py-2 px-4 rounded-md mt-6 hover:bg-green-700"
+            >
+              Update Allowance
+            </button>
+          </div>
         </form>
       </div>
       <Footer />

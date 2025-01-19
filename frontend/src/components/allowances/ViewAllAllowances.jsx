@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import axios from "axios";
+import * as XLSX from "xlsx";
 
 const ViewAllAllowances = () => {
   const navigate = useNavigate();
@@ -89,6 +90,61 @@ const ViewAllAllowances = () => {
     navigate(`/${user.role}-dashboard/allowances/approve-allowances`);
   };
 
+  // Function to handle Excel download
+  const downloadExcel = () => {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(
+      filteredHistory.map((allowance, index) => {
+        const allowanceMap = {};
+        if (
+          allowance.allowanceType &&
+          allowance.allowanceAmount &&
+          allowance.status
+        ) {
+          allowance.allowanceType.forEach((type, idx) => {
+            if (allowance.status[idx] === "approved") {
+              const key = type.toLowerCase();
+              allowanceMap[key] =
+                (allowanceMap[key] || 0) + allowance.allowanceAmount[idx];
+            }
+          });
+        }
+
+        return {
+          "S. No.": index + 1,
+          "Emp ID": allowance.employeeId.employeeId,
+          "Emp Name": allowance.employeeId.name,
+          "Allowance Month": allowance.allowanceMonth,
+          "Allowance Year": allowance.allowanceYear,
+          "EPF By Co.": allowanceMap["epfbyco"] || allowance.epfByCo || 0,
+          "ESI by Co.": allowanceMap["esibyco"] || allowance.esiByCo || 0,
+          "Med. & P.A. Ins.":
+            allowanceMap["medpains"] || allowance.medPAIns || 0,
+          "Monthly Ins. & Accidental":
+            allowanceMap["monthlyinsacc"] || allowance.monthlyInsAcc || 0,
+          "Site Allowance": allowanceMap["site"] || allowance.site || 0,
+          "Earned Leave":
+            allowanceMap["earnedleave"] || allowance.earnedLeave || 0,
+          LTC: allowanceMap["ltc"] || allowance.ltc || 0,
+          Gratuity: allowanceMap["gratuity"] || allowance.gratuity || 0,
+          "Res. Phone": allowanceMap["resphone"] || allowance.resPhone || 0,
+          Mobile: allowanceMap["mobile"] || allowance.mobile || 0,
+          "Car EMI": allowanceMap["caremi"] || allowance.carEmi || 0,
+          Petrol: allowanceMap["petrol"] || allowance.petrol || 0,
+          Driver: allowanceMap["driver"] || allowance.driver || 0,
+          "Car Maint.": allowanceMap["carmaint"] || allowance.carMaint || 0,
+          "Local Travel/Metro Fair":
+            allowanceMap["localtravel"] || allowance.localTravel || 0,
+          Deferred: allowanceMap["deferred"] || allowance.deferred || 0,
+          "Over Time": allowanceMap["overtime"] || allowance.overTime || 0,
+          Others: allowanceMap["others"] || allowance.others || 0,
+        };
+      })
+    );
+    XLSX.utils.book_append_sheet(wb, ws, "Allowance History");
+    XLSX.writeFile(wb, "Allowance_History.xlsx");
+  };
+
   return (
     <div className="p-6 space-y-6 bg-white">
       {/* Search Bar */}
@@ -118,12 +174,20 @@ const ViewAllAllowances = () => {
           >
             Approve Allowance
           </button>
+          <button
+            className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
+            onClick={downloadExcel}
+          >
+            Download as Excel
+          </button>
         </div>
       </div>
 
       {/* Table Section */}
       <div className="overflow-x-auto">
-        <h2 className="text-2xl font-bold mb-4">Allowance History</h2>
+        <h2 className="text-2xl text-gray-800 font-bold mb-4">
+          Variable Allowance History
+        </h2>
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead className="bg-gray-200 border-b">
             <tr>
@@ -142,7 +206,6 @@ const ViewAllAllowances = () => {
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Allowance Year
               </th>
-              {/* Add other columns as needed */}
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 EPF By Co.
               </th>
@@ -150,13 +213,13 @@ const ViewAllAllowances = () => {
                 ESI by Co.
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Med.& P.A. Ins.
+                Med. & P.A. Ins.
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Monthly Ins. & Accidental
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Bonus
+                Site Allowance
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Earned Leave
@@ -166,9 +229,6 @@ const ViewAllAllowances = () => {
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Gratuity
-              </th>
-              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Loyalty Bonus
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Res. Phone
@@ -195,9 +255,6 @@ const ViewAllAllowances = () => {
                 Deferred
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Special Allowance
-              </th>
-              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Over Time
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
@@ -215,9 +272,7 @@ const ViewAllAllowances = () => {
                 allowance.status
               ) {
                 allowance.allowanceType.forEach((type, idx) => {
-                  // Check if the allowance status is "approved"
                   if (allowance.status[idx] === "approved") {
-                    // Add the allowance amount to the map for the corresponding type
                     const key = type.toLowerCase();
                     allowanceMap[key] =
                       (allowanceMap[key] || 0) + allowance.allowanceAmount[idx];
@@ -257,7 +312,7 @@ const ViewAllAllowances = () => {
                       0}
                   </td>
                   <td className="px-4 py-2 text-center text-sm text-gray-800">
-                    {allowanceMap["bonus"] || allowance.bonus || 0}
+                    {allowanceMap["site"] || allowance.site || 0}
                   </td>
                   <td className="px-4 py-2 text-center text-sm text-gray-800">
                     {allowanceMap["earnedleave"] || allowance.earnedLeave || 0}
@@ -267,11 +322,6 @@ const ViewAllAllowances = () => {
                   </td>
                   <td className="px-4 py-2 text-center text-sm text-gray-800">
                     {allowanceMap["gratuity"] || allowance.gratuity || 0}
-                  </td>
-                  <td className="px-4 py-2 text-center text-sm text-gray-800">
-                    {allowanceMap["loyaltybonus"] ||
-                      allowance.loyaltyBonus ||
-                      0}
                   </td>
                   <td className="px-4 py-2 text-center text-sm text-gray-800">
                     {allowanceMap["resphone"] || allowance.resPhone || 0}
@@ -296,11 +346,6 @@ const ViewAllAllowances = () => {
                   </td>
                   <td className="px-4 py-2 text-center text-sm text-gray-800">
                     {allowanceMap["deferred"] || allowance.deferred || 0}
-                  </td>
-                  <td className="px-4 py-2 text-center text-sm text-gray-800">
-                    {allowanceMap["specialallowance"] ||
-                      allowance.specialAllowance ||
-                      0}
                   </td>
                   <td className="px-4 py-2 text-center text-sm text-gray-800">
                     {allowanceMap["overtime"] || allowance.overTime || 0}

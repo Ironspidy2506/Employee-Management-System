@@ -53,9 +53,9 @@ const EmployeeDashboard = () => {
 
         {/* Dashboard Content */}
         <div className="flex-1 p-6">
-          {/* <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-gray-800">
             Welcome to the Employee Dashboard, {user?.name || "User"}!
-          </h1> */}
+          </h1>
 
           <Outlet />
           {/* Add any other relevant content or components here */}

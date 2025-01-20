@@ -165,7 +165,7 @@ const EmployeeHelpdesk = () => {
             ) : (
               <tr>
                 <td
-                  colSpan="4"
+                  colSpan="5"
                   className="py-3 px-6 text-sm text-center text-red-600"
                 >
                   No queries found.

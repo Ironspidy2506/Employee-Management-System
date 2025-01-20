@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import KorusImage from "../assets/Korus.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -85,7 +87,7 @@ const Login = () => {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-6 relative">
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-600"
@@ -93,7 +95,7 @@ const Login = () => {
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"} // Toggle between text and password
               id="password"
               name="password"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-500 transition-all sm:text-sm"
@@ -101,6 +103,14 @@ const Login = () => {
               required
               onChange={(e) => setPassword(e.target.value)}
             />
+            {/* Eye Icon */}
+            <button
+              type="button"
+              className="absolute inset-y-0 top-6 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </button>
           </div>
 
           <button
@@ -113,13 +123,6 @@ const Login = () => {
             <p className="text-red-600 text-sm mt-2 text-center">{error}</p>
           )}
         </form>
-
-        <p className="text-sm text-gray-500 mt-4 text-center">
-          Forgot your password?{" "}
-          <a href="#" className="text-blue-500 hover:underline">
-            Reset it
-          </a>
-        </p>
       </div>
     </div>
   );

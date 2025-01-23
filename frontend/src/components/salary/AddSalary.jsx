@@ -56,6 +56,35 @@ const AddSalary = () => {
     }
   };
 
+  const handleFetchGrossSalary = async () => {
+    try {
+      const { data } = await axios.get(
+        `https://employee-management-system-backend-objq.onrender.com/api/employees/${employeeIdInput}/${paymentMonth}/${paymentYear}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+
+      if (data.success) {
+        setGrossSalary(data.grossSalary);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching gross salary:", error);
+      toast.error("Error fetching gross salary.");
+    }
+  };
+
+  useEffect(() => {
+    if (employeeIdInput && paymentMonth && paymentYear) {
+      handleFetchGrossSalary();
+    }
+  }, [paymentMonth, paymentYear]);
+
   useEffect(() => {
     if (grossSalary) {
       const basic =
@@ -78,7 +107,7 @@ const AddSalary = () => {
         { name: "EPF", amount: (basic * 0.12).toFixed(2) },
         {
           name: "ESIC",
-          amount: basic > 21000 ? (grossSalary * 0.0075).toFixed(2) : 0,
+          amount: basic > 21000 ? 0 : (grossSalary * 0.0075).toFixed(2),
         },
         { name: "Advance Deduction", amount: 0 },
         { name: "Tax Deduction", amount: 0 },
@@ -173,6 +202,36 @@ const AddSalary = () => {
     "December",
   ];
 
+  const handleFieldChange = (index, fieldType, key, value) => {
+    if (fieldType === "allowances") {
+      const updatedAllowances = [...allowances];
+      updatedAllowances[index][key] = value;
+      setAllowances(updatedAllowances);
+    } else if (fieldType === "deductions") {
+      const updatedDeductions = [...deductions];
+      updatedDeductions[index][key] = value;
+      setDeductions(updatedDeductions);
+    }
+  };
+
+  const addField = (fieldType) => {
+    if (fieldType === "allowances") {
+      setAllowances([...allowances, { name: "", amount: 0 }]);
+    } else if (fieldType === "deductions") {
+      setDeductions([...deductions, { name: "", amount: 0 }]);
+    }
+  };
+
+  const removeField = (index, fieldType) => {
+    if (fieldType === "allowances") {
+      const updatedAllowances = allowances.filter((_, i) => i !== index);
+      setAllowances(updatedAllowances);
+    } else if (fieldType === "deductions") {
+      const updatedDeductions = deductions.filter((_, i) => i !== index);
+      setDeductions(updatedDeductions);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -209,6 +268,17 @@ const AddSalary = () => {
             {/* Display Employee Details */}
             {employeeDetails && (
               <div className="space-y-4">
+                <div>
+                  <label className="block font-medium mb-2">
+                    Employee Name
+                  </label>
+                  <input
+                    type="text"
+                    value={employeeDetails.name}
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+                  />
+                </div>
                 <div>
                   <label className="block font-medium mb-2">Designation</label>
                   <input
@@ -376,7 +446,7 @@ const AddSalary = () => {
                   <button
                     type="button"
                     onClick={() => removeField(index, "allowances")}
-                    className="px-2 py-1 bg-red-500 text-white rounded-md focus:outline-none"
+                    className="px-2 py-1 bg-red-500 text-white rounded-md"
                   >
                     Delete
                   </button>
@@ -425,7 +495,6 @@ const AddSalary = () => {
                     className="w-32 px-4 py-2 border border-gray-300 rounded-md focus:outline-none"
                     placeholder="Amount"
                   />
-
                   <button
                     type="button"
                     onClick={() => removeField(index, "deductions")}

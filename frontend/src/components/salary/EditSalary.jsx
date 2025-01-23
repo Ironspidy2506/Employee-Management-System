@@ -13,6 +13,7 @@ const EditSalary = () => {
   const navigate = useNavigate();
   const [employeeDetails, setEmployeeDetails] = useState(null);
   const [employeeIdInput, setEmployeeIdInput] = useState("");
+  const [employeeType, setEmployeeType] = useState("");
   const [grossSalary, setGrossSalary] = useState("");
   const [paymentMonth, setPaymentMonth] = useState("");
   const [paymentYear, setPaymentYear] = useState("");
@@ -46,13 +47,30 @@ const EditSalary = () => {
 
   useEffect(() => {
     if (grossSalary) {
-      // Ensure we don't overwrite the fetched allowances and deductions
-      const calculatedBasic = (grossSalary * 0.45).toFixed(2);
-      setBasicSalary(calculatedBasic);
+      // Calculate basic salary
+      const basic =
+        employeeType === "Employee"
+          ? (grossSalary * 0.45).toFixed(2)
+          : (grossSalary * 0.6).toFixed(2);
+      setBasicSalary(basic);
 
-      // Calculate allowances only if they are empty
-      if (allowances.length === 0) {
-        const updatedAllowances = [
+      // Reusable function to update or add entries in an array
+      const updateOrAddEntries = (prevItems, newItems) => {
+        const updatedItems = [...prevItems];
+        newItems.forEach(({ name, amount }) => {
+          const index = updatedItems.findIndex((item) => item.name === name);
+          if (index >= 0) {
+            updatedItems[index].amount = amount; // Update existing item
+          } else {
+            updatedItems.push({ name, amount }); // Add new item
+          }
+        });
+        return updatedItems;
+      };
+
+      // Update allowances
+      setAllowances((prevAllowances) =>
+        updateOrAddEntries(prevAllowances, [
           { name: "HRA", amount: (grossSalary * 0.27).toFixed(2) },
           { name: "Food Allowance", amount: (grossSalary * 0.1).toFixed(2) },
           {
@@ -63,22 +81,23 @@ const EditSalary = () => {
             name: "Transport Allowance",
             amount: (grossSalary * 0.1).toFixed(2),
           },
-        ];
-        setAllowances(updatedAllowances);
-      }
+        ])
+      );
 
-      // Calculate deductions only if they are empty
-      if (deductions.length === 0) {
-        const updatedDeductions = [
-          { name: "EPF", amount: (calculatedBasic * 0.12).toFixed(2) },
-          { name: "ESI", amount: (grossSalary * 0.0075).toFixed(2) },
+      // Update deductions
+      setDeductions((prevDeductions) =>
+        updateOrAddEntries(prevDeductions, [
+          { name: "EPF", amount: (basic * 0.12).toFixed(2) },
+          {
+            name: "ESIC",
+            amount: basic > 21000 ? 0 : (grossSalary * 0.0075).toFixed(2),
+          },
           { name: "Advance Deduction", amount: 0 },
           { name: "Tax Deduction", amount: 0 },
-        ];
-        setDeductions(updatedDeductions);
-      }
+        ])
+      );
     }
-  }, [grossSalary, allowances, deductions]); // Added allowances and deductions as dependencies
+  }, [grossSalary, employeeType]);
 
   useEffect(() => {
     const fetchSalaryData = async () => {
@@ -90,9 +109,8 @@ const EditSalary = () => {
             paymentYear,
           });
 
-          console.log(salaryDetails);
-
           if (salaryDetails) {
+            setEmployeeType(salaryDetails.employeeType || "");
             setGrossSalary(salaryDetails.grossSalary || "");
             setBasicSalary(salaryDetails.basicSalary || 0);
             setPayableDays(salaryDetails.payableDays || "");
@@ -169,7 +187,6 @@ const EditSalary = () => {
   }, [paymentMonth, paymentYear]);
 
   useEffect(() => {
-    // Calculate Net Payable Days
     const totalPayableDays = parseInt(payableDays || 0, 10) + sundays;
     setNetPayableDays(totalPayableDays);
   }, [payableDays, sundays]);
@@ -290,6 +307,17 @@ const EditSalary = () => {
             {employeeDetails && (
               <div className="space-y-4">
                 <div>
+                  <label className="block font-medium mb-2">
+                    Employee Name
+                  </label>
+                  <input
+                    type="text"
+                    value={employeeDetails.name}
+                    readOnly
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none"
+                  />
+                </div>
+                <div>
                   <label className="block font-medium mb-2">Designation</label>
                   <input
                     type="text"
@@ -371,6 +399,20 @@ const EditSalary = () => {
                 readOnly
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none bg-gray-100"
               />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-2">Employee Type</label>
+              <select
+                value={employeeType}
+                onChange={(e) => setEmployeeType(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
+                required
+              >
+                <option value="">Select Employee Type</option>
+                <option value="Employee">Employee</option>
+                <option value="Director">Director</option>
+              </select>
             </div>
 
             <div>

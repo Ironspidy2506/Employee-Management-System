@@ -11,7 +11,7 @@ const ViewSalary = () => {
   const [salaries, setSalaries] = useState([]);
   const [filteredSalaries, setFilteredSalaries] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption, setSelectedOption] = useState("monthly");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
   const [employeeId, setEmployeeId] = useState("");
@@ -40,6 +40,8 @@ const ViewSalary = () => {
             },
           }
         );
+
+        console.log(response);
 
         toast.success(`Fetched salary data for ${month} ${year}`);
         setSalaries(response.data);
@@ -87,7 +89,7 @@ const ViewSalary = () => {
     );
 
     const epf = salary.deductions[0]?.amount || 0;
-    const esi = salary.deductions[1]?.amount || 0;
+    const ESIC = salary.deductions[1]?.amount || 0;
     const advance = salary.deductions[2]?.amount || 0;
     const tax = salary.deductions[3]?.amount || 0;
 
@@ -107,7 +109,7 @@ const ViewSalary = () => {
       medicalAllowance +
       transportAllowance +
       otherAllowances;
-    const totalDeductions = epf + esi + advance + tax + otherDeductions;
+    const totalDeductions = epf + ESIC + advance + tax + otherDeductions;
 
     const grossTotalSalary =
       salary.basicSalary + totalAllowances - totalDeductions;
@@ -213,9 +215,9 @@ const ViewSalary = () => {
           sum + (salary.deductions.find((d) => d.name === "EPF")?.amount || 0),
         0
       ),
-      ESI: filteredSalaries.reduce(
+      ESIC: filteredSalaries.reduce(
         (sum, salary) =>
-          sum + (salary.deductions.find((d) => d.name === "ESI")?.amount || 0),
+          sum + (salary.deductions.find((d) => d.name === "ESIC")?.amount || 0),
         0
       ),
       AdvanceDeductions: filteredSalaries.reduce(
@@ -238,7 +240,7 @@ const ViewSalary = () => {
           salary.deductions
             .filter(
               (deduction) =>
-                !["EPF", "ESI", "Advance Deduction", "Tax Deduction"].includes(
+                !["EPF", "ESIC", "Advance Deduction", "Tax Deduction"].includes(
                   deduction?.name
                 )
             )
@@ -280,7 +282,7 @@ const ViewSalary = () => {
         )
         .reduce((total, allowance) => total + (allowance?.amount || 0), 0),
       EPF: salary.deductions.find((d) => d.name === "EPF")?.amount || 0,
-      ESI: salary.deductions.find((d) => d.name === "ESI")?.amount || 0,
+      ESIC: salary.deductions.find((d) => d.name === "ESIC")?.amount || 0,
       AdvanceDeductions:
         salary.deductions.find((d) => d.name === "Advance Deduction")?.amount ||
         0,
@@ -289,7 +291,7 @@ const ViewSalary = () => {
       OtherDeductions: salary.deductions
         .filter(
           (deduction) =>
-            !["EPF", "ESI", "Advance Deduction", "Tax Deduction"].includes(
+            !["EPF", "ESIC", "Advance Deduction", "Tax Deduction"].includes(
               deduction?.name
             )
         )
@@ -508,7 +510,7 @@ const ViewSalary = () => {
                   EPF
                 </th>
                 <th className="border text-center text-gray-800 bg-red-100 px-2 py-1">
-                  ESI
+                  ESIC
                 </th>
                 <th className="border text-center text-gray-800 bg-red-100 px-2 py-1">
                   Adv. Deductions
@@ -597,7 +599,7 @@ const ViewSalary = () => {
                       0}
                   </td>
                   <td className="border px-4 py-2 text-center">
-                    {salary.deductions.find((d) => d.name === "ESI")?.amount ||
+                    {salary.deductions.find((d) => d.name === "ESIC")?.amount ||
                       0}
                   </td>
                   <td className="border px-4 py-2 text-center">
@@ -615,7 +617,7 @@ const ViewSalary = () => {
                         (deduction) =>
                           ![
                             "EPF",
-                            "ESI",
+                            "ESIC",
                             "Advance Deduction",
                             "Tax Deduction",
                           ].includes(deduction?.name)
@@ -741,7 +743,7 @@ const ViewSalary = () => {
                     {filteredSalaries.reduce(
                       (sum, salary) =>
                         sum +
-                        (salary.deductions.find((d) => d.name === "ESI")
+                        (salary.deductions.find((d) => d.name === "ESIC")
                           ?.amount || 0),
                       0
                     )}
@@ -775,7 +777,7 @@ const ViewSalary = () => {
                             (deduction) =>
                               ![
                                 "EPF",
-                                "ESI",
+                                "ESIC",
                                 "Advance Deduction",
                                 "Tax Deduction",
                               ].includes(deduction.name)

@@ -491,6 +491,43 @@ const updateEmployeeJourney = async (req, res) => {
   }
 };
 
+const getGrossSalary = async (req, res) => {
+  try {
+    const { employeeId, paymentMonth, paymentYear } = req.params;
+
+    const date = new Date(`${paymentMonth} 1, ${paymentYear}`);
+
+    date.setMonth(date.getMonth() - 1);
+    const previousMonth = date.toLocaleString("default", { month: "long" });
+    const previousYear = date.getFullYear();
+
+    const employee = await Employee.findOne({ employeeId });
+    if (!employee) {
+      return res.json({ success: false, error: "Employee not found" });
+    }
+    const empId = employee._id;
+
+    const salary = await Salary.findOne({
+      employeeId: empId,
+      paymentMonth: previousMonth,
+      paymentYear: previousYear.toString(),
+    });
+
+    if (!salary) {
+      return res.json({
+        success: false,
+      });
+    }
+
+    return res.json({ success: true, grossSalary: salary.grossSalary });
+  } catch (error) {
+    return res.json({
+      success: false,
+      error: "Server error while fetching gross salary details",
+    });
+  }
+};
+
 export {
   addEmployee,
   upload,
@@ -505,4 +542,5 @@ export {
   getEmployeeSummaryForAllowances,
   updateEmployeeLeaveBalance,
   updateEmployeeJourney,
+  getGrossSalary,
 };

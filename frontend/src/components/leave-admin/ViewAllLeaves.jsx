@@ -5,6 +5,8 @@ import {
   getLeaveRecords,
   approveRejectLeave,
 } from "../../utils/AdminLeaveHelper.jsx";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ViewAllLeaves = () => {
   const { user } = useAuth();
@@ -33,6 +35,7 @@ const ViewAllLeaves = () => {
   const handleApproveReject = async (leaveId, action) => {
     try {
       await approveRejectLeave(leaveId, action);
+      toast.success("Leave status updated successfully");
       const updatedHistory = leaveHistory.map((leave) =>
         leave._id === leaveId ? { ...leave, status: action } : leave
       );
@@ -107,6 +110,7 @@ const ViewAllLeaves = () => {
 
   return (
     <div className="p-6 space-y-6 bg-white">
+      <ToastContainer />
       {/* Search Bar */}
 
       {/* Table Section */}
@@ -155,6 +159,9 @@ const ViewAllLeaves = () => {
                 {sortConfig.key === "startDate" &&
                   (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
               </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer">
+                Start Time
+              </th>
               <th
                 className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer"
                 onClick={() => handleSort("endDate")}
@@ -162,6 +169,9 @@ const ViewAllLeaves = () => {
                 End Date
                 {sortConfig.key === "endDate" &&
                   (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer">
+                End Time
               </th>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                 No. of Days
@@ -195,13 +205,19 @@ const ViewAllLeaves = () => {
                 <td className="px-4 py-2 text-sm text-gray-800">
                   {formatDate(leave.startDate)}
                 </td>
+                <td className="px-4 py-2 text-center text-sm text-gray-800">
+                  {leave.startTime}
+                </td>
                 <td className="px-4 py-2 text-sm text-gray-800">
                   {formatDate(leave.endDate)}
                 </td>
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
+                  {leave.endTime}
+                </td>
+                <td className="px-4 py-2 text-center text-sm text-gray-800">
                   {leave.days}
                 </td>
-                <td className="px-4 py-2 text-sm text-justify text-gray-800">
+                <td className="px-4 py-2 text-sm text-left text-gray-800">
                   {leave.reason}
                 </td>
                 <td
@@ -210,6 +226,13 @@ const ViewAllLeaves = () => {
                   )}`}
                 >
                   {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
+                  {leave?.approvedBy || leave?.rejectedBy
+                    ? leave.status === "approved"
+                      ? ` by ${leave.approvedBy}`
+                      : leave.status === "rejected"
+                      ? ` by ${leave.rejectedBy}`
+                      : ""
+                    : null}
                 </td>
                 <td className="flex px-4 py-2 text-sm text-gray-800 space-x-2">
                   {leave.status === "pending" ? (

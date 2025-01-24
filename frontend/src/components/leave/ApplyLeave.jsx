@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -19,13 +20,44 @@ const ApplyLeave = () => {
     reason: "",
     leaveType: "el",
     days: 0,
+    appliedTo: [], // New field for selected employees
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false); // Button state
+  const [employees, setEmployees] = useState([]); // To store the list of employees
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch employees when component loads
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await axios.get(
+          "https://employee-management-system-backend-objq.onrender.com/api/employees",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setEmployees(response.data.employees); // Assuming response.data is an array of employee objects
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+        toast.error("Failed to load employees.");
+      }
+    };
+
+    fetchEmployees();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (selectedOptions) => {
+    setFormData((prev) => ({
+      ...prev,
+      appliedTo: selectedOptions.map((option) => option.value),
+    }));
   };
 
   useEffect(() => {
@@ -59,9 +91,9 @@ const ApplyLeave = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (isSubmitting) return; // Prevent duplicate submissions
+    if (isSubmitting) return;
 
-    setIsSubmitting(true); // Disable the button
+    setIsSubmitting(true);
     const userId = user._id;
 
     const leaveData = {
@@ -72,6 +104,7 @@ const ApplyLeave = () => {
       reason: formData.reason,
       leaveType: formData.leaveType,
       days: formData.days,
+      appliedTo: formData.appliedTo, // Include selected employees
     };
 
     try {
@@ -100,17 +133,33 @@ const ApplyLeave = () => {
       setIsSubmitting(false);
     }
   };
-
   return (
     <div className="mt-5 max-w-auto mx-auto p-6 bg-white shadow-md rounded-md">
       <Header />
-      <h2 className="text-2xl font-bold text-gray-700 text-center mb-5">
+      <h2 className="text-2xl font-bold text-gray-800 text-center mb-5">
         Leave Application Form
       </h2>
       <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-gray-800 mb-2">Applying To</label>
+          <Select
+            isMulti
+            options={employees
+              .sort((a, b) => a.employeeId - b.employeeId) // Simple numeric comparison
+              .map((employee) => ({
+                value: employee._id,
+                label: `${employee.employeeId}-${employee.name}`,
+              }))}
+            onChange={handleSelectChange}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            placeholder="Select employees..."
+          />
+        </div>
+
         <div className="flex flex-col lg:flex-row lg:space-x-4">
           <div className="mb-4 lg:w-1/2">
-            <label className="block text-gray-700 mb-2">Start Date</label>
+            <label className="block text-gray-800 mb-2">Start Date</label>
             <input
               type="date"
               name="startDate"
@@ -121,7 +170,7 @@ const ApplyLeave = () => {
             />
           </div>
           <div className="mb-4 lg:w-1/2">
-            <label className="block text-gray-700 mb-2">Start Time</label>
+            <label className="block text-gray-800 mb-2">Start Time</label>
             <input
               type="time"
               name="startTime"
@@ -134,7 +183,7 @@ const ApplyLeave = () => {
 
         <div className="flex flex-col lg:flex-row lg:space-x-4">
           <div className="mb-4 lg:w-1/2">
-            <label className="block text-gray-700 mb-2">End Date</label>
+            <label className="block text-gray-800 mb-2">End Date</label>
             <input
               type="date"
               name="endDate"
@@ -145,7 +194,7 @@ const ApplyLeave = () => {
             />
           </div>
           <div className="mb-4 lg:w-1/2">
-            <label className="block text-gray-700 mb-2">End Time</label>
+            <label className="block text-gray-800 mb-2">End Time</label>
             <input
               type="time"
               name="endTime"
@@ -157,7 +206,7 @@ const ApplyLeave = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Reason</label>
+          <label className="block text-gray-800 mb-2">Reason</label>
           <textarea
             name="reason"
             value={formData.reason}
@@ -169,7 +218,7 @@ const ApplyLeave = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Leave Type</label>
+          <label className="block text-gray-800 mb-2">Leave Type</label>
           <select
             name="leaveType"
             value={formData.leaveType}
@@ -183,7 +232,7 @@ const ApplyLeave = () => {
         </div>
 
         <div className="mb-6">
-          <label className="block text-gray-700 mb-2">Number of Days</label>
+          <label className="block text-gray-800 mb-2">Number of Days</label>
           <input
             type="number"
             value={formData.days}

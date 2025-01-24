@@ -750,7 +750,7 @@ const EditEmployee = () => {
                   <select
                     name="role"
                     id="role"
-                    value={capitalizeFirstLetter(employee.role)}
+                    value={capitalizeFirstLetter(employee.role) || ""}
                     className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-blue-300 focus:outline-none"
                     required
                     onChange={handleChange}
@@ -760,6 +760,7 @@ const EditEmployee = () => {
                     {/* <option value="Accounts">Accounts</option> */}
                     {/* <option value="HR">HR</option> */}
                     <option value="Employee">Employee</option>
+                    <option value="Lead">Team Lead</option>
                   </select>
                 </div>
 

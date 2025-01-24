@@ -134,13 +134,15 @@ const ViewEmployeeLeave = () => {
               { label: "S. No.", key: null },
               { label: "Leave Type", key: "type" },
               { label: "Start Date", key: "startDate" },
+              { label: "Start Time", key: "startTime" },
               { label: "End Date", key: "endDate" },
+              { label: "End Time", key: "endTime" },
               { label: "No. of Days", key: "days" },
               { label: "Status", key: "status" },
             ].map((column, index) => (
               <th
                 key={index}
-                className={`px-4 py-3 text-left text-base font-medium text-gray-700 ${
+                className={`px-4 py-3 text-center text-base font-medium text-gray-700 ${
                   column.key ? "cursor-pointer" : ""
                 }`}
                 onClick={column.key ? () => handleSort(column.key) : null}
@@ -158,13 +160,15 @@ const ViewEmployeeLeave = () => {
               key={leave._id}
               className="border-b hover:bg-gray-50 text-base text-gray-800"
             >
-              <td className="px-4 py-3">{index + 1}</td>
-              <td className="px-4 py-3">{leave.type.toUpperCase()}</td>
-              <td className="px-4 py-3">{formatDate(leave.startDate)}</td>
-              <td className="px-4 py-3">{formatDate(leave.endDate)}</td>
-              <td className="px-4 py-3">{leave.days}</td>
+              <td className="px-4 py-3 text-center">{index + 1}</td>
+              <td className="px-4 py-3 text-center">{leave.type.toUpperCase()}</td>
+              <td className="px-4 py-3 text-center">{formatDate(leave.startDate)}</td>
+              <td className="px-4 py-3 text-center">{leave.startTime}</td>
+              <td className="px-4 py-3 text-center">{formatDate(leave.endDate)}</td>
+              <td className="px-4 py-3 text-center">{leave.endTime}</td>
+              <td className="px-4 py-3 text-center">{leave.days}</td>
               <td
-                className={`px-4 py-3 font-semibold ${getStatusColor(
+                className={`px-4 py-3 font-semibold text-center ${getStatusColor(
                   leave.status
                 )}`}
               >

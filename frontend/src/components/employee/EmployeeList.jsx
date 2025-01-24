@@ -4,7 +4,6 @@ import axios from "axios";
 import { EmployeeButtons } from "../../utils/EmployeeHelper";
 import { useAuth } from "../../context/authContext";
 
-
 const EmployeeList = () => {
   const { user } = useAuth();
   const [employees, setEmployees] = useState([]);
@@ -81,8 +80,10 @@ const EmployeeList = () => {
   // Handle search filter by employeeId
   const handleFilter = (e) => {
     const searchValue = e.target.value.toLowerCase();
-    const records = employees.filter((emp) =>
-      emp.employeeId.toString().toLowerCase().includes(searchValue)
+    const records = employees.filter(
+      (emp) =>
+        emp.employeeId.toString().toLowerCase().includes(searchValue) ||
+        emp.name.toLowerCase().includes(searchValue)
     );
     const updatedData = updateSerialNumbers(records);
     setFilteredEmployees(updatedData);
@@ -111,7 +112,7 @@ const EmployeeList = () => {
       {empLoading ? (
         <div>Loading...</div>
       ) : (
-        <div className="p-6 space-y-6">
+        <div className="p-4 space-y-6">
           <div className="bg-white shadow-md rounded-md p-4">
             <h3 className="text-xl font-bold text-gray-800">
               Manage Employees
@@ -121,7 +122,7 @@ const EmployeeList = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 shadow-md p-5 rounded-md">
             <input
               type="search"
-              placeholder="Search Employee By Id"
+              placeholder="Search Employee By Id or Name"
               onChange={handleFilter}
               className="w-full md:w-auto flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />

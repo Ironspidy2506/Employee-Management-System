@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const ViewLeaveHistory = () => {
   const { user } = useAuth();
+
   const [leaveHistory, setLeaveHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
   const [leaveCounts, setLeaveCounts] = useState({ el: 0, cl: 0, sl: 0 });
@@ -125,17 +126,34 @@ const ViewLeaveHistory = () => {
           </div>
 
           {/* Apply Leave Button */}
-          <button
-            onClick={() => navigate("/employee-dashboard/leave/apply")}
-            className="px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-          >
-            Apply Leave
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate("/employee-dashboard/leave/apply")}
+              className="px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+            >
+              Apply Leave
+            </button>
+
+            {user.role === "Lead" ? (
+              <button
+                onClick={() =>
+                  navigate(
+                    `/employee-dashboard/leave/approve-leaves/${user._id}`
+                  )
+                }
+                className="px-6 py-3 text-lg font-semibold text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50"
+              >
+                Approve Leave
+              </button>
+            ) : null}
+          </div>
         </div>
 
         {/* Table Section */}
         <div className="overflow-x-auto">
-          <h2 className="text-2xl text-gray-800 font-bold mb-4">Leave History</h2>
+          <h2 className="text-2xl text-gray-800 font-bold mb-4">
+            Leave History
+          </h2>
           <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
             <thead className="bg-gray-200 border-b">
               <tr>
@@ -210,10 +228,10 @@ const ViewLeaveHistory = () => {
                     {leave.status.charAt(0).toUpperCase() +
                       leave.status.slice(1)}
                   </td>
-                  <td className="flex justify-center px-4 py-2 text-base text-gray-800 space-x-2">
+                  <td className="flex items-center justify-center px-4 py-2 text-base text-gray-800 space-x-2">
                     {leave.status !== "approved" &&
                     leave.status !== "rejected" ? (
-                      <>
+                      <div className="flex flex-col lg:flex-row gap-2">
                         <button
                           onClick={() =>
                             navigate(
@@ -230,10 +248,8 @@ const ViewLeaveHistory = () => {
                         >
                           Delete
                         </button>
-                      </>
-                    ) : (
-                      <></>
-                    )}
+                      </div>
+                    ) : null}
                   </td>
                 </tr>
               ))}

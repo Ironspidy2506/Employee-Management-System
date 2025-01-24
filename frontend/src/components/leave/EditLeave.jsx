@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getLeaveById, updateLeave } from "../../utils/LeaveHelper.jsx";
 import Footer from "../HeaderFooter/Footer.jsx";
 import Header from "../HeaderFooter/Header.jsx";
+import axios from "axios";
+import Select from "react-select";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -18,17 +20,48 @@ const EditLeave = () => {
     reason: "",
     leaveType: "el",
     days: 0,
+    appliedTo: [],
   };
 
   const [formData, setFormData] = useState(initialFormData);
+  const [employees, setEmployees] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await axios.get(
+          "https://employee-management-system-backend-objq.onrender.com/api/employees",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        const sortedEmployees = response.data.employees.sort(
+          (a, b) => a.employeeId - b.employeeId
+        );
+
+        const employeeOptions = sortedEmployees.map((employee) => ({
+          value: employee._id,
+          label: `${employee.employeeId} - ${employee.name}`,
+        }));
+
+        setEmployees(employeeOptions);
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+        toast.error("Failed to load employees.");
+      }
+    };
+
+    fetchEmployees();
+  }, []);
 
   useEffect(() => {
     const fetchLeaveData = async () => {
       try {
         const data = await getLeaveById(_id);
-        console.log(data);
-
         setFormData({
           startDate: new Date(data.startDate).toISOString().split("T")[0],
           startTime: data.startTime,
@@ -37,12 +70,16 @@ const EditLeave = () => {
           reason: data.reason,
           leaveType: data.type,
           days: data.days,
+          appliedTo: data.appliedTo.map((approver) => ({
+            value: approver._id,
+            label: `${approver.employeeId} - ${approver.name}`,
+          })),
         });
-        setLoading(false);
+
+        console.log(formData.appliedTo);
       } catch (err) {
         console.error("Error fetching leave data:", err);
-        setError("Failed to fetch leave data.");
-        setLoading(false);
+        toast.error("Failed to fetch leave data.");
       }
     };
 
@@ -54,6 +91,13 @@ const EditLeave = () => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  const handleApproverChange = (selectedOptions) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      appliedTo: selectedOptions || [],
     }));
   };
 
@@ -89,10 +133,13 @@ const EditLeave = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    console.log(formData);
-
     try {
-      await updateLeave(_id, formData);
+      const payload = {
+        ...formData,
+        appliedTo: formData.appliedTo.map((approver) => approver.value),
+      };
+
+      await updateLeave(_id, payload);
       toast.success("Leave updated successfully!");
       setTimeout(() => {
         navigate("/employee-dashboard/leave");
@@ -115,6 +162,18 @@ const EditLeave = () => {
           Edit Leave Application
         </h2>
         <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Approvers</label>
+            <Select
+              isMulti
+              options={employees}
+              value={formData.appliedTo}
+              onChange={handleApproverChange}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              placeholder="Select approvers..."
+            />
+          </div>
           <div className="flex flex-col lg:flex-row lg:space-x-4">
             <div className="mb-4 lg:w-1/2">
               <label className="block text-gray-700 mb-2">Start Date</label>

@@ -51,6 +51,7 @@ import OnboardingOffboarding from "./components/hr-dashboard/OnboardingOffboardi
 import Password from "./components/employee-dashboard/Password";
 import EditFixedAllowancesAdmin from "./components/fixed-allowances/EditFixedAllowancesAdmin";
 import ViewEmployeeCTC from "./components/employee-dashboard/ViewEmployeeCTC";
+import ViewAppliedLeavesTeamLead from "./components/leave/ViewAppliedLeavesTeamLead";
 
 const App = () => {
   return (
@@ -360,6 +361,10 @@ const App = () => {
           <Route
             path="/employee-dashboard/leave/apply"
             element={<ApplyLeave />}
+          />
+          <Route
+            path="/employee-dashboard/leave/approve-leaves/:userId"
+            element={<ViewAppliedLeavesTeamLead />}
           />
           <Route
             path="/employee-dashboard/leave/edit/:_id"

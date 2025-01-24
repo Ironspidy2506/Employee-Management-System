@@ -13,7 +13,7 @@ const getLeaveHistory = async (req, res) => {
       .populate({
         path: "employeeId",
       })
-      .sort({ startDate: -1 });
+      .sort({ lastUpdated: -1 });
 
     res.status(200).json(leaveHistory);
   } catch (error) {
@@ -25,19 +25,42 @@ const getLeaveHistory = async (req, res) => {
 const applyForLeave = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { startDate, startTime, endDate, endTime, reason, leaveType, days } =
-      req.body;
+    const {
+      startDate,
+      startTime,
+      endDate,
+      endTime,
+      reason,
+      leaveType,
+      days,
+      appliedTo, // Added this field
+    } = req.body;
 
+    // Find the employee making the request
     const employee = await Employee.findOne({ userId });
     if (!employee) {
       return res.status(404).json({ error: "Employee not found" });
     }
 
+    // Check leave balance
     const leaveBalance = employee.leaveBalance[leaveType];
     if (leaveBalance < days) {
       return res.status(400).json({ message: "Not enough leave balance" });
     }
 
+    // Validate appliedTo array (ensure the provided IDs exist)
+    if (!Array.isArray(appliedTo) || appliedTo.length === 0) {
+      return res.status(400).json({ message: "Invalid 'appliedTo' data" });
+    }
+
+    const approvers = await Employee.find({ _id: { $in: appliedTo } });
+    if (approvers.length !== appliedTo.length) {
+      return res
+        .status(404)
+        .json({ message: "One or more approvers not found" });
+    }
+
+    // Create the leave
     const newLeave = new Leave({
       employeeId: employee._id,
       startDate,
@@ -47,6 +70,7 @@ const applyForLeave = async (req, res) => {
       reason,
       type: leaveType,
       days,
+      appliedTo,
     });
 
     await newLeave.save();
@@ -64,7 +88,7 @@ const applyForLeave = async (req, res) => {
 const getLeaveById = async (req, res) => {
   try {
     const { _id } = req.params;
-    const leaveHistory = await Leave.findById({ _id });
+    const leaveHistory = await Leave.findById({ _id }).populate("appliedTo");
     res.status(200).json(leaveHistory);
   } catch (error) {
     console.error("Error fetching leave history:", error);
@@ -75,12 +99,35 @@ const getLeaveById = async (req, res) => {
 const updateLeaveById = async (req, res) => {
   try {
     const { _id } = req.params;
-    const { leaveType, startDate, startTime, endDate, endTime, days, reason } =
-      req.body;
+    const {
+      leaveType,
+      startDate,
+      startTime,
+      endDate,
+      endTime,
+      days,
+      reason,
+      appliedTo,
+    } = req.body;
 
     const leaveHistory = await Leave.findById(_id);
     if (!leaveHistory) {
       return res.status(404).json({ error: "Leave record not found" });
+    }
+
+    if (appliedTo) {
+      if (!Array.isArray(appliedTo) || appliedTo.length === 0) {
+        return res.status(400).json({ message: "Invalid 'appliedTo' data" });
+      }
+
+      const approvers = await Employee.find({ _id: { $in: appliedTo } });
+      if (approvers.length !== appliedTo.length) {
+        return res
+          .status(404)
+          .json({ message: "One or more approvers not found" });
+      }
+
+      leaveHistory.appliedTo = appliedTo;
     }
 
     leaveHistory.type = leaveType;
@@ -153,7 +200,9 @@ const getLeaveBalance = async (req, res) => {
 
 const getAllLeaves = async (req, res) => {
   try {
-    const leaves = await Leave.find().populate("employeeId");
+    const leaves = await Leave.find()
+      .populate("employeeId")
+      .sort({ lastUpdated: -1 });
     res.status(200).json(leaves);
   } catch (error) {
     console.error("Error fetching all leaves:", error);
@@ -194,10 +243,12 @@ const approveOrReject = async (req, res) => {
 
       employee.leaveBalance[leaveType] -= leave.days;
       leave.status = "approved";
+      leave.approvedBy = "Admin";
 
       await employee.save();
     } else if (action === "rejected") {
       leave.status = "rejected";
+      leave.rejectedBy = "Admin";
     }
 
     await leave.save();

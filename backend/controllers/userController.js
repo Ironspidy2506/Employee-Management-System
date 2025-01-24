@@ -1,5 +1,7 @@
 import User from "../models/User.js";
+import Leave from "../models/Leave.js";
 import bcrypt from "bcrypt";
+import Employee from "../models/Employee.js";
 
 const getUserData = async (req, res) => {
   try {
@@ -37,10 +39,9 @@ const updatePassword = async (req, res) => {
     const user = await User.findById(userId);
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
-      return res
-        .json({ success: false, message: "Wrong Old Password!" });
+      return res.json({ success: false, message: "Wrong Old Password!" });
     }
-    
+
     const hashPassword = await bcrypt.hash(newPassword, 10);
 
     await User.findByIdAndUpdate(
@@ -59,4 +60,109 @@ const updatePassword = async (req, res) => {
   }
 };
 
-export { getUserData, deleteUserData, updatePassword };
+const getUserLeaveForApprovals = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const employee = await Employee.findOne({ userId });
+    const empId = employee._id;
+
+    const leaves = await Leave.find({ appliedTo: { $in: [empId] } })
+      .populate("employeeId")
+      .populate("appliedTo")
+      .sort({ lastUpdated: -1 });
+
+    if (leaves.length === 0) {
+      return res.status(404).json({ message: "No leaves found for approval." });
+    }
+
+    res.status(200).json({ leaves });
+  } catch (error) {
+    console.error("Error fetching leaves for approval:", error);
+    res.status(500).json({ message: "Failed to fetch leaves for approval." });
+  }
+};
+
+const approveOrRejectLeaveTeamLead = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { leaveId, action } = req.body;
+
+    if (!["approve", "reject"].includes(action)) {
+      return res.json({
+        success: false,
+        message: "Invalid action. Must be 'approved' or 'rejected'.",
+      });
+    }
+
+    const teamLead = await Employee.findOne({ userId });
+    if (!teamLead) {
+      return res.json({
+        success: false,
+        message: "Team lead not found.",
+      });
+    }
+
+    const empName = teamLead.name;
+
+    const leave = await Leave.findById(leaveId).populate("employeeId");
+    if (!leave) {
+      return res.json({
+        success: false,
+        message: "Leave request not found.",
+      });
+    }
+
+    if (leave.status !== "pending") {
+      return res.json({
+        success: false,
+        message: "Only pending leave requests can be updated.",
+      });
+    }
+
+    const employee = leave.employeeId;
+
+    if (action === "approve") {
+      const leaveType = leave.type.toLowerCase();
+      if (employee.leaveBalance[leaveType] < leave.days) {
+        return res.json({
+          success: false,
+          message: `Insufficient leave balance for ${leaveType}.`,
+        });
+      }
+
+      employee.leaveBalance[leaveType] -= leave.days;
+      leave.status = "approved";
+      leave.approvedBy = empName;
+
+      await employee.save();
+    } else if (action === "reject") {
+      leave.status = "rejected";
+      leave.rejectedBy = empName;
+    }
+
+    await leave.save();
+
+    res.json({
+      success: true,
+      message: `Leave ${
+        action === "approve" ? "approved" : "rejected"
+      } successfully.`,
+      leave,
+    });
+  } catch (error) {
+    console.error("Error updating leave status:", error);
+    res.json({
+      success: false,
+      message: "Internal server error.",
+    });
+  }
+};
+
+export {
+  getUserData,
+  deleteUserData,
+  updatePassword,
+  getUserLeaveForApprovals,
+  approveOrRejectLeaveTeamLead,
+};

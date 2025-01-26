@@ -26,7 +26,6 @@ const ApplyLeave = () => {
   const [employees, setEmployees] = useState([]); // To store the list of employees
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch employees when component loads
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -38,7 +37,13 @@ const ApplyLeave = () => {
             },
           }
         );
-        setEmployees(response.data.employees); // Assuming response.data is an array of employee objects
+
+        const leadEmployees = response.data.employees.filter(
+          (employee) =>
+            employee.role === "Lead" && employee.userId?._id !== user._id
+        );
+
+        setEmployees(leadEmployees);
       } catch (error) {
         console.error("Error fetching employees:", error);
         toast.error("Failed to load employees.");
@@ -46,7 +51,7 @@ const ApplyLeave = () => {
     };
 
     fetchEmployees();
-  }, []);
+  }, [user._id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -148,7 +153,7 @@ const ApplyLeave = () => {
               .sort((a, b) => a.employeeId - b.employeeId) // Simple numeric comparison
               .map((employee) => ({
                 value: employee._id,
-                label: `${employee.employeeId}-${employee.name}`,
+                label: `${employee.employeeId} - ${employee.name}`,
               }))}
             onChange={handleSelectChange}
             className="basic-multi-select"

@@ -7,8 +7,10 @@ import axios from "axios";
 import Select from "react-select";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../context/authContext.jsx";
 
 const EditLeave = () => {
+  const { user } = useAuth();
   const { _id } = useParams();
   const navigate = useNavigate();
 
@@ -39,7 +41,12 @@ const EditLeave = () => {
           }
         );
 
-        const sortedEmployees = response.data.employees.sort(
+        const leadEmployees = response.data.employees.filter(
+          (employee) =>
+            employee.role === "Lead" && employee.userId?._id !== user._id
+        );
+
+        const sortedEmployees = leadEmployees.sort(
           (a, b) => a.employeeId - b.employeeId
         );
 

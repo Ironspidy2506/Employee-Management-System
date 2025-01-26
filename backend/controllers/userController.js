@@ -159,10 +159,42 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
   }
 };
 
+const hrUpdatePassword = async (req, res) => {
+  try {
+    const { employeeId, newPassword } = req.body;
+
+    const employee = await Employee.findById(employeeId).populate("userId");
+    if (!employee) {
+      return res.json({ success: false, message: "Employee not found" });
+    }
+
+    const userId = employee.userId?._id;
+    const hashPassword = await bcrypt.hash(newPassword, 10);
+
+    await User.findByIdAndUpdate(
+      userId,
+      { password: hashPassword },
+      { new: true }
+    );
+
+    return res.json({
+      success: true,
+      message: "Password Updated Successfully",
+    });
+  } catch (error) {
+    console.error("Error updating password:", error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export {
   getUserData,
   deleteUserData,
   updatePassword,
   getUserLeaveForApprovals,
   approveOrRejectLeaveTeamLead,
+  hrUpdatePassword,
 };

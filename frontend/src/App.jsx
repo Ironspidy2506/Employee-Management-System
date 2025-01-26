@@ -52,6 +52,7 @@ import Password from "./components/employee-dashboard/Password";
 import EditFixedAllowancesAdmin from "./components/fixed-allowances/EditFixedAllowancesAdmin";
 import ViewEmployeeCTC from "./components/employee-dashboard/ViewEmployeeCTC";
 import ViewAppliedLeavesTeamLead from "./components/leave/ViewAppliedLeavesTeamLead";
+import HrChangePassword from "./components/hr-dashboard/HrChangePassword";
 
 const App = () => {
   return (
@@ -315,6 +316,10 @@ const App = () => {
           <Route
             path="/hr-dashboard/onboarding-offboarding"
             element={<OnboardingOffboarding />}
+          />
+          <Route
+            path="/hr-dashboard/change-password"
+            element={<HrChangePassword />}
           />
         </Route>
 

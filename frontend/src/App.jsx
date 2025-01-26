@@ -137,12 +137,9 @@ const App = () => {
             path="/admin-dashboard/performance"
             element={<ViewPerformanceAdmin />}
           />
-          <Route
-            path="/admin-dashboard/ctc"
-            element={<ViewEmployeeCTC />}
-          />
+          <Route path="/admin-dashboard/ctc" element={<ViewEmployeeCTC />} />
 
-<Route
+          <Route
             path="/admin-dashboard/fixed-allowances"
             element={<ViewAllFixedAllowance />}
           />
@@ -157,8 +154,6 @@ const App = () => {
             element={<EditFixedAllowancesAdmin />}
           />
         </Route>
-
-        
 
         {/* Accounts Dashboard Routes */}
         <Route
@@ -212,10 +207,7 @@ const App = () => {
             path="/accounts-dashboard/add-employee"
             element={<AddEmployee />}
           />
-          <Route
-            path="/accounts-dashboard/ctc"
-            element={<ViewEmployeeCTC />}
-          />
+          <Route path="/accounts-dashboard/ctc" element={<ViewEmployeeCTC />} />
           <Route
             path="/accounts-dashboard/salary"
             element={<SalaryOptions />}
@@ -331,7 +323,7 @@ const App = () => {
           path="/employee-dashboard"
           element={
             <PrivateRoutes>
-              <RoleBaseRoutes requiredRole={["employee"]}>
+              <RoleBaseRoutes requiredRole={["employee", "Lead"]}>
                 <EmployeeDashboard />
               </RoleBaseRoutes>
             </PrivateRoutes>
@@ -364,7 +356,11 @@ const App = () => {
           />
           <Route
             path="/employee-dashboard/leave/approve-leaves/:userId"
-            element={<ViewAppliedLeavesTeamLead />}
+            element={
+              <RoleBaseRoutes requiredRole={["Lead"]}>
+                <ViewAppliedLeavesTeamLead />
+              </RoleBaseRoutes>
+            }
           />
           <Route
             path="/employee-dashboard/leave/edit/:_id"

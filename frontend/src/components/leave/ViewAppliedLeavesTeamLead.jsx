@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 const ViewAppliedLeavesTeamLead = () => {
   const { user } = useAuth();
   const userId = user._id;
-
   const [leaves, setLeaves] = useState([]);
   const [filteredLeaves, setFilteredLeaves] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

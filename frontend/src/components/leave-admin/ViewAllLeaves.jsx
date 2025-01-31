@@ -97,12 +97,14 @@ const ViewAllLeaves = () => {
   };
 
   const handleSearch = (event) => {
-    const query = event.target.value;
+    const query = event.target.value.toLowerCase(); // Convert query to lowercase for case-insensitive search
     setSearchQuery(query);
 
-    // Filter by employeeId (handling it as a number)
     const filtered = leaveHistory.filter((leave) => {
-      return leave.employeeId.employeeId.toString().includes(query); // Ensure employeeId is treated as a string
+      return (
+        leave.employeeId.employeeId.toString().includes(query) || // Search by employee ID
+        leave.employeeId.name.toLowerCase().includes(query) // Search by name
+      );
     });
 
     setFilteredHistory(filtered);
@@ -121,7 +123,7 @@ const ViewAllLeaves = () => {
             type="text"
             value={searchQuery}
             onChange={handleSearch}
-            placeholder="Search by Employee ID"
+            placeholder="Search by Employee ID or Name"
             className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>

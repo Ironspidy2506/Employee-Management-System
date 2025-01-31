@@ -1,20 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../context/authContext"; // Assuming you have an authentication context
-import axios from "axios"; // Assuming you're using Axios to make API calls
+import { useAuth } from "../../context/authContext"; // Authentication context
+import axios from "axios";
 import Header from "../HeaderFooter/Header";
 import Footer from "../HeaderFooter/Footer";
 import userImg from "../../assets/user.jpg";
 
 const EmployeeSummary = () => {
-  const { user } = useAuth(); // Get the logged-in user from context
+  const { user } = useAuth();
   const [employee, setEmployee] = useState(null);
+  const [allemployees, setAllEmployees] = useState([]);
+  const [todayBirthdays, setTodayBirthdays] = useState([]);
 
   useEffect(() => {
-    // Fetch employee details from backend
+    // Fetch employee details
     const fetchEmployeeData = async () => {
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/summary/${user._id}`, // Fetching employee data by logged-in user's ID
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/summary/${user._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setEmployee(response.data.employee);
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      }
+    };
+
+    // Fetch all employees
+    const fetchAllEmployees = async () => {
+      try {
+        const response = await axios.get(
+          "https://employee-management-system-backend-objq.onrender.com/api/employees",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -22,13 +41,32 @@ const EmployeeSummary = () => {
           }
         );
 
-        setEmployee(response.data.employee);
+        const employees = response.data.employees;
+        setAllEmployees(employees);
+
+        // Get today's date
+        const today = new Date();
+        const todayDay = today.getDate();
+        const todayMonth = today.getMonth() + 1; // Months are 0-based
+
+        // Filter employees with today's birthday
+        const birthdayList = employees.filter((emp) => {
+          if (!emp.dob) return false;
+          const empDob = new Date(emp.dob);
+          return (
+            empDob.getDate() === todayDay &&
+            empDob.getMonth() + 1 === todayMonth
+          );
+        });
+
+        setTodayBirthdays(birthdayList);
       } catch (error) {
-        console.error("Error fetching employee data:", error);
+        console.error("Error fetching all employees:", error);
       }
     };
 
     fetchEmployeeData();
+    fetchAllEmployees();
   }, [user]);
 
   const capitalizeFirstLetter = (str) => {
@@ -36,12 +74,26 @@ const EmployeeSummary = () => {
   };
 
   if (!employee) {
-    return <div>Loading...</div>; // Show loading indicator while fetching data
+    return <div>Loading...</div>;
   }
 
   return (
     <>
       <Header />
+
+      {/* Marquee for Today's Birthdays */}
+      {todayBirthdays.length > 0 && (
+        <div className="w-full text-xl text-green-600 py-2">
+          <marquee>
+            🎂 Happy Birthday to{" "}
+            {todayBirthdays
+              .map((emp) => `${emp.employeeId} - ${emp.name}`)
+              .join(", ")}
+            ! 🎉
+          </marquee>
+        </div>
+      )}
+
       <div className="w-full mx-auto bg-white shadow-lg rounded-2xl p-8">
         <div className="flex flex-col md:flex-row items-start gap-10">
           {/* Employee Photo */}
@@ -49,7 +101,7 @@ const EmployeeSummary = () => {
             <img
               src={`https://employee-management-system-backend-objq.onrender.com/${employee.userId.profileImage}`}
               alt={employee.name}
-              onError={(e) => (e.target.src = userImg)} // Fallback image
+              onError={(e) => (e.target.src = userImg)}
               className="w-56 h-56 rounded-full object-cover border-4 border-blue-500 shadow-lg"
             />
           </div>

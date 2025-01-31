@@ -129,22 +129,18 @@ const employeeSchema = new mongoose.Schema({
   bank: {
     type: String,
     trim: true,
-    required: true,
   },
   branch: {
     type: String,
     trim: true,
-    required: true,
   },
   ifsc: {
     type: String,
     trim: true,
-    required: true,
   },
   accountNo: {
     type: String,
     trim: true,
-    required: true,
   },
   repperson: {
     type: String,

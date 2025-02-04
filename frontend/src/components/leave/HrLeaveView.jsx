@@ -8,7 +8,7 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ViewAllLeaves = () => {
+const HrLeaveView = () => {
   const { user } = useAuth();
   const [leaveHistory, setLeaveHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
@@ -130,11 +130,11 @@ const ViewAllLeaves = () => {
         <div className="flex justify-start mb-4">
           <button
             onClick={() =>
-              navigate("/admin-dashboard/leave/employeesLeaveBalances")
+              navigate("/hr-dashboard/leave/employeesLeaveBalances")
             }
             className="w-full sm:w-auto px-5 py-2 text-center text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
           >
-            View Remaining Leaves
+            Edit Leave Balances
           </button>
         </div>
 
@@ -183,9 +183,6 @@ const ViewAllLeaves = () => {
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Status
-              </th>
-              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                Actions
               </th>
             </tr>
           </thead>
@@ -236,28 +233,6 @@ const ViewAllLeaves = () => {
                       : ""
                     : null}
                 </td>
-                <td className="flex px-4 py-2 text-sm text-gray-800 space-x-2">
-                  {leave.status === "pending" ? (
-                    <>
-                      <button
-                        onClick={() =>
-                          handleApproveReject(leave._id, "approved")
-                        }
-                        className="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleApproveReject(leave._id, "rejected")
-                        }
-                        className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700"
-                      >
-                        Reject
-                      </button>
-                    </>
-                  ) : null}
-                </td>
               </tr>
             ))}
           </tbody>
@@ -267,4 +242,4 @@ const ViewAllLeaves = () => {
   );
 };
 
-export default ViewAllLeaves;
+export default HrLeaveView;

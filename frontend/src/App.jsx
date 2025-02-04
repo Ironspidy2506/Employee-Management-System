@@ -53,6 +53,7 @@ import EditFixedAllowancesAdmin from "./components/fixed-allowances/EditFixedAll
 import ViewEmployeeCTC from "./components/employee-dashboard/ViewEmployeeCTC";
 import ViewAppliedLeavesTeamLead from "./components/leave/ViewAppliedLeavesTeamLead";
 import HrChangePassword from "./components/hr-dashboard/HrChangePassword";
+import HrLeaveView from "./components/leave/HrLeaveView";
 
 const App = () => {
   return (
@@ -306,7 +307,8 @@ const App = () => {
 
           <Route path="/hr-dashboard/holiday" element={<AlterHoliday />} />
           <Route path="/hr-dashboard/add-employee" element={<AddEmployee />} />
-          <Route path="/hr-dashboard/leave" element={<EditLeaveBalances />} />
+          <Route path="/hr-dashboard/leave" element={<HrLeaveView />} />
+          <Route path="/hr-dashboard/leave/employeesLeaveBalances" element={<EditLeaveBalances />} />
           <Route path="/hr-dashboard/users" element={<UsersData />} />
           <Route path="/hr-dashboard/helpdesk" element={<Helpdesk />} />
           <Route

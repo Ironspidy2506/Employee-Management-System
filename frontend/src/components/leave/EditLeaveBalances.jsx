@@ -43,6 +43,7 @@ const EditLeaveBalances = () => {
           cl: employeeData.leaveBalance.cl,
           sl: employeeData.leaveBalance.sl,
           od: employeeData.leaveBalance.od,
+          others: employeeData.leaveBalance.others,
         },
         {
           headers: {
@@ -175,6 +176,20 @@ const EditLeaveBalances = () => {
                   type="number"
                   name="od"
                   value={employeeData.leaveBalance?.od || 0}
+                  onWheel={(e) => e.target.blur()}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600">
+                  Others
+                </label>
+                <input
+                  type="number"
+                  name="others"
+                  value={employeeData.leaveBalance?.others || 0}
                   onWheel={(e) => e.target.blur()}
                   onChange={handleChange}
                   className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"

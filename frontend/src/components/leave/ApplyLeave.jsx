@@ -68,19 +68,43 @@ const ApplyLeave = () => {
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
       const startDateTime = new Date(
-        `${formData.startDate}T${formData.startTime || "00:00"}`
+        `${formData.startDate}T${formData.startTime || "09:30"}`
       );
       const endDateTime = new Date(
-        `${formData.endDate}T${formData.endTime || "23:59"}`
+        `${formData.endDate}T${formData.endTime || "18:00"}`
       );
 
-      let totalMilliseconds = endDateTime - startDateTime;
-      let totalDays = totalMilliseconds / (1000 * 60 * 60 * 24);
+      let totalDays =
+        Math.floor((endDateTime - startDateTime) / (1000 * 60 * 60 * 24)) + 1;
 
-      if (totalDays % 1 > 0.5) {
-        totalDays = Math.ceil(totalDays);
-      } else if (totalDays % 1 > 0 && totalDays % 1 <= 0.5) {
-        totalDays = Math.floor(totalDays) + 0.5;
+      const startHour = startDateTime.getHours();
+      const startMinutes = startDateTime.getMinutes();
+      const endHour = endDateTime.getHours();
+      const endMinutes = endDateTime.getMinutes();
+
+      // Office working hours
+      const officeStartMinutes = 9 * 60 + 30; // 9:30 AM
+      const halfDayMinutes = 13 * 60 + 30; // 1:30 PM
+      const officeEndMinutes = 18 * 60; // 6:00 PM
+
+      const startTimeInMinutes = startHour * 60 + startMinutes;
+      const endTimeInMinutes = endHour * 60 + endMinutes;
+
+      if (formData.startDate === formData.endDate) {
+        // Same-day leave
+        if (endTimeInMinutes <= halfDayMinutes) {
+          totalDays = 0.5; // Half-day leave
+        } else {
+          totalDays = 1; // Full-day leave
+        }
+      } else {
+        // Multi-day leave calculation
+        if (startTimeInMinutes > halfDayMinutes) {
+          totalDays -= 0.5; // First day is half
+        }
+        if (endTimeInMinutes < halfDayMinutes) {
+          totalDays -= 0.5; // Last day is half
+        }
       }
 
       totalDays = Math.max(totalDays, 0);
@@ -122,6 +146,7 @@ const ApplyLeave = () => {
           },
         }
       );
+      
 
       if (response.data) {
         toast.success("Leave applied successfully");
@@ -233,6 +258,8 @@ const ApplyLeave = () => {
             <option value="el">Earned Leave (EL)</option>
             <option value="sl">Sick Leave (SL)</option>
             <option value="cl">Casual Leave (CL)</option>
+            <option value="od">On Duty (OD)</option>
+            <option value="others">Others</option>
           </select>
         </div>
 

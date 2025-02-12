@@ -11,7 +11,13 @@ const ViewLeaveHistory = () => {
 
   const [leaveHistory, setLeaveHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
-  const [leaveCounts, setLeaveCounts] = useState({ el: 0, cl: 0, sl: 0 });
+  const [leaveCounts, setLeaveCounts] = useState({
+    el: 0,
+    cl: 0,
+    sl: 0,
+    od: 0,
+    others: 0,
+  });
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
   const navigate = useNavigate();
@@ -123,6 +129,10 @@ const ViewLeaveHistory = () => {
             <div className="text-lg font-semibold text-gray-700">
               On Duty (OD): {leaveCounts.od}
             </div>
+            <div className="h-8 w-px bg-gray-300"></div>
+            <div className="text-lg font-semibold text-gray-700">
+              Others: {leaveCounts.others}
+            </div>
           </div>
 
           {/* Apply Leave Button */}
@@ -209,13 +219,25 @@ const ViewLeaveHistory = () => {
                     {formatDate(leave.startDate)}
                   </td>
                   <td className="px-4 py-2 text-base text-center text-gray-800">
-                    {leave.startTime}
+                    {new Date(
+                      `1970-01-01T${leave.startTime}`
+                    ).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
                   </td>
                   <td className="px-4 py-2 text-base text-center text-gray-800">
                     {formatDate(leave.endDate)}
                   </td>
                   <td className="px-4 py-2 text-base text-center text-gray-800">
-                    {leave.endTime}
+                    {new Date(
+                      `1970-01-01T${leave.endTime}`
+                    ).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
                   </td>
                   <td className="px-4 py-2 text-base  text-center text-gray-800">
                     {leave.days}

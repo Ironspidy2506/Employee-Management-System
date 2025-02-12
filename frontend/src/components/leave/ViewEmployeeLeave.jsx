@@ -108,7 +108,7 @@ const ViewEmployeeLeave = () => {
           </div>
         </div>
         {/* Leave Counts */}
-        <div className="flex space-x-6 items-center">
+        <div className="flex gap-2 items-center">
           <div className="text-lg font-semibold text-gray-700">
             Earned Leave (EL): {employee.leaveBalance?.el || 0}{" "}
             {/* Corrected */}
@@ -122,8 +122,13 @@ const ViewEmployeeLeave = () => {
           <div className="text-lg font-semibold text-gray-700">
             Sick Leave (SL): {employee.leaveBalance?.sl || 0} {/* Corrected */}
           </div>
+          <div className="h-8 w-px bg-gray-300"></div>
           <div className="text-lg font-semibold text-gray-700">
             On Duty (OD): {employee.leaveBalance?.od || 0} {/* Corrected */}
+          </div>
+          <div className="h-8 w-px bg-gray-300"></div>
+          <div className="text-lg font-semibold text-gray-700">
+            Others: {employee.leaveBalance?.others || 0} {/* Corrected */}
           </div>
         </div>
       </div>

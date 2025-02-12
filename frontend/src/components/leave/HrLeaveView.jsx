@@ -205,13 +205,27 @@ const HrLeaveView = () => {
                   {formatDate(leave.startDate)}
                 </td>
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {leave.startTime}
+                  {new Date(`1970-01-01T${leave.startTime}`).toLocaleTimeString(
+                    "en-US",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    }
+                  )}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-800">
                   {formatDate(leave.endDate)}
                 </td>
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {leave.endTime}
+                  {new Date(`1970-01-01T${leave.endTime}`).toLocaleTimeString(
+                    "en-US",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    }
+                  )}
                 </td>
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
                   {leave.days}

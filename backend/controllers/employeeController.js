@@ -425,7 +425,8 @@ const getEmployeeSummaryForAllowances = async (req, res) => {
 const updateEmployeeLeaveBalance = async (req, res) => {
   try {
     const { employeeId } = req.params;
-    const { el, cl, sl, od } = req.body;
+    const { el, cl, sl, od, others } = req.body;
+
 
     const employee = await Employee.findOne({ employeeId: employeeId });
     if (!employee) {
@@ -439,7 +440,9 @@ const updateEmployeeLeaveBalance = async (req, res) => {
       cl: cl !== undefined ? cl : employee.leaveBalance.cl,
       sl: sl !== undefined ? sl : employee.leaveBalance.sl,
       od: od !== undefined ? od : employee.leaveBalance.od,
+      others: others !== undefined ? others : employee.leaveBalance.others,
     };
+    
 
     employee.leaveBalance = updatedLeaveBalance;
 

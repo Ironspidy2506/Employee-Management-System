@@ -29,7 +29,7 @@ const leaveSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["el", "sl", "cl", "od"],
+    enum: ["el", "sl", "cl", "od", "others"],
     required: true,
   },
   days: {

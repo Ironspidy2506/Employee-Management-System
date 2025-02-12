@@ -33,7 +33,7 @@ const applyForLeave = async (req, res) => {
       reason,
       leaveType,
       days,
-      appliedTo, // Added this field
+      appliedTo,
     } = req.body;
 
     // Find the employee making the request
@@ -42,10 +42,15 @@ const applyForLeave = async (req, res) => {
       return res.status(404).json({ error: "Employee not found" });
     }
 
-    // Check leave balance
-    const leaveBalance = employee.leaveBalance[leaveType];
-    if (leaveBalance < days) {
-      return res.status(400).json({ message: "Not enough leave balance" });
+    // Convert leaveType to lowercase for case-insensitive comparison
+    const normalizedLeaveType = leaveType.toLowerCase();
+
+    // Skip leave balance check for "od" and "others"
+    if (normalizedLeaveType !== "od" && normalizedLeaveType !== "others") {
+      const leaveBalance = employee.leaveBalance[leaveType];
+      if (leaveBalance < days) {
+        return res.status(400).json({ message: "Not enough leave balance" });
+      }
     }
 
     // Validate appliedTo array (ensure the provided IDs exist)
@@ -115,6 +120,24 @@ const updateLeaveById = async (req, res) => {
       return res.status(404).json({ error: "Leave record not found" });
     }
 
+    // Find the employee who applied for leave
+    const employee = await Employee.findById(leaveHistory.employeeId);
+    if (!employee) {
+      return res.status(404).json({ error: "Employee not found" });
+    }
+
+    // Convert leaveType to lowercase for case-insensitive handling
+    const leaveTypeLower = leaveType.toLowerCase();
+
+    // Check leave balance if leaveType is NOT "od" or "others"
+    if (leaveTypeLower !== "od" && leaveTypeLower !== "others") {
+      const leaveBalance = employee.leaveBalance[leaveTypeLower];
+
+      if (leaveBalance < days) {
+        return res.status(400).json({ message: "Not enough leave balance" });
+      }
+    }
+
     if (appliedTo) {
       if (!Array.isArray(appliedTo) || appliedTo.length === 0) {
         return res.status(400).json({ message: "Invalid 'appliedTo' data" });
@@ -130,7 +153,8 @@ const updateLeaveById = async (req, res) => {
       leaveHistory.appliedTo = appliedTo;
     }
 
-    leaveHistory.type = leaveType;
+    // Update leave record
+    leaveHistory.type = leaveTypeLower;
     leaveHistory.startDate = startDate;
     leaveHistory.startTime = startTime;
     leaveHistory.endDate = endDate;
@@ -227,28 +251,20 @@ const approveOrReject = async (req, res) => {
       return res.status(404).json({ error: "Leave request not found." });
     }
 
-    if (leave.status !== "pending") {
-      return res
-        .status(400)
-        .json({ error: "Only pending leave requests can be updated." });
-    }
-
     const employee = leave.employeeId;
+    const leaveType = leave.type.toLowerCase();
 
     if (action === "approved") {
-      const leaveType = leave.type.toLowerCase();
-      if (employee.leaveBalance[leaveType] < leave.days) {
-        return res.status(400).json({ error: "Insufficient leave balance." });
+      // If the leave type is "OD" or other specified types, increase balance instead of deducting
+      if (["od", "others"].includes(leaveType)) {
+        employee.leaveBalance[leaveType] += leave.days;
+      } else {
+        if (employee.leaveBalance[leaveType] < leave.days) {
+          return res.status(400).json({ error: "Insufficient leave balance." });
+        }
+        employee.leaveBalance[leaveType] -= leave.days;
       }
-
-      employee.leaveBalance[leaveType] -= leave.days;
-      leave.status = "approved";
-      leave.approvedBy = "Admin";
-
       await employee.save();
-    } else if (action === "rejected") {
-      leave.status = "rejected";
-      leave.rejectedBy = "Admin";
     }
 
     await leave.save();

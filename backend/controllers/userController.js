@@ -88,11 +88,10 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
     const { userId } = req.params;
     const { leaveId, action } = req.body;
 
-
     if (!["approve", "reject"].includes(action)) {
       return res.json({
         success: false,
-        message: "Invalid action. Must be 'approved' or 'rejected'.",
+        message: "Invalid action. Must be 'approve' or 'reject'.",
       });
     }
 
@@ -105,8 +104,8 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
     }
 
     const empName = teamLead.name;
-
     const leave = await Leave.findById(leaveId).populate("employeeId");
+
     if (!leave) {
       return res.json({
         success: false,
@@ -114,32 +113,24 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
       });
     }
 
-    if (leave.status !== "pending") {
-      return res.json({
-        success: false,
-        message: "Only pending leave requests can be updated.",
-      });
-    }
-
     const employee = leave.employeeId;
+    const leaveType = leave.type.toLowerCase();
 
     if (action === "approve") {
-      const leaveType = leave.type.toLowerCase();
-      if (employee.leaveBalance[leaveType] < leave.days) {
-        return res.json({
-          success: false,
-          message: `Insufficient leave balance for ${leaveType}.`,
-        });
+      // If the leave type is "OD" or others, increase leave balance instead of deducting
+      if (["od", "others"].includes(leaveType)) {
+        employee.leaveBalance[leaveType] += leave.days;
+      } else {
+        if (employee.leaveBalance[leaveType] < leave.days) {
+          return res.json({
+            success: false,
+            message: `Insufficient leave balance for ${leaveType}.`,
+          });
+        }
+        employee.leaveBalance[leaveType] -= leave.days;
       }
-
-      employee.leaveBalance[leaveType] -= leave.days;
-      leave.status = "approved";
       leave.approvedBy = empName;
-
       await employee.save();
-    } else if (action === "reject") {
-      leave.status = "rejected";
-      leave.rejectedBy = empName;
     }
 
     await leave.save();
@@ -152,7 +143,7 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
       leave,
     });
   } catch (error) {
-    console.error("Error updating leave status:", error);
+    console.error("Error processing leave approval/rejection:", error);
     res.json({
       success: false,
       message: "Internal server error.",

@@ -117,7 +117,7 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
     const leaveType = leave.type.toLowerCase();
 
     if (action === "approve") {
-      // If the leave type is "OD" or others, increase leave balance instead of deducting
+      // If the leave type is "OD" or "others", increase leave balance instead of deducting
       if (["od", "others"].includes(leaveType)) {
         employee.leaveBalance[leaveType] += leave.days;
       } else {
@@ -130,16 +130,18 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
         employee.leaveBalance[leaveType] -= leave.days;
       }
       leave.approvedBy = empName;
+      leave.status = "approved"; // Mark leave as approved
       await employee.save();
+    } else if (action === "reject") {
+      leave.status = "rejected"; // Mark leave as rejected
+      leave.rejectedBy = empName;
     }
 
     await leave.save();
 
     res.json({
       success: true,
-      message: `Leave ${
-        action === "approve" ? "approved" : "rejected"
-      } successfully.`,
+      message: `Leave ${action === "approve" ? "approved" : "rejected"} successfully.`,
       leave,
     });
   } catch (error) {
@@ -150,6 +152,7 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
     });
   }
 };
+
 
 const hrUpdatePassword = async (req, res) => {
   try {

@@ -243,7 +243,7 @@ const approveOrReject = async (req, res) => {
     if (!["approved", "rejected"].includes(action)) {
       return res
         .status(400)
-        .json({ error: "Invalid action. Must be 'approve' or 'reject'." });
+        .json({ error: "Invalid action. Must be 'approved' or 'rejected'." });
     }
 
     const leave = await Leave.findById(leaveId).populate("employeeId");
@@ -251,20 +251,34 @@ const approveOrReject = async (req, res) => {
       return res.status(404).json({ error: "Leave request not found." });
     }
 
+    if (leave.status !== "pending") {
+      return res
+        .status(400)
+        .json({ error: "Only pending leave requests can be updated." });
+    }
+
     const employee = leave.employeeId;
     const leaveType = leave.type.toLowerCase();
 
     if (action === "approved") {
-      // If the leave type is "OD" or other specified types, increase balance instead of deducting
       if (["od", "others"].includes(leaveType)) {
+        // Add leave days for OD or Other leave types
         employee.leaveBalance[leaveType] += leave.days;
       } else {
+        // Deduct leave balance for normal leave types
         if (employee.leaveBalance[leaveType] < leave.days) {
           return res.status(400).json({ error: "Insufficient leave balance." });
         }
         employee.leaveBalance[leaveType] -= leave.days;
       }
+
+      leave.status = "approved";
+      leave.approvedBy = "Admin";
+
       await employee.save();
+    } else if (action === "rejected") {
+      leave.status = "rejected";
+      leave.rejectedBy = "Admin";
     }
 
     await leave.save();

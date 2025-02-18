@@ -43,6 +43,7 @@ const EditLeaveBalances = () => {
           cl: employeeData.leaveBalance.cl,
           sl: employeeData.leaveBalance.sl,
           od: employeeData.leaveBalance.od,
+          lwp: employeeData.leaveBalance.lwp,
           others: employeeData.leaveBalance.others,
         },
         {
@@ -176,6 +177,20 @@ const EditLeaveBalances = () => {
                   type="number"
                   name="od"
                   value={employeeData.leaveBalance?.od || 0}
+                  onWheel={(e) => e.target.blur()}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600">
+                  Leave without pay (LWP)
+                </label>
+                <input
+                  type="number"
+                  name="lwp"
+                  value={employeeData.leaveBalance?.lwp || 0}
                   onWheel={(e) => e.target.blur()}
                   onChange={handleChange}
                   className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"

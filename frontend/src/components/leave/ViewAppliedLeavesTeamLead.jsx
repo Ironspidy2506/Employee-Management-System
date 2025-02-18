@@ -121,6 +121,7 @@ const ViewAppliedLeavesTeamLead = () => {
               <tr>
                 <th className="border px-4 py-2 text-gray-700">Emp ID</th>
                 <th className="border px-4 py-2 text-gray-700">Emp Name</th>
+                <th className="border px-4 py-2 text-gray-700">Leave Type</th>
                 <th className="border px-4 py-2 text-gray-700">Start Date</th>
                 <th className="border px-4 py-2 text-gray-700">Start Time</th>
                 <th className="border px-4 py-2 text-gray-700">End Date</th>
@@ -143,17 +144,31 @@ const ViewAppliedLeavesTeamLead = () => {
                   <td className="border px-4 py-2 text-center">
                     {leave.employeeId.name}
                   </td>
+                  <td className="border px-4 py-2 text-center">{leave.type.toUpperCase()}</td>
                   <td className="border px-4 py-2 text-center">
                     {formatDate(leave.startDate)}
                   </td>
                   <td className="border px-4 py-2 text-center">
-                    {leave.startTime}
+                    {new Date(
+                      `1970-01-01T${leave.startTime}`
+                    ).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
                   </td>
                   <td className="border px-4 py-2 text-center">
                     {formatDate(leave.endDate)}
                   </td>
                   <td className="border px-4 py-2 text-center">
-                    {leave.endTime}
+                    {new Date(`1970-01-01T${leave.endTime}`).toLocaleTimeString(
+                      "en-US",
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      }
+                    )}
                   </td>
                   <td className="border px-4 py-2 text-center">{leave.days}</td>
                   <td className="border px-4 py-2 text-center">

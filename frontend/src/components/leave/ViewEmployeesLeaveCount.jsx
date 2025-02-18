@@ -140,6 +140,9 @@ const ViewEmployeesLeaveCount = () => {
                 On Duty (OD)
               </th>
               <th className="px-4 py-2 text-base text-center font-medium text-gray-700 border border-gray-300">
+                Leave without pay (LWP)
+              </th>
+              <th className="px-4 py-2 text-base text-center font-medium text-gray-700 border border-gray-300">
                 Others
               </th>
             </tr>
@@ -171,6 +174,9 @@ const ViewEmployeesLeaveCount = () => {
                 </td>
                 <td className="px-4 py-2 text-base text-center text-gray-800 border border-gray-300">
                   {employee.leaveBalance?.od || 0}
+                </td>
+                <td className="px-4 py-2 text-base text-center text-gray-800 border border-gray-300">
+                  {employee.leaveBalance?.lwp || 0}
                 </td>
                 <td className="px-4 py-2 text-base text-center text-gray-800 border border-gray-300">
                   {employee.leaveBalance?.others || 0}

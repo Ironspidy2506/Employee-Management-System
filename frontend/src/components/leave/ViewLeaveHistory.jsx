@@ -16,6 +16,7 @@ const ViewLeaveHistory = () => {
     cl: 0,
     sl: 0,
     od: 0,
+    lwp: 0,
     others: 0,
   });
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
@@ -113,24 +114,28 @@ const ViewLeaveHistory = () => {
         {/* Leave Counts and Buttons Section */}
         <div className="flex flex-wrap items-center justify-between p-6 rounded-lg shadow-md bg-white gap-4">
           {/* Leave Counts */}
-          <div className="flex space-x-6 items-center">
-            <div className="text-lg font-semibold text-gray-700">
+          <div className="flex gap-2 items-center">
+            <div className="text-md font-semibold text-gray-700">
               Earned Leave (EL): {leaveCounts.el}
             </div>
             <div className="h-8 w-px bg-gray-300"></div>
-            <div className="text-lg font-semibold text-gray-700">
+            <div className="text-md font-semibold text-gray-700">
               Casual Leave (CL): {leaveCounts.cl}
             </div>
             <div className="h-8 w-px bg-gray-300"></div>
-            <div className="text-lg font-semibold text-gray-700">
+            <div className="text-md font-semibold text-gray-700">
               Sick Leave (SL): {leaveCounts.sl}
             </div>
             <div className="h-8 w-px bg-gray-300"></div>
-            <div className="text-lg font-semibold text-gray-700">
+            <div className="text-md font-semibold text-gray-700">
               On Duty (OD): {leaveCounts.od}
             </div>
             <div className="h-8 w-px bg-gray-300"></div>
-            <div className="text-lg font-semibold text-gray-700">
+            <div className="text-md font-semibold text-gray-700">
+              Leave without pay (LWP): {leaveCounts.od}
+            </div>
+            <div className="h-8 w-px bg-gray-300"></div>
+            <div className="text-md font-semibold text-gray-700">
               Others: {leaveCounts.others}
             </div>
           </div>

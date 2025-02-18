@@ -118,7 +118,7 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
 
     if (action === "approve") {
       // If the leave type is "OD" or "others", increase leave balance instead of deducting
-      if (["od", "others"].includes(leaveType)) {
+      if (["od", "lwp", "others"].includes(leaveType)) {
         employee.leaveBalance[leaveType] += leave.days;
       } else {
         if (employee.leaveBalance[leaveType] < leave.days) {
@@ -141,7 +141,9 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
 
     res.json({
       success: true,
-      message: `Leave ${action === "approve" ? "approved" : "rejected"} successfully.`,
+      message: `Leave ${
+        action === "approve" ? "approved" : "rejected"
+      } successfully.`,
       leave,
     });
   } catch (error) {
@@ -152,7 +154,6 @@ const approveOrRejectLeaveTeamLead = async (req, res) => {
     });
   }
 };
-
 
 const hrUpdatePassword = async (req, res) => {
   try {

@@ -46,7 +46,7 @@ const applyForLeave = async (req, res) => {
     const normalizedLeaveType = leaveType.toLowerCase();
 
     // Skip leave balance check for "od" and "others"
-    if (normalizedLeaveType !== "od" && normalizedLeaveType !== "others") {
+    if (normalizedLeaveType !== "od" && normalizedLeaveType !== "lwp" && normalizedLeaveType !== "others") {
       const leaveBalance = employee.leaveBalance[leaveType];
       if (leaveBalance < days) {
         return res.status(400).json({ message: "Not enough leave balance" });
@@ -130,7 +130,7 @@ const updateLeaveById = async (req, res) => {
     const leaveTypeLower = leaveType.toLowerCase();
 
     // Check leave balance if leaveType is NOT "od" or "others"
-    if (leaveTypeLower !== "od" && leaveTypeLower !== "others") {
+    if (leaveTypeLower !== "od" && leaveTypeLower !== "others" && leaveTypeLower !== "lwp") {
       const leaveBalance = employee.leaveBalance[leaveTypeLower];
 
       if (leaveBalance < days) {
@@ -203,19 +203,19 @@ const getLeaveBalance = async (req, res) => {
     const employee = await Employee.findOne({ userId });
 
     if (!employee) {
-      return res.status(404).json({
+      return res.json({
         success: false,
         message: "Employee not found",
       });
     }
 
-    res.status(200).json({
+    res.json({
       success: true,
       leaveBalance: employee.leaveBalance,
     });
   } catch (error) {
     console.error("Error fetching leave balance:", error);
-    res.status(500).json({
+    res.json({
       success: false,
       message: "Error fetching leave balance",
     });
@@ -242,7 +242,6 @@ const approveOrReject = async (req, res) => {
 
     if (!["approved", "rejected"].includes(action)) {
       return res
-        .status(400)
         .json({ error: "Invalid action. Must be 'approved' or 'rejected'." });
     }
 
@@ -261,7 +260,7 @@ const approveOrReject = async (req, res) => {
     const leaveType = leave.type.toLowerCase();
 
     if (action === "approved") {
-      if (["od", "others"].includes(leaveType)) {
+      if (["od", "lwp", "others"].includes(leaveType)) {
         // Add leave days for OD or Other leave types
         employee.leaveBalance[leaveType] += leave.days;
       } else {

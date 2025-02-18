@@ -94,8 +94,8 @@ const ViewEmployeeLeave = () => {
   return (
     <div className="overflow-x-auto p-4 mt-2">
       <h2 className="text-2xl font-bold mb-4">Leave History</h2>
-      <div className="flex flex-wrap items-center justify-between p-6 rounded-lg shadow-md bg-white gap-4 mb-4">
-        <div className=" p-4 rounded-lg">
+      <div className="flex flex-wrap items-center justify-between p-6 rounded-lg shadow-md bg-white gap-2 mb-4">
+        <div className="rounded-lg">
           <div>
             <p className="text-lg font-medium text-gray-600">
               <span className="font-semibold text-gray-800">Emp Id:</span>{" "}
@@ -109,25 +109,29 @@ const ViewEmployeeLeave = () => {
         </div>
         {/* Leave Counts */}
         <div className="flex gap-2 items-center">
-          <div className="text-lg font-semibold text-gray-700">
+          <div className="text-md font-semibold text-gray-700">
             Earned Leave (EL): {employee.leaveBalance?.el || 0}{" "}
             {/* Corrected */}
           </div>
           <div className="h-8 w-px bg-gray-300"></div>
-          <div className="text-lg font-semibold text-gray-700">
+          <div className="text-md font-semibold text-gray-700">
             Casual Leave (CL): {employee.leaveBalance?.cl || 0}{" "}
             {/* Corrected */}
           </div>
           <div className="h-8 w-px bg-gray-300"></div>
-          <div className="text-lg font-semibold text-gray-700">
+          <div className="text-md font-semibold text-gray-700">
             Sick Leave (SL): {employee.leaveBalance?.sl || 0} {/* Corrected */}
           </div>
           <div className="h-8 w-px bg-gray-300"></div>
-          <div className="text-lg font-semibold text-gray-700">
+          <div className="text-md font-semibold text-gray-700">
             On Duty (OD): {employee.leaveBalance?.od || 0} {/* Corrected */}
           </div>
           <div className="h-8 w-px bg-gray-300"></div>
-          <div className="text-lg font-semibold text-gray-700">
+          <div className="text-md font-semibold text-gray-700">
+            Leave without pay (LWP): {employee.leaveBalance?.lwp || 0} {/* Corrected */}
+          </div>
+          <div className="h-8 w-px bg-gray-300"></div>
+          <div className="text-md font-semibold text-gray-700">
             Others: {employee.leaveBalance?.others || 0} {/* Corrected */}
           </div>
         </div>

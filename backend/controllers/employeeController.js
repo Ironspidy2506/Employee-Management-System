@@ -8,17 +8,6 @@ import Salary from "../models/Salary.js";
 import Leave from "../models/Leave.js";
 import Allowance from "../models/Allowances.js";
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/uploads");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage: storage });
-
 const addEmployee = async (req, res) => {
   try {
     const {
@@ -71,13 +60,21 @@ const addEmployee = async (req, res) => {
     // Hash the password before saving
     const hashPassword = await bcrypt.hash(password, 10);
 
+    // Handle profile image (Convert to Base64)
+    let profileImage = "";
+    if (req.file) {
+      profileImage = `data:${
+        req.file.mimetype
+      };base64,${req.file.buffer.toString("base64")}`;
+    }
+
     // Create new User
     const newUser = new User({
       name,
       email,
       password: hashPassword,
       role: role.toLowerCase(),
-      profileImage: req.file ? req.file.filename : "",
+      profileImage: profileImage, // Store Base64 image
     });
 
     const savedUser = await newUser.save();
@@ -221,8 +218,6 @@ const updateEmployee = async (req, res) => {
       doj,
     } = req.body;
 
-    const profileImage = req.file ? req.file.filename : null;
-
     // Find the employee document by ID
     const employee = await Employee.findById(_id);
     if (!employee) {
@@ -237,12 +232,20 @@ const updateEmployee = async (req, res) => {
       return res.status(404).json({ success: false, error: "User Not Found" });
     }
 
+    // Handle profile image (Convert to Base64)
+    let profileImage = user.profileImage; // Keep existing image if not updated
+    if (req.file) {
+      profileImage = `data:${
+        req.file.mimetype
+      };base64,${req.file.buffer.toString("base64")}`;
+    }
+
     // Update the user document
     const updatedUserFields = {
       ...(name && { name }),
       ...(email && { email }),
       ...(role && { role }),
-      ...(profileImage && { profileImage }),
+      ...(profileImage && { profileImage }), // Update image only if available
     };
 
     if (Object.keys(updatedUserFields).length > 0) {
@@ -427,7 +430,6 @@ const updateEmployeeLeaveBalance = async (req, res) => {
     const { employeeId } = req.params;
     const { el, cl, sl, od, others } = req.body;
 
-
     const employee = await Employee.findOne({ employeeId: employeeId });
     if (!employee) {
       return res
@@ -442,7 +444,6 @@ const updateEmployeeLeaveBalance = async (req, res) => {
       od: od !== undefined ? od : employee.leaveBalance.od,
       others: others !== undefined ? others : employee.leaveBalance.others,
     };
-    
 
     employee.leaveBalance = updatedLeaveBalance;
 
@@ -533,7 +534,6 @@ const getGrossSalary = async (req, res) => {
 
 export {
   addEmployee,
-  upload,
   getEmployees,
   getEmployee,
   updateEmployee,

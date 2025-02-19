@@ -23,6 +23,7 @@ const EmployeeSummary = () => {
             },
           }
         );
+
         setEmployee(response.data.employee);
       } catch (error) {
         console.error("Error fetching employee data:", error);
@@ -99,7 +100,7 @@ const EmployeeSummary = () => {
           {/* Employee Photo */}
           <div className="flex-shrink-0">
             <img
-              src={`https://employee-management-system-backend-objq.onrender.com/${employee.userId.profileImage}`}
+              src={employee.userId.profileImage}
               alt={employee.name}
               onError={(e) => (e.target.src = userImg)}
               className="w-56 h-56 rounded-full object-cover border-4 border-blue-500 shadow-lg"

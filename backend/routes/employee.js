@@ -1,6 +1,7 @@
 import express from 'express';
 import authMiddleware from '../middleware/authMiddleware.js'
-import { addEmployee, upload, getEmployee, getEmployees, updateEmployee, fetchEmployeesByDepId, getEmployeeForSummary, getSalaryDetailsOfEmployee, getEmployeeLeaves, deleteEmployee, getEmployeeSummaryForAllowances, updateEmployeeLeaveBalance, updateEmployeeJourney, getGrossSalary } from '../controllers/employeeController.js';
+import upload from '../config/multer.js';
+import { addEmployee, getEmployee, getEmployees, updateEmployee, fetchEmployeesByDepId, getEmployeeForSummary, getSalaryDetailsOfEmployee, getEmployeeLeaves, deleteEmployee, getEmployeeSummaryForAllowances, updateEmployeeLeaveBalance, updateEmployeeJourney, getGrossSalary } from '../controllers/employeeController.js';
 
 const router = express.Router();
 

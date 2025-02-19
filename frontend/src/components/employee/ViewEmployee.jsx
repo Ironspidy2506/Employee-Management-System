@@ -60,7 +60,6 @@ const ViewEmployee = () => {
             <img
               src={`https://employee-management-system-backend-objq.onrender.com/${employee.userId.profileImage}`}
               alt={employee.name}
-              onError={(e) => (e.target.src = userImg)} // Fallback image
               className="w-56 h-56 rounded-full object-cover border-4 border-blue-500 shadow-lg"
             />
           </div>

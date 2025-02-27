@@ -672,6 +672,7 @@ const AddEmployee = () => {
                 {/* <option value="Accounts">Accounts</option> */}
                 {/* <option value="HR">HR</option> */}
                 <option value="Employee">Employee</option>
+                {/* <option value="Lead">Team Lead</option> */}
               </select>
             </div>
 

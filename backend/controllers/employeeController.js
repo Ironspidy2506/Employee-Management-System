@@ -121,13 +121,9 @@ const addEmployee = async (req, res) => {
 
     await newEmployee.save();
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Employee Added Successfully!" });
+    return res.json({ success: true, message: "Employee Added Successfully!" });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ success: false, error: "Add Employee Server Error" });
+    return res.json({ success: false, error: "Add Employee Server Error" });
   }
 };
 
@@ -221,15 +217,13 @@ const updateEmployee = async (req, res) => {
     // Find the employee document by ID
     const employee = await Employee.findById(_id);
     if (!employee) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Employee Not Found" });
+      return res.json({ success: false, error: "Employee Not Found" });
     }
 
     // Find the associated user document
     const user = await User.findById(employee.userId);
     if (!user) {
-      return res.status(404).json({ success: false, error: "User Not Found" });
+      return res.json({ success: false, error: "User Not Found" });
     }
 
     // Handle profile image (Convert to Base64)

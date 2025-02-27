@@ -1,5 +1,6 @@
 import Employee from "../models/Employee.js";
 import Leave from "../models/Leave.js";
+import transporter from "../config/nodemailer.js";
 
 const getLeaveHistory = async (req, res) => {
   try {
@@ -46,7 +47,11 @@ const applyForLeave = async (req, res) => {
     const normalizedLeaveType = leaveType.toLowerCase();
 
     // Skip leave balance check for "od" and "others"
-    if (normalizedLeaveType !== "od" && normalizedLeaveType !== "lwp" && normalizedLeaveType !== "others") {
+    if (
+      normalizedLeaveType !== "od" &&
+      normalizedLeaveType !== "lwp" &&
+      normalizedLeaveType !== "others"
+    ) {
       const leaveBalance = employee.leaveBalance[leaveType];
       if (leaveBalance < days) {
         return res.status(400).json({ message: "Not enough leave balance" });
@@ -65,6 +70,17 @@ const applyForLeave = async (req, res) => {
         .json({ message: "One or more approvers not found" });
     }
 
+    const formatDate = (date) => {
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    };
+
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
+
     // Create the leave
     const newLeave = new Leave({
       employeeId: employee._id,
@@ -81,12 +97,32 @@ const applyForLeave = async (req, res) => {
     await newLeave.save();
     await employee.save();
 
-    res
-      .status(201)
-      .json({ message: "Leave applied successfully", leave: newLeave });
+    // Extract approvers' emails
+    const approverEmails = approvers
+      .map((approver) => approver.email)
+      .join(",");
+
+    // Send email to all approvers
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: approverEmails, // Sending email to all approvers
+      subject: "New Leave Application",
+      html: `
+        <p>Dear Approver,</p>
+        <p><strong>${employee.name}</strong> has applied for leave from <strong>${formattedStartDate}</strong> to <strong>${formattedEndDate}</strong>.</p>
+        <p><strong>Reason:</strong> ${reason}</p>
+        <p>Please review the request.</p>
+        <br>
+        <p>Best Regards,<br><strong>Korus Engineering Solutions Pvt. Ltd.</strong></p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.json({ message: "Leave applied successfully", leave: newLeave });
   } catch (error) {
     console.error("Error applying for leave:", error);
-    res.status(500).json({ message: "Server error" });
+    res.json({ message: "Server error" });
   }
 };
 
@@ -130,7 +166,11 @@ const updateLeaveById = async (req, res) => {
     const leaveTypeLower = leaveType.toLowerCase();
 
     // Check leave balance if leaveType is NOT "od" or "others"
-    if (leaveTypeLower !== "od" && leaveTypeLower !== "others" && leaveTypeLower !== "lwp") {
+    if (
+      leaveTypeLower !== "od" &&
+      leaveTypeLower !== "others" &&
+      leaveTypeLower !== "lwp"
+    ) {
       const leaveBalance = employee.leaveBalance[leaveTypeLower];
 
       if (leaveBalance < days) {
@@ -241,8 +281,9 @@ const approveOrReject = async (req, res) => {
     const { leaveId, action } = req.params;
 
     if (!["approved", "rejected"].includes(action)) {
-      return res
-        .json({ error: "Invalid action. Must be 'approved' or 'rejected'." });
+      return res.json({
+        error: "Invalid action. Must be 'approved' or 'rejected'.",
+      });
     }
 
     const leave = await Leave.findById(leaveId).populate("employeeId");

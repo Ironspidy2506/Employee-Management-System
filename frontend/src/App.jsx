@@ -54,6 +54,7 @@ import ViewEmployeeCTC from "./components/employee-dashboard/ViewEmployeeCTC";
 import ViewAppliedLeavesTeamLead from "./components/leave/ViewAppliedLeavesTeamLead";
 import HrChangePassword from "./components/hr-dashboard/HrChangePassword";
 import HrLeaveView from "./components/leave/HrLeaveView";
+import AnnualAppraisalForm from "./components/appraisal/AnnualAppraisalForm";
 
 const App = () => {
   return (
@@ -138,6 +139,10 @@ const App = () => {
           <Route
             path="/admin-dashboard/performance"
             element={<ViewPerformanceAdmin />}
+          />
+          <Route
+            path="/admin-dashboard/appraisal"
+            element={<AnnualAppraisalForm />}
           />
           <Route path="/admin-dashboard/ctc" element={<ViewEmployeeCTC />} />
 
@@ -262,6 +267,10 @@ const App = () => {
             path="/accounts-dashboard/performance"
             element={<ViewPerformanceAdmin />}
           />
+          {/* <Route
+            path="/accounts-dashboard/appraisal"
+            element={<AnnualAppraisalForm />}
+          /> */}
         </Route>
 
         <Route
@@ -314,6 +323,10 @@ const App = () => {
           <Route
             path="/hr-dashboard/performance"
             element={<ViewPerformanceAdmin />}
+          />
+          <Route
+            path="/hr-dashboard/appraisal"
+            element={<AnnualAppraisalForm />}
           />
           <Route
             path="/hr-dashboard/onboarding-offboarding"

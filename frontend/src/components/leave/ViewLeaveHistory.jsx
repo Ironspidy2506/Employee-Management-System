@@ -204,6 +204,9 @@ const ViewLeaveHistory = () => {
                   No. of Days
                 </th>
                 <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
+                  Attachment
+                </th>
+                <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
                   Status
                 </th>
                 <th className="px-4 py-2 text-center text-base font-medium text-gray-700">
@@ -236,17 +239,38 @@ const ViewLeaveHistory = () => {
                     {formatDate(leave.endDate)}
                   </td>
                   <td className="px-4 py-2 text-base text-center text-gray-800">
-                    {new Date(
-                      `1970-01-01T${leave.endTime}`
-                    ).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}
+                    {new Date(`1970-01-01T${leave.endTime}`).toLocaleTimeString(
+                      "en-US",
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      }
+                    )}
                   </td>
                   <td className="px-4 py-2 text-base  text-center text-gray-800">
                     {leave.days}
                   </td>
+                  <td className="px-4 py-2 text-sm text-center text-gray-800">
+                    {leave.attachment ? (
+                      <button
+                        onClick={() =>
+                          window.open(
+                            `https://employee-management-system-backend-objq.onrender.com/api/leaves/attachment/${leave._id}`,
+                            "_blank"
+                          )
+                        }
+                        className="text-white bg-blue-600 rounded hover:bg-blue-700 px-3 py-2"
+                      >
+                        View
+                      </button>
+                    ) : (
+                      <span className="text-gray-500 text-sm">
+                        No Attachment
+                      </span>
+                    )}
+                  </td>
+
                   <td
                     className={`px-4 py-2 text-base text-center font-semibold ${getStatusColor(
                       leave.status
@@ -255,10 +279,10 @@ const ViewLeaveHistory = () => {
                     {leave.status.charAt(0).toUpperCase() +
                       leave.status.slice(1)}
                   </td>
-                  <td className="flex items-center justify-center px-4 py-2 text-base text-gray-800 space-x-2">
+                  <td className="px-4 py-2 text-base text-gray-800 space-x-2">
                     {leave.status !== "approved" &&
                     leave.status !== "rejected" ? (
-                      <div className="flex flex-col lg:flex-row gap-2">
+                      <div className="flex flex-col justify-center items-center lg:flex-row gap-2">
                         <button
                           onClick={() =>
                             navigate(

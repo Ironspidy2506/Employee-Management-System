@@ -26,16 +26,19 @@ const getLeaveHistory = async (req, res) => {
 const applyForLeave = async (req, res) => {
   try {
     const { userId } = req.params;
-    const {
-      startDate,
-      startTime,
-      endDate,
-      endTime,
-      reason,
-      leaveType,
-      days,
-      appliedTo,
-    } = req.body;
+    const { startDate, startTime, endDate, endTime, reason, leaveType, days } =
+      req.body;
+
+    // Parse appliedTo field
+    let appliedTo = [];
+    try {
+      appliedTo = JSON.parse(req.body.appliedTo || "[]"); // Convert back to array
+      if (!Array.isArray(appliedTo) || appliedTo.length === 0) {
+        return res.status(400).json({ message: "Invalid 'appliedTo' data" });
+      }
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid 'appliedTo' format" });
+    }
 
     // Find the employee making the request
     const employee = await Employee.findOne({ userId });
@@ -43,26 +46,18 @@ const applyForLeave = async (req, res) => {
       return res.status(404).json({ error: "Employee not found" });
     }
 
-    // Convert leaveType to lowercase for case-insensitive comparison
-    const normalizedLeaveType = leaveType.toLowerCase();
+    // Convert leaveType to lowercase for consistency
+    const leaveTypeLower = leaveType.toLowerCase();
 
-    // Skip leave balance check for "od" and "others"
-    if (
-      normalizedLeaveType !== "od" &&
-      normalizedLeaveType !== "lwp" &&
-      normalizedLeaveType !== "others"
-    ) {
-      const leaveBalance = employee.leaveBalance[leaveType];
+    // Skip leave balance check for "od", "others", and "lwp"
+    if (!["od", "others", "lwp"].includes(leaveTypeLower)) {
+      const leaveBalance = employee.leaveBalance[leaveTypeLower];
       if (leaveBalance < days) {
         return res.status(400).json({ message: "Not enough leave balance" });
       }
     }
 
-    // Validate appliedTo array (ensure the provided IDs exist)
-    if (!Array.isArray(appliedTo) || appliedTo.length === 0) {
-      return res.status(400).json({ message: "Invalid 'appliedTo' data" });
-    }
-
+    // Validate if approvers exist
     const approvers = await Employee.find({ _id: { $in: appliedTo } });
     if (approvers.length !== appliedTo.length) {
       return res
@@ -70,18 +65,17 @@ const applyForLeave = async (req, res) => {
         .json({ message: "One or more approvers not found" });
     }
 
-    const formatDate = (date) => {
-      const d = new Date(date);
-      const day = String(d.getDate()).padStart(2, "0");
-      const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-      const year = d.getFullYear();
-      return `${day}-${month}-${year}`;
-    };
+    // Handle file attachments
+    let attachment = null;
+    if (req.file) {
+      attachment = {
+        fileName: req.file.originalname,
+        fileType: req.file.mimetype,
+        fileData: req.file.buffer, // Store file as Buffer
+      };
+    }
 
-    const formattedStartDate = formatDate(startDate);
-    const formattedEndDate = formatDate(endDate);
-
-    // Create the leave
+    // Create the leave entry
     const newLeave = new Leave({
       employeeId: employee._id,
       startDate,
@@ -89,27 +83,27 @@ const applyForLeave = async (req, res) => {
       endDate,
       endTime,
       reason,
-      type: leaveType,
+      type: leaveTypeLower,
       days,
       appliedTo,
+      attachment, // Single attachment (matching updateLeaveById)
     });
 
     await newLeave.save();
-    await employee.save();
 
     // Extract approvers' emails
     const approverEmails = approvers
       .map((approver) => approver.email)
       .join(",");
 
-    // Send email to all approvers
+    // Send email notification
     const mailOptions = {
       from: process.env.SENDER_EMAIL,
-      to: approverEmails, // Sending email to all approvers
+      to: approverEmails,
       subject: "New Leave Application",
       html: `
         <p>Dear Approver,</p>
-        <p><strong>${employee.name}</strong> has applied for leave from <strong>${formattedStartDate}</strong> to <strong>${formattedEndDate}</strong>.</p>
+        <p><strong>${employee.name}</strong> has applied for leave from <strong>${startDate}</strong> to <strong>${endDate}</strong>.</p>
         <p><strong>Reason:</strong> ${reason}</p>
         <p>Please review the request.</p>
         <br>
@@ -119,10 +113,12 @@ const applyForLeave = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    res.json({ message: "Leave applied successfully", leave: newLeave });
+    res
+      .status(200)
+      .json({ message: "Leave applied successfully", leave: newLeave });
   } catch (error) {
     console.error("Error applying for leave:", error);
-    res.json({ message: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -140,17 +136,14 @@ const getLeaveById = async (req, res) => {
 const updateLeaveById = async (req, res) => {
   try {
     const { _id } = req.params;
-    const {
-      leaveType,
-      startDate,
-      startTime,
-      endDate,
-      endTime,
-      days,
-      reason,
-      appliedTo,
-    } = req.body;
 
+    // Parse JSON fields
+    const appliedTo = JSON.parse(req.body.appliedTo || "[]"); // Convert back to array
+
+    const { startDate, startTime, endDate, endTime, reason, leaveType, days } =
+      req.body;
+
+    // Find the leave record
     const leaveHistory = await Leave.findById(_id);
     if (!leaveHistory) {
       return res.status(404).json({ error: "Leave record not found" });
@@ -162,38 +155,37 @@ const updateLeaveById = async (req, res) => {
       return res.status(404).json({ error: "Employee not found" });
     }
 
-    // Convert leaveType to lowercase for case-insensitive handling
+    // Convert leaveType to lowercase for consistency
     const leaveTypeLower = leaveType.toLowerCase();
 
-    // Check leave balance if leaveType is NOT "od" or "others"
-    if (
-      leaveTypeLower !== "od" &&
-      leaveTypeLower !== "others" &&
-      leaveTypeLower !== "lwp"
-    ) {
+    // Check leave balance if leaveType is NOT "od", "others", or "lwp"
+    if (!["od", "others", "lwp"].includes(leaveTypeLower)) {
       const leaveBalance = employee.leaveBalance[leaveTypeLower];
-
       if (leaveBalance < days) {
         return res.status(400).json({ message: "Not enough leave balance" });
       }
     }
 
-    if (appliedTo) {
-      if (!Array.isArray(appliedTo) || appliedTo.length === 0) {
-        return res.status(400).json({ message: "Invalid 'appliedTo' data" });
-      }
+    // Validate and update appliedTo field
+    const approvers = await Employee.find({ _id: { $in: appliedTo } });
+    if (approvers.length !== appliedTo.length) {
+      return res
+        .status(404)
+        .json({ message: "One or more approvers not found" });
+    }
+    leaveHistory.appliedTo = appliedTo;
 
-      const approvers = await Employee.find({ _id: { $in: appliedTo } });
-      if (approvers.length !== appliedTo.length) {
-        return res
-          .status(404)
-          .json({ message: "One or more approvers not found" });
-      }
-
-      leaveHistory.appliedTo = appliedTo;
+    // Handle file attachment if present
+    if (req.file) {
+      console.log("File uploaded:", req.file);
+      leaveHistory.attachment = {
+        fileName: req.file.originalname,
+        fileType: req.file.mimetype,
+        fileData: req.file.buffer, // Store file as Buffer
+      };
     }
 
-    // Update leave record
+    // Update leave record fields
     leaveHistory.type = leaveTypeLower;
     leaveHistory.startDate = startDate;
     leaveHistory.startTime = startTime;
@@ -202,8 +194,9 @@ const updateLeaveById = async (req, res) => {
     leaveHistory.days = days;
     leaveHistory.reason = reason;
 
+    // Save the updated leave record
     const updatedLeave = await leaveHistory.save();
-    res.status(200).json(updatedLeave);
+    res.json({ message: "Leave updated successfully", leave: updatedLeave });
   } catch (error) {
     console.error("Error updating leave record:", error);
     res.status(500).json({ error: "Failed to update leave record" });
@@ -350,6 +343,23 @@ const getSummary = async (req, res) => {
   }
 };
 
+const getLeaveAttachment = async (req, res) => {
+  try {
+    const { leaveId } = req.params;
+    const leave = await Leave.findById(leaveId);
+
+    if (!leave || !leave.attachment) {
+      return res.status(404).json({ message: "Attachment not found" });
+    }
+
+    res.set("Content-Type", leave.attachment.fileType);
+    res.send(leave.attachment.fileData);
+  } catch (error) {
+    console.error("Error fetching attachment:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export {
   getLeaveHistory,
   applyForLeave,
@@ -360,4 +370,5 @@ export {
   getAllLeaves,
   approveOrReject,
   getSummary,
+  getLeaveAttachment,
 };

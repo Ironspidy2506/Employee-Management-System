@@ -47,6 +47,11 @@ const leaveSchema = new mongoose.Schema({
       ref: "employee",
     },
   ],
+  attachment: {
+    fileName: String,
+    fileType: String,
+    fileData: Buffer,
+  },
   approvedBy: {
     type: String,
   },

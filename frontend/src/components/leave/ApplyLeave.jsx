@@ -20,7 +20,8 @@ const ApplyLeave = () => {
     reason: "",
     leaveType: "el",
     days: 0,
-    appliedTo: [], // New field for selected employees
+    appliedTo: [],
+    attachment: null, // Add this field
   });
 
   const [employees, setEmployees] = useState([]); // To store the list of employees
@@ -125,16 +126,20 @@ const ApplyLeave = () => {
     setIsSubmitting(true);
     const userId = user._id;
 
-    const leaveData = {
-      startDate: formData.startDate,
-      startTime: formData.startTime,
-      endDate: formData.endDate,
-      endTime: formData.endTime,
-      reason: formData.reason,
-      leaveType: formData.leaveType,
-      days: formData.days,
-      appliedTo: formData.appliedTo, // Include selected employees
-    };
+    const leaveData = new FormData();
+    leaveData.append("startDate", formData.startDate);
+    leaveData.append("startTime", formData.startTime);
+    leaveData.append("endDate", formData.endDate);
+    leaveData.append("endTime", formData.endTime);
+    leaveData.append("reason", formData.reason);
+    leaveData.append("leaveType", formData.leaveType);
+    leaveData.append("days", formData.days);
+    leaveData.append("appliedTo", JSON.stringify(formData.appliedTo)); // Convert array to string
+
+    // Append file if it exists
+    if (formData.attachment) {
+      leaveData.append("attachment", formData.attachment);
+    }
 
     try {
       const response = await axios.post(
@@ -143,6 +148,7 @@ const ApplyLeave = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -153,15 +159,24 @@ const ApplyLeave = () => {
           navigate("/employee-dashboard/leave");
         }, 2000);
       } else {
-        toast.error("There was an error applying for leave.");
+        toast.error(response.data.message);
         setIsSubmitting(false);
       }
     } catch (error) {
       console.error("Error submitting leave:", error);
-      toast.error("There was an error submitting your leave request.");
+      toast.error(error.response.data.message);
       setIsSubmitting(false);
     }
   };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]; // Get the first selected file
+    setFormData((prevData) => ({
+      ...prevData,
+      attachment: file,
+    }));
+  };
+
   return (
     <div className="mt-5 max-w-auto mx-auto p-6 bg-white shadow-md rounded-md">
       <Header />
@@ -235,18 +250,6 @@ const ApplyLeave = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-800 mb-2">Reason</label>
-          <textarea
-            name="reason"
-            value={formData.reason}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            rows="3"
-            required
-          />
-        </div>
-
-        <div className="mb-4">
           <label className="block text-gray-800 mb-2">Leave Type</label>
           <select
             name="leaveType"
@@ -261,6 +264,31 @@ const ApplyLeave = () => {
             <option value="lwp">Leave without pay (LWP)</option>
             <option value="others">Others</option>
           </select>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-800 mb-2">Reason</label>
+          <textarea
+            name="reason"
+            value={formData.reason}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            rows="3"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-800 mb-2">
+            Attachments (If any) (Single File to be uploaded)
+          </label>
+          <input
+            type="file"
+            name="attachment"
+            accept=".pdf,.doc,.docx,.jpg,.png" // Specify allowed file types if needed
+            onChange={handleFileChange}
+            className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
         </div>
 
         <div className="mb-6">

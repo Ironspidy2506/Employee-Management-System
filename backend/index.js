@@ -16,9 +16,10 @@ import holidayRouter from "./routes/holiday.js";
 import performanceRouter from "./routes/performance.js";
 
 const app = express();
+config({ path: ".env" });
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-config({ path: ".env" });
 
 app.use(
   cors({

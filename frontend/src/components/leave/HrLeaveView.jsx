@@ -181,6 +181,9 @@ const HrLeaveView = () => {
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                 Reason
               </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                Attachment
+              </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Status
               </th>
@@ -232,6 +235,23 @@ const HrLeaveView = () => {
                 </td>
                 <td className="px-4 py-2 text-sm text-left text-gray-800">
                   {leave.reason}
+                </td>
+                <td className="px-4 py-2 text-sm text-center text-gray-800">
+                  {leave.attachment ? (
+                    <button
+                      onClick={() =>
+                        window.open(
+                          `https://employee-management-system-backend-objq.onrender.com/api/leaves/attachment/${leave._id}`,
+                          "_blank"
+                        )
+                      }
+                      className="px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                    >
+                      View
+                    </button>
+                  ) : (
+                    <span className="text-gray-500 text-sm">No Attachment</span>
+                  )}
                 </td>
                 <td
                   className={`px-4 py-2 text-center text-sm font-semibold ${getStatusColor(

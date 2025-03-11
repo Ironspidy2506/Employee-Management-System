@@ -25,7 +25,17 @@ const EditLeave = () => {
     appliedTo: [],
   };
 
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState({
+    startDate: "",
+    startTime: "",
+    endDate: "",
+    endTime: "",
+    reason: "",
+    leaveType: "el",
+    days: 0,
+    appliedTo: [],
+    attachment: null, // Add this field
+  });
   const [employees, setEmployees] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -66,7 +76,7 @@ const EditLeave = () => {
   }, []);
 
   useEffect(() => {
-    const fetchLeaveData = async () => {
+    const fetchpayload = async () => {
       try {
         const data = await getLeaveById(_id);
         setFormData({
@@ -82,15 +92,13 @@ const EditLeave = () => {
             label: `${approver.employeeId} - ${approver.name}`,
           })),
         });
-
-        console.log(formData.appliedTo);
       } catch (err) {
         console.error("Error fetching leave data:", err);
         toast.error("Failed to fetch leave data.");
       }
     };
 
-    fetchLeaveData();
+    fetchpayload();
   }, [_id]);
 
   const handleChange = (e) => {
@@ -165,12 +173,30 @@ const EditLeave = () => {
     setIsSubmitting(true);
 
     try {
-      const payload = {
-        ...formData,
-        appliedTo: formData.appliedTo.map((approver) => approver.value),
-      };
+      const payload = new FormData();
+      payload.append("startDate", formData.startDate);
+      payload.append("startTime", formData.startTime);
+
+      payload.append("endDate", formData.endDate);
+      payload.append("endTime", formData.endTime);
+
+      payload.append("reason", formData.reason);
+      payload.append("leaveType", formData.leaveType);
+      payload.append("days", formData.days);
+
+      // Append approvers as array
+      payload.append(
+        "appliedTo", 
+        JSON.stringify(formData.appliedTo.map((approver) => approver.value))
+      );
+
+      // Append file if selected
+      if (formData.attachment) {
+        payload.append("attachment", formData.attachment);
+      }
 
       await updateLeave(_id, payload);
+
       toast.success("Leave updated successfully!");
       setTimeout(() => {
         navigate("/employee-dashboard/leave");
@@ -181,6 +207,14 @@ const EditLeave = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]; // Get the first selected file
+    setFormData((prevData) => ({
+      ...prevData,
+      attachment: file,
+    }));
   };
 
   return (
@@ -254,18 +288,6 @@ const EditLeave = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Reason</label>
-            <textarea
-              name="reason"
-              value={formData.reason}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows="3"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
             <label className="block text-gray-700 mb-2">Leave Type</label>
             <select
               name="leaveType"
@@ -280,6 +302,31 @@ const EditLeave = () => {
               <option value="lwp">Leave without pay (LWP)</option>
               <option value="others">Others</option>
             </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-800 mb-2">Reason</label>
+            <textarea
+              name="reason"
+              value={formData.reason}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              rows="3"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-800 mb-2">
+              Attachments (If any) (Single File to be uploaded)
+            </label>
+            <input
+              type="file"
+              name="attachment"
+              accept=".pdf,.doc,.docx,.jpg,.png" // Specify allowed file types if needed
+              onChange={handleFileChange}
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
           </div>
 
           <div className="mb-6">

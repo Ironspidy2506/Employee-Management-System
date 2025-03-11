@@ -36,16 +36,6 @@ export const getLeaveById = async (_id) => {
 
 export const updateLeave = async (_id, formData) => {
   try {
-    // Fetch the current leave details
-    const leaveResponse = await axios.get(
-      `https://employee-management-system-backend-objq.onrender.com/api/leaves/edit/${_id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-
     // Update the leave details
     const leaveUpdateResponse = await axios.put(
       `https://employee-management-system-backend-objq.onrender.com/api/leaves/edit/${_id}`,
@@ -53,6 +43,7 @@ export const updateLeave = async (_id, formData) => {
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
         },
       }
     );
@@ -91,7 +82,7 @@ export const fetchLeaveBalance = async (userId) => {
         },
       }
     );
-    
+
     return response.data.leaveBalance;
   } catch (error) {
     console.error("Error fetching leave balance:", error);

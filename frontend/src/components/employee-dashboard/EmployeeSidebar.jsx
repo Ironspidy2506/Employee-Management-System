@@ -119,7 +119,7 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
-            to="/employee-dashboard/performance"
+            to="/employee-dashboard/appraisal"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -130,7 +130,7 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
             onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
             <FaChartLine className="mr-3 text-xl" />
-            <span>Performance</span>
+            <span>Appraisal</span>
           </NavLink>
 
           <NavLink

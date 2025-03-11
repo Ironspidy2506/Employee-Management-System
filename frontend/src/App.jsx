@@ -263,6 +263,11 @@ const App = () => {
             path="/accounts-dashboard/leave"
             element={<ViewEmployeesLeaveCount />}
           />
+
+          <Route
+            path="/accounts-dashboard/appraisal"
+            element={<AnnualAppraisalForm />}
+          />
           <Route
             path="/accounts-dashboard/performance"
             element={<ViewPerformanceAdmin />}
@@ -317,7 +322,10 @@ const App = () => {
           <Route path="/hr-dashboard/holiday" element={<AlterHoliday />} />
           <Route path="/hr-dashboard/add-employee" element={<AddEmployee />} />
           <Route path="/hr-dashboard/leave" element={<HrLeaveView />} />
-          <Route path="/hr-dashboard/leave/employeesLeaveBalances" element={<EditLeaveBalances />} />
+          <Route
+            path="/hr-dashboard/leave/employeesLeaveBalances"
+            element={<EditLeaveBalances />}
+          />
           <Route path="/hr-dashboard/users" element={<UsersData />} />
           <Route path="/hr-dashboard/helpdesk" element={<Helpdesk />} />
           <Route
@@ -357,6 +365,11 @@ const App = () => {
           <Route
             path="/employee-dashboard/allowances"
             element={<ViewEmployeeAllowance />}
+          />
+
+          <Route
+            path="/employee-dashboard/appraisal"
+            element={<AnnualAppraisalForm />}
           />
           <Route
             path="/employee-dashboard/allowances/add"

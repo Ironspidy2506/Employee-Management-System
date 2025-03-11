@@ -165,7 +165,7 @@ const AccountSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           </NavLink>
 
           <NavLink
-            to="/accounts-dashboard/performance"
+            to="/accounts-dashboard/appraisal"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${
                 isActive
@@ -176,7 +176,7 @@ const AccountSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
             onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
             <FaChartLine className="mr-3 text-xl" />
-            <span>Performance</span>
+            <span>Appraisal</span>
           </NavLink>
         </div>
 

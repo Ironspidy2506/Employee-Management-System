@@ -152,7 +152,7 @@ const AnnualAppraisalForm = () => {
           <div className="grid grid-cols-2 gap-4">
             {/* Employee Selection */}
             <div>
-              <label className="text-lg font-semibold text-gray-700 dark:text-gray-200 capitalize mb-1 block">
+              <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
                 Employee
               </label>
               <Select
@@ -171,7 +171,7 @@ const AnnualAppraisalForm = () => {
 
             {/* Department Selection (Auto-updated) */}
             <div>
-              <label className="text-lg font-semibold text-gray-700 dark:text-gray-200 capitalize mb-1 block">
+              <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
                 Department
               </label>
               <Select
@@ -196,7 +196,7 @@ const AnnualAppraisalForm = () => {
               />
             </div>
             <div>
-              <label className="text-lg font-semibold text-gray-700 dark:text-gray-200 capitalize mb-1 block">
+              <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
                 Banner ID
               </label>
               <input
@@ -205,12 +205,12 @@ const AnnualAppraisalForm = () => {
                 placeholder="Banner ID #"
                 value={formData.bannerId}
                 onChange={handleChange}
-                className="p-2 border rounded w-full dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
             <div>
-              <label className="text-lg font-semibold text-gray-700 dark:text-gray-200 capitalize mb-1 block">
+              <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
                 Classification
               </label>
               <input
@@ -219,14 +219,14 @@ const AnnualAppraisalForm = () => {
                 placeholder="Classification"
                 value={formData.classification}
                 onChange={handleChange}
-                className="p-2 border rounded w-full dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
           {/* Accomplishments */}
           <div>
-            <label className="text-lg font-semibold text-gray-700 dark:text-gray-200 capitalize mb-1 block">
+            <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
               Accomplishments
             </label>
             <textarea
@@ -234,15 +234,15 @@ const AnnualAppraisalForm = () => {
               placeholder="Accomplishments of Position Duties"
               value={formData.accomplishments}
               onChange={handleChange}
-              className="p-2 border rounded w-full h-20 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-2 border rounded w-full h-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           {/* Ratings Section */}
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">
             Performance Ratings
           </h3>
-          <div className="space-y-6 bg-white dark:bg-gray-900">
+          <div className="space-y-6 bg-white ">
             {[
               "Punctuality",
               "Attendance",
@@ -255,14 +255,11 @@ const AnnualAppraisalForm = () => {
               "Work Habits",
               "Initiative",
             ].map((field) => (
-              <div
-                key={field}
-                className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow"
-              >
-                <label className="text-lg font-semibold text-gray-700 dark:text-gray-200 capitalize">
+              <div key={field} className="p-4 bg-gray-100 rounded-lg shadow">
+                <label className="text-lg font-semibold text-gray-700 capitalize">
                   {field}:
                 </label>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                <p className="text-sm text-gray-600 mt-1">
                   {
                     {
                       Punctuality: "Reports to work on time.",
@@ -293,7 +290,7 @@ const AnnualAppraisalForm = () => {
                   ].map((rating) => (
                     <label
                       key={rating}
-                      className="flex items-center gap-2 bg-gray-200 dark:bg-gray-700 px-3 py-2 rounded-lg shadow cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                      className="flex items-center gap-2 bg-gray-200 px-3 py-2 rounded-lg shadow cursor-pointer hover:bg-gray-300 transition"
                     >
                       <input
                         type="radio"
@@ -303,9 +300,7 @@ const AnnualAppraisalForm = () => {
                         onChange={handleRatingChange}
                         className="w-5 h-5 accent-blue-500 cursor-pointer"
                       />
-                      <span className="text-gray-800 dark:text-white">
-                        {rating}
-                      </span>
+                      <span className="text-gray-800">{rating}</span>
                     </label>
                   ))}
                 </div>
@@ -326,7 +321,7 @@ const AnnualAppraisalForm = () => {
 
           {/* Supervisor Comments */}
           <div>
-            <label className="text-lg font-semibold text-gray-700 dark:text-gray-200 capitalize mb-1 block">
+            <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
               Supervisor Comments
             </label>
             <textarea
@@ -334,7 +329,7 @@ const AnnualAppraisalForm = () => {
               placeholder="Supervisor Comments"
               value={formData.supervisorComments}
               onChange={handleChange}
-              className="p-2 border rounded w-full h-20 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-2 border rounded w-full h-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 

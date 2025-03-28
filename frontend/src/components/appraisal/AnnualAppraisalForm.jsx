@@ -7,11 +7,24 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ratingScale = {
-  Failed: 1,
-  "Needs Improvement": 2,
-  "Adequate/Fair": 3,
-  Excellent: 4,
+  Failed: 25,
+  "Needs Improvement": 50,
+  "Adequate/Fair": 75,
+  Excellent: 100,
 };
+
+const ratingFields = [
+  "Punctuality",
+  "Attendance",
+  "Job Knowledge",
+  "Human Relations",
+  "Quality of Work",
+  "Performance",
+  "Professional Development",
+  "Dedication",
+  "Work Habits",
+  "Initiative",
+];
 
 const AnnualAppraisalForm = () => {
   const [employees, setEmployees] = useState([]);
@@ -24,18 +37,12 @@ const AnnualAppraisalForm = () => {
     classification: "",
     department: "",
     accomplishments: "",
-    jobKnowledge: "",
-    planningOrganizing: "",
-    problemSolving: "",
-    humanRelations: "",
-    communicationSkills: "",
-    qualityOfWork: "",
-    productivity: "",
-    dependability: "",
-    professionalDevelopment: "",
-    overallPerformance: "",
     supervisorComments: "",
   });
+
+  const [ratings, setRatings] = useState(
+    ratingFields.reduce((acc, field) => ({ ...acc, [field]: "" }), {})
+  );
 
   useEffect(() => {
     fetchDepartments();
@@ -44,11 +51,12 @@ const AnnualAppraisalForm = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/employees", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        "https://employee-management-system-backend-objq.onrender.com/api/employees",
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       setEmployees(response.data.employees);
     } catch (error) {
       console.error("Error fetching employees:", error);
@@ -58,11 +66,12 @@ const AnnualAppraisalForm = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/department", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        "https://employee-management-system-backend-objq.onrender.com/api/department",
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       setDepartments(response.data.departments);
     } catch (error) {
       console.error("Error fetching departments:", error);
@@ -79,19 +88,21 @@ const AnnualAppraisalForm = () => {
       setFormData({
         ...formData,
         employeeName: selectedEmployee.name,
-        department: selectedEmployee.department
-          ? selectedEmployee.department._id
-          : "",
+        department: selectedEmployee.department?._id || "",
       });
     }
   };
 
   const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleRatingChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => {
-      const newData = { ...prevData, [name]: value };
-      calculateTotalRating(newData); // Ensure rating updates when inputs change
-      return newData;
+    setRatings((prevRatings) => {
+      const updatedRatings = { ...prevRatings, [name]: value };
+      calculateTotalRating(updatedRatings);
+      return updatedRatings;
     });
   };
 
@@ -101,7 +112,6 @@ const AnnualAppraisalForm = () => {
 
     Object.keys(data).forEach((key) => {
       if (ratingScale[data[key]]) {
-        // Only sum up valid ratings
         total += ratingScale[data[key]];
         count++;
       }
@@ -111,18 +121,17 @@ const AnnualAppraisalForm = () => {
   };
 
   const getPerformanceMessage = (rating) => {
-    if (rating < 1.5) {
+    if (rating < 50) {
       return { text: "Needs Significant Improvement", color: "text-red-500" };
-    } else if (rating < 2.5) {
+    } else if (rating < 70) {
       return { text: "Needs Improvement", color: "text-orange-500" };
-    } else if (rating < 3.5) {
+    } else if (rating < 90) {
       return { text: "Satisfactory Performance", color: "text-blue-500" };
     } else {
       return { text: "Excellent Performance", color: "text-green-500" };
     }
   };
 
-  // Inside your return statement where total rating is displayed
   const performanceMessage = getPerformanceMessage(totalRating);
 
   const handleSubmit = (e) => {
@@ -290,8 +299,8 @@ const AnnualAppraisalForm = () => {
                         type="radio"
                         name={field}
                         value={rating}
-                        checked={formData[field] === rating}
-                        onChange={handleChange}
+                        checked={ratings[field] === rating}
+                        onChange={handleRatingChange}
                         className="w-5 h-5 accent-blue-500 cursor-pointer"
                       />
                       <span className="text-gray-800 dark:text-white">
@@ -307,7 +316,7 @@ const AnnualAppraisalForm = () => {
           {/* Display Total Rating */}
           <div className="text-center text-xl font-extrabold mt-4">
             Total Rating Score:{" "}
-            <span className="text-blue-500">{totalRating}/4</span>
+            <span className="text-blue-500">{totalRating}/100</span>
             <p
               className={`mt-2 text-lg font-semibold ${performanceMessage.color}`}
             >

@@ -426,6 +426,7 @@ const App = () => {
             element={<Password />}
           />
         </Route>
+        {/* <Route path="/appraisal" element={<AnnualAppraisalForm />} /> */}
       </Routes>
     </BrowserRouter>
   );

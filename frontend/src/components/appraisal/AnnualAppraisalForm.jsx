@@ -137,7 +137,6 @@ const AnnualAppraisalForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Submitted:", formData);
-    alert("Appraisal Submitted Successfully!");
   };
 
   return (

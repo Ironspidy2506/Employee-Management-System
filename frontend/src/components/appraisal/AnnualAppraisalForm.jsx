@@ -52,7 +52,7 @@ const AnnualAppraisalForm = () => {
   const fetchEmployees = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/employees",
+        "https://employee-management-system-backend-objq.onrender.com/api/employees",
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -67,7 +67,7 @@ const AnnualAppraisalForm = () => {
   const fetchDepartments = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/department",
+        "https://employee-management-system-backend-objq.onrender.com/api/department",
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -145,7 +145,7 @@ const AnnualAppraisalForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/appraisals/add-appraisal",
+        "https://employee-management-system-backend-objq.onrender.com/api/appraisals/add-appraisal",
         payload,
         {
           headers: {

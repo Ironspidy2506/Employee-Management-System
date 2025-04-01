@@ -27,7 +27,7 @@ const ApplyAllowances = () => {
     const fetchEmployeeData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/employees/summary/${user._id}`,
+          `https://employee-management-system-backend-objq.onrender.com/api/employees/summary/${user._id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -67,7 +67,7 @@ const ApplyAllowances = () => {
     const userId = user._id;
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/allowances/add/${userId}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/allowances/add/${userId}`,
         formData,
         {
           headers: {

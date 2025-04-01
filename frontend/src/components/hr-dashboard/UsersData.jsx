@@ -9,7 +9,7 @@ const UsersData = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/users", {
+        const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/users", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -25,7 +25,7 @@ const UsersData = () => {
   // Handle user deletion
   const deleteUser = async (userId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/users/delete/${userId}`, {
+      await axios.delete(`https://employee-management-system-backend-objq.onrender.com/api/users/delete/${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

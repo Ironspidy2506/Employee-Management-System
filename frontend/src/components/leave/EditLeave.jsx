@@ -43,7 +43,7 @@ const EditLeave = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/employees",
+          "https://employee-management-system-backend-objq.onrender.com/api/employees",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

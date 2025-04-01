@@ -43,7 +43,7 @@ const ViewAllAllowances = () => {
     const fetchAllowanceData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/allowances/fetchAllHistory`,
+          `https://employee-management-system-backend-objq.onrender.com/api/allowances/fetchAllHistory`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

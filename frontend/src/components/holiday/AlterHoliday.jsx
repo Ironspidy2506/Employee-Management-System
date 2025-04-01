@@ -21,7 +21,7 @@ const AlterHoliday = () => {
   // Fetch holidays from the server
   const getHolidays = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/holiday", {
+      const { data } = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/holiday", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -53,7 +53,7 @@ const AlterHoliday = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/holiday/add-holiday",
+        "https://employee-management-system-backend-objq.onrender.com/api/holiday/add-holiday",
         { name: holidayName, date: holidayDate },
         {
           headers: {
@@ -79,7 +79,7 @@ const AlterHoliday = () => {
   const editHoliday = async (_id, updatedHoliday) => {
     try {
       const { data } = await axios.put(
-        `http://localhost:5000/api/holiday/edit-holiday/${_id}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/holiday/edit-holiday/${_id}`,
         updatedHoliday,
         {
           headers: {
@@ -113,7 +113,7 @@ const AlterHoliday = () => {
   const deleteHoliday = async (_id) => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:5000/api/holiday/delete-holiday/${_id}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/holiday/delete-holiday/${_id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

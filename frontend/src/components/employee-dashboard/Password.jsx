@@ -27,7 +27,7 @@ const Password = () => {
 
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/users/update-password/${user._id}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/users/update-password/${user._id}`,
         passwordDetails,
         {
           headers: {

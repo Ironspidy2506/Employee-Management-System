@@ -29,7 +29,7 @@ const AddFixedAllowanceAdmin = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/employees/allowances/summary/${formData.employeeId}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${formData.employeeId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -63,7 +63,7 @@ const AddFixedAllowanceAdmin = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/fixed-allowances/admin/add-fixed-allowance/${formData.employeeId}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/fixed-allowances/admin/add-fixed-allowance/${formData.employeeId}`,
         formData,
         {
           headers: {

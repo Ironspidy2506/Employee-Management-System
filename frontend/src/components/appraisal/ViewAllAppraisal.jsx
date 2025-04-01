@@ -15,7 +15,7 @@ const ViewAllAppraisal = () => {
     const fetchAppraisals = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:5000/api/appraisal/view-all-appraisals",
+          "https://employee-management-system-backend-objq.onrender.com/api/appraisal/view-all-appraisals",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -15,7 +15,7 @@ const ViewAppliedLeavesTeamLead = () => {
   const getAppliedLeaves = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/users/get-leave-for-approvals/${userId}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/users/get-leave-for-approvals/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -47,7 +47,7 @@ const ViewAppliedLeavesTeamLead = () => {
   const handleAction = async (leaveId, action) => {
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/users/leave-action/${userId}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/users/leave-action/${userId}`,
         { leaveId, action },
         {
           headers: {

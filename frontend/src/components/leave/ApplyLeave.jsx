@@ -31,7 +31,7 @@ const ApplyLeave = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/employees",
+          "https://employee-management-system-backend-objq.onrender.com/api/employees",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -143,7 +143,7 @@ const ApplyLeave = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/leaves/apply/${userId}`,
+        `https://employee-management-system-backend-objq.onrender.com/api/leaves/apply/${userId}`,
         leaveData,
         {
           headers: {

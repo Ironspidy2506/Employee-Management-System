@@ -9,7 +9,7 @@ export const DepartmentButtons = ({ _id, onDepartmentDelete, user }) => {
     if (confirm) {
       try {
         const response = await axios.delete(
-          `http://localhost:5000/api/department/${_id}`,
+          `https://employee-management-system-backend-objq.onrender.com/api/department/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

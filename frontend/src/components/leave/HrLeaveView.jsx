@@ -241,7 +241,7 @@ const HrLeaveView = () => {
                     <button
                       onClick={() =>
                         window.open(
-                          `http://localhost:5000/api/leaves/attachment/${leave._id}`,
+                          `https://employee-management-system-backend-objq.onrender.com/api/leaves/attachment/${leave._id}`,
                           "_blank"
                         )
                       }

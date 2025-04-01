@@ -238,7 +238,7 @@ const updateEmployee = async (req, res) => {
     const updatedUserFields = {
       ...(name && { name }),
       ...(email && { email }),
-      ...(role && { role }),
+      ...(role && { role: role !== "Lead" ? role.toLowerCase() : role }),
       ...(profileImage && { profileImage }), // Update image only if available
     };
 
@@ -280,7 +280,7 @@ const updateEmployee = async (req, res) => {
       ...(ifsc && { ifsc }),
       ...(accountNo && { accountNo }),
       ...(repperson && { repperson }),
-      ...(role && { role }),
+      ...(role && { role: role !== "Lead" ? role.toLowerCase() : role }),
       ...(doj && { doj }),
     };
 

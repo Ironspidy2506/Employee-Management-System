@@ -3,7 +3,7 @@ import axios from "axios";
 export const getLeaveRecords = async () => {
   try {
     const response = await axios.get(
-      `https://employee-management-system-backend-objq.onrender.com/api/leaves/admin/getLeaves`,
+      `http://localhost:5000/api/leaves/admin/getLeaves`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -19,7 +19,7 @@ export const getLeaveRecords = async () => {
 
 export const approveRejectLeave = async (leaveId, action) => {
   try {
-    const response = await axios.post(`https://employee-management-system-backend-objq.onrender.com/api/leaves/${action}/${leaveId}`, {}, {
+    const response = await axios.post(`http://localhost:5000/api/leaves/${action}/${leaveId}`, {}, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

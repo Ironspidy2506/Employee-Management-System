@@ -38,7 +38,7 @@ const EditEmployee = () => {
       setEmpLoading(true);
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/${_id}`,
+          `http://localhost:5000/api/employees/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -85,7 +85,7 @@ const EditEmployee = () => {
 
     try {
       const response = await axios.put(
-        `https://employee-management-system-backend-objq.onrender.com/api/employees/${_id}`,
+        `http://localhost:5000/api/employees/${_id}`,
         formDataObj,
         {
           headers: {

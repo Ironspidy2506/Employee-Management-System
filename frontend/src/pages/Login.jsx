@@ -18,7 +18,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://employee-management-system-backend-objq.onrender.com/api/auth/login",
+        "http://localhost:5000/api/auth/login",
         {
           email,
           password,
@@ -26,6 +26,9 @@ const Login = () => {
       );
 
       if (response.data.success) {
+
+        console.log(response);
+        
         login(response.data.user);
         localStorage.setItem("token", response.data.token);
         if (response.data.user.role === "admin") {

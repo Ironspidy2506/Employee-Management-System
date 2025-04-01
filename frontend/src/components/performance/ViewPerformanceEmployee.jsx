@@ -22,7 +22,7 @@ const ViewPerformanceEmployee = () => {
   const getUserPerformance = async () => {
     try {
       const { data } = await axios.get(
-        `https://employee-management-system-backend-objq.onrender.com/api/performance/get-user-performances/${_id}`,
+        `http://localhost:5000/api/performance/get-user-performances/${_id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -59,7 +59,7 @@ const ViewPerformanceEmployee = () => {
       }
 
       const { data } = await axios.post(
-        `https://employee-management-system-backend-objq.onrender.com/api/performance/add-performance`,
+        `http://localhost:5000/api/performance/add-performance`,
         {
           _id,
           month,
@@ -109,7 +109,7 @@ const ViewPerformanceEmployee = () => {
     } = editedPerformance;
     try {
       const { data } = await axios.put(
-        `https://employee-management-system-backend-objq.onrender.com/api/performance/edit-performance/${_id}`,
+        `http://localhost:5000/api/performance/edit-performance/${_id}`,
         {
           projectName,
           projectTitle,
@@ -140,7 +140,7 @@ const ViewPerformanceEmployee = () => {
   const handleDeletePerformance = async (_id) => {
     try {
       const { data } = await axios.delete(
-        `https://employee-management-system-backend-objq.onrender.com/api/performance/delete-performance/${_id}`,
+        `http://localhost:5000/api/performance/delete-performance/${_id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

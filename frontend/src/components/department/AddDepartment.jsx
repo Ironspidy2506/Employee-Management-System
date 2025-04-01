@@ -23,7 +23,7 @@ const AddDepartment = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://employee-management-system-backend-objq.onrender.com/api/department/add",
+        "http://localhost:5000/api/department/add",
         department,
         {
           headers: {

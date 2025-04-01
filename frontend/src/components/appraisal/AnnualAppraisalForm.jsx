@@ -52,7 +52,7 @@ const AnnualAppraisalForm = () => {
   const fetchEmployees = async () => {
     try {
       const response = await axios.get(
-        "https://employee-management-system-backend-objq.onrender.com/api/employees",
+        "http://localhost:5000/api/employees",
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -67,7 +67,7 @@ const AnnualAppraisalForm = () => {
   const fetchDepartments = async () => {
     try {
       const response = await axios.get(
-        "https://employee-management-system-backend-objq.onrender.com/api/department",
+        "http://localhost:5000/api/department",
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -134,14 +134,50 @@ const AnnualAppraisalForm = () => {
 
   const performanceMessage = getPerformanceMessage(totalRating);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
+
+    const payload = {
+      ...formData,
+      ratings,
+      totalRating,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/appraisals/add-appraisal",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      toast.success("Appraisal submitted successfully!");
+      setFormData({
+        employeeName: "",
+        bannerId: "",
+        classification: "",
+        department: "",
+        accomplishments: "",
+        supervisorComments: "",
+      });
+      setRatings(
+        ratingFields.reduce((acc, field) => ({ ...acc, [field]: "" }), {})
+      );
+      setTotalRating(0);
+    } catch (error) {
+      console.error("Error submitting appraisal:", error);
+      toast.error("Failed to submit appraisal.");
+    }
   };
 
   return (
     <>
       <Header />
+      <ToastContainer />
       <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-2xl font-bold text-center mb-4 text-gray-800">
           Annual Appraisal Form

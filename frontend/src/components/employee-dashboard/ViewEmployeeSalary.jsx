@@ -45,7 +45,7 @@ const ViewEmployeeSalary = () => {
     setError(null);
     try {
       const response = await axios.get(
-        `https://employee-management-system-backend-objq.onrender.com/api/employees/salary/${user._id}?paymentMonth=${paymentMonth}&paymentYear=${paymentYear}`,
+        `http://localhost:5000/api/employees/salary/${user._id}?paymentMonth=${paymentMonth}&paymentYear=${paymentYear}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 export const fetchDepartments = async () => {
   let departments;
   try {
-    const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/department", {
+    const response = await axios.get("http://localhost:5000/api/department", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -26,7 +26,7 @@ export const fetchEmployeeById = async (_id) => {
   let employees;
   try {
     const response = await axios.get(
-      `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${_id}`,
+      `http://localhost:5000/api/employees/allowances/summary/${_id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -52,7 +52,7 @@ export const getSalaryDetails = async ({
 }) => {
   try {
     const response = await axios.get(
-      `https://employee-management-system-backend-objq.onrender.com/api/salary/${employeeId}?paymentMonth=${paymentMonth}&paymentYear=${paymentYear}`,
+      `http://localhost:5000/api/salary/${employeeId}?paymentMonth=${paymentMonth}&paymentYear=${paymentYear}`,
       { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
     );
 
@@ -65,7 +65,7 @@ export const getSalaryDetails = async ({
 
 export const updateSalary = async (employeeId, payload) => {
   try {
-    await axios.put(`https://employee-management-system-backend-objq.onrender.com/api/salary/${employeeId}`, payload, {
+    await axios.put(`http://localhost:5000/api/salary/${employeeId}`, payload, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
   } catch (error) {

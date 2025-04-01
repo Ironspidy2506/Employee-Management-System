@@ -18,7 +18,7 @@ const ApproveAllowances = () => {
     const fetchAllowanceData = async () => {
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/allowances/fetchAllHistory`,
+          `http://localhost:5000/api/allowances/fetchAllHistory`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -78,7 +78,7 @@ const ApproveAllowances = () => {
 
     try {
       const response = await axios.put(
-        `https://employee-management-system-backend-objq.onrender.com/api/allowances/${allowanceId}`,
+        `http://localhost:5000/api/allowances/${allowanceId}`,
         { status: "approved", voucherNo },
         {
           headers: {

@@ -14,6 +14,7 @@ import userRouter from "./routes/users.js";
 import helpdeskRouter from "./routes/helpdesk.js";
 import holidayRouter from "./routes/holiday.js";
 import performanceRouter from "./routes/performance.js";
+import appraisalRouter from './routes/appraisal.js'
 
 const app = express();
 config({ path: ".env" });
@@ -23,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: "https://employee-management-system-roan-pi.vercel.app",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
@@ -44,6 +45,7 @@ app.use("/api/fixed-allowances", fixedallowanceRouter);
 app.use("/api/helpdesk", helpdeskRouter);
 app.use("/api/holiday", holidayRouter);
 app.use("/api/performance", performanceRouter);
+app.use("/api/appraisal", appraisalRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server started on ${process.env.PORT}`);

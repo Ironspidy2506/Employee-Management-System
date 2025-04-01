@@ -33,7 +33,7 @@ const ViewSalary = () => {
     if (selectedOption === "monthly") {
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/salary/monthly-wise/${month}/${year}`,
+          `http://localhost:5000/api/salary/monthly-wise/${month}/${year}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -52,7 +52,7 @@ const ViewSalary = () => {
     } else {
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/salary/employee-wise/${employeeId}`,
+          `http://localhost:5000/api/salary/employee-wise/${employeeId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

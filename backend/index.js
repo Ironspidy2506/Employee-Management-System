@@ -19,9 +19,6 @@ import appraisalRouter from './routes/appraisal.js'
 const app = express();
 config({ path: ".env" });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 app.use(
   cors({
     origin: "https://employee-management-system-roan-pi.vercel.app",
@@ -29,6 +26,10 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 dbConnect();
 

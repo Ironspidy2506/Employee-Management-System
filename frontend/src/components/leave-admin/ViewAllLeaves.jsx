@@ -22,6 +22,8 @@ const ViewAllLeaves = () => {
     const fetchLeaveHistory = async () => {
       try {
         const data = await getLeaveRecords();
+        console.log(data);
+        
         setLeaveHistory(data);
         setFilteredHistory(data);
       } catch (error) {
@@ -151,6 +153,9 @@ const ViewAllLeaves = () => {
                 Emp Name
               </th>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                Department
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                 Leave Type
               </th>
               <th
@@ -199,10 +204,13 @@ const ViewAllLeaves = () => {
                   {index + 1}
                 </td>
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {leave.employeeId.employeeId}
+                  {leave.employeeId?.employeeId}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-800">
-                  {leave.employeeId.name}
+                  {leave.employeeId?.name}
+                </td>
+                <td className="px-4 py-2 text-sm text-gray-800">
+                  {leave.employeeId?.department?.departmentName}
                 </td>
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
                   {leave.type.toUpperCase()}

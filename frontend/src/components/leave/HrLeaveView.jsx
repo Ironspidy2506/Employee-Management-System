@@ -196,10 +196,10 @@ const HrLeaveView = () => {
                   {index + 1}
                 </td>
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {leave.employeeId.employeeId}
+                  {leave.employeeId?.employeeId}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-800">
-                  {leave.employeeId.name}
+                  {leave.employeeId?.name}
                 </td>
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
                   {leave.type.toUpperCase()}

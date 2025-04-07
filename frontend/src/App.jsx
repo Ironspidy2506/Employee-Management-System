@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminDashboard from "./pages/AdminDashboard";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
@@ -58,26 +58,6 @@ import AnnualAppraisalForm from "./components/appraisal/AnnualAppraisalForm";
 import ViewAllAppraisal from "./components/appraisal/ViewAllAppraisal";
 
 const App = () => {
-  useEffect(() => {
-    const pingBackend = async () => {
-      try {
-        await fetch(
-          "https://employee-management-system-backend-objq.onrender.com/ping"
-        );
-        console.log("Backend pinged successfully!");
-      } catch (err) {
-        console.error("Ping failed:", err);
-      }
-    };
-
-    pingBackend();
-
-    // Optional: ping every 5 minutes if the app stays open
-    const interval = setInterval(pingBackend, 5 * 60 * 1000); // 5 mins
-
-    return () => clearInterval(interval); // clean up on unmount
-  }, []);
-
   return (
     <BrowserRouter>
       <Routes>
@@ -363,7 +343,7 @@ const App = () => {
             path="/hr-dashboard/performance"
             element={<ViewPerformanceAdmin />}
           />
-          <Route
+           <Route
             path="/hr-dashboard/appraisal"
             element={<ViewAllAppraisal />}
           />

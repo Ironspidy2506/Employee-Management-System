@@ -14,16 +14,21 @@ const ViewAllLeaves = () => {
   const [filteredHistory, setFilteredHistory] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [visibleRecords, setVisibleRecords] = useState(50); // show first 50 initially
 
   const navigate = useNavigate();
   const userId = user._id;
+
+  const handleShowMore = () => {
+    setVisibleRecords((prev) => prev + 10); // load 10 more on each click
+  };
 
   useEffect(() => {
     const fetchLeaveHistory = async () => {
       try {
         const data = await getLeaveRecords();
         console.log(data);
-        
+
         setLeaveHistory(data);
         setFilteredHistory(data);
       } catch (error) {
@@ -198,7 +203,7 @@ const ViewAllLeaves = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredHistory.map((leave, index) => (
+            {filteredHistory.slice(0, visibleRecords).map((leave, index) => (
               <tr key={leave._id} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
                   {index + 1}
@@ -209,7 +214,10 @@ const ViewAllLeaves = () => {
                 <td className="px-4 py-2 text-sm text-gray-800">
                   {leave.employeeId?.name}
                 </td>
-                <td className="px-4 py-2 text-sm text-gray-800">
+                <td
+                  className="px-4 py-2 text-sm text-center
+                 text-gray-800"
+                >
                   {leave.employeeId?.department?.departmentName}
                 </td>
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
@@ -306,6 +314,16 @@ const ViewAllLeaves = () => {
             ))}
           </tbody>
         </table>
+        {visibleRecords < filteredHistory.length && (
+          <div className="mt-4 flex justify-center">
+            <button
+              onClick={handleShowMore}
+              className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition"
+            >
+              Show More
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

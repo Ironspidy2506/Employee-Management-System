@@ -258,8 +258,15 @@ const getLeaveBalance = async (req, res) => {
 const getAllLeaves = async (req, res) => {
   try {
     const leaves = await Leave.find()
-      .populate("employeeId")
+      .populate({
+        path: "employeeId",
+        populate: {
+          path: "department", // 🔁 the correct field name in Employee schema
+          model: "department", // ✅ should match your Department model name
+        },
+      })
       .sort({ lastUpdated: -1 });
+
     res.status(200).json(leaves);
   } catch (error) {
     console.error("Error fetching all leaves:", error);

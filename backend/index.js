@@ -33,6 +33,11 @@ app.use(express.urlencoded({ extended: true }));
 dbConnect();
 
 app.use(express.static("public/uploads"));
+
+app.get("/ping", (req, res) => {
+  res.status(200).send("pong");
+});
+
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/department", departmentRouter);

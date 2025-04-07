@@ -14,7 +14,7 @@ import userRouter from "./routes/users.js";
 import helpdeskRouter from "./routes/helpdesk.js";
 import holidayRouter from "./routes/holiday.js";
 import performanceRouter from "./routes/performance.js";
-import appraisalRouter from './routes/appraisal.js'
+import appraisalRouter from "./routes/appraisal.js";
 
 const app = express();
 config({ path: ".env" });
@@ -29,7 +29,6 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 dbConnect();
 

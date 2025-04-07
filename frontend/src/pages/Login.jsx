@@ -26,9 +26,6 @@ const Login = () => {
       );
 
       if (response.data.success) {
-
-        console.log(response);
-        
         login(response.data.user);
         localStorage.setItem("token", response.data.token);
         if (response.data.user.role === "admin") {

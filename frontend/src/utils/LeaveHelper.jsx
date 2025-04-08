@@ -3,7 +3,7 @@ import axios from "axios";
 export const getLeaveHistory = async (userId) => {
   try {
     const response = await axios.get(
-      `https://employee-management-system-backend-objq.onrender.com/api/leaves/history/${userId}`,
+      `http://localhost:5000/api/leaves/history/${userId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -20,7 +20,7 @@ export const getLeaveHistory = async (userId) => {
 export const getLeaveById = async (_id) => {
   try {
     const response = await axios.get(
-      `https://employee-management-system-backend-objq.onrender.com/api/leaves/edit/${_id}`,
+      `http://localhost:5000/api/leaves/edit/${_id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -38,7 +38,7 @@ export const updateLeave = async (_id, formData) => {
   try {
     // Update the leave details
     const leaveUpdateResponse = await axios.put(
-      `https://employee-management-system-backend-objq.onrender.com/api/leaves/edit/${_id}`,
+      `http://localhost:5000/api/leaves/edit/${_id}`,
       formData,
       {
         headers: {
@@ -58,7 +58,7 @@ export const updateLeave = async (_id, formData) => {
 export const deleteLeave = async (leaveId) => {
   try {
     const response = await axios.delete(
-      `https://employee-management-system-backend-objq.onrender.com/api/leaves/${leaveId}`,
+      `http://localhost:5000/api/leaves/${leaveId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -75,7 +75,7 @@ export const deleteLeave = async (leaveId) => {
 export const fetchLeaveBalance = async (userId) => {
   try {
     const response = await axios.get(
-      `https://employee-management-system-backend-objq.onrender.com/api/leaves/${userId}`,
+      `http://localhost:5000/api/leaves/${userId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

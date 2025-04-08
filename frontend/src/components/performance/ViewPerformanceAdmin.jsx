@@ -22,7 +22,7 @@ const ViewPerformanceAdmin = () => {
         }
 
         const { data } = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/performance/month-year-basis/${month}/${year}`,
+          `http://localhost:5000/api/performance/month-year-basis/${month}/${year}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -44,7 +44,7 @@ const ViewPerformanceAdmin = () => {
 
         const empId = Number(employeeId.trim());
         const { data } = await axios.post(
-          `https://employee-management-system-backend-objq.onrender.com/api/performance/get-employee-performance`,
+          `http://localhost:5000/api/performance/get-employee-performance`,
           { empId },
           {
             headers: {

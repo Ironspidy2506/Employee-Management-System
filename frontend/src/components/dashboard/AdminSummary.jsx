@@ -26,17 +26,17 @@ const AdminSummary = () => {
         // Create an array of promises for concurrent requests
         const [employeeResponse, departmentResponse, leaveResponse] =
           await Promise.all([
-            axios.get("https://employee-management-system-backend-objq.onrender.com/api/employees", {
+            axios.get("http://localhost:5000/api/employees", {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             }),
-            axios.get("https://employee-management-system-backend-objq.onrender.com/api/department", {
+            axios.get("http://localhost:5000/api/department", {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             }),
-            axios.get("https://employee-management-system-backend-objq.onrender.com/api/leaves/fetch/summary", {
+            axios.get("http://localhost:5000/api/leaves/fetch/summary", {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },

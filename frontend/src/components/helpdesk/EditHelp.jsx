@@ -16,7 +16,7 @@ const EditHelp = () => {
     const fetchHelpQuery = async () => {
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/helpdesk/${_id}`,
+          `http://localhost:5000/api/helpdesk/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -40,7 +40,7 @@ const EditHelp = () => {
   const handleUpdate = async () => {
     try {
       const response = await axios.put(
-        `https://employee-management-system-backend-objq.onrender.com/api/helpdesk/update-help/${_id}`,
+        `http://localhost:5000/api/helpdesk/update-help/${_id}`,
         { query },
         {
           headers: {

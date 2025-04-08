@@ -4,6 +4,7 @@ import axios from "axios";
 import Header from "../HeaderFooter/Header";
 import Footer from "../HeaderFooter/Footer";
 import { ToastContainer, toast } from "react-toastify";
+import { useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
 const ratingScale = {
@@ -67,7 +68,8 @@ const ratingFields = [
   },
 ];
 
-const AnnualAppraisalForm = () => {
+const EditAppraisalForm = () => {
+  const { id } = useParams();
   const [employees, setEmployees] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [totalRating, setTotalRating] = useState(0);
@@ -82,12 +84,13 @@ const AnnualAppraisalForm = () => {
   });
 
   const [ratings, setRatings] = useState(
-    ratingFields.reduce((acc, field) => ({ ...acc, [field.key]: "" }), {})
-  );  
+    ratingFields.reduce((acc, field) => ({ ...acc, [field]: "" }), {})
+  );
 
   useEffect(() => {
     fetchDepartments();
     fetchEmployees();
+    fetchAppraisal();
   }, []);
 
   const fetchEmployees = async () => {
@@ -97,7 +100,6 @@ const AnnualAppraisalForm = () => {
       });
       setEmployees(response.data.employees);
     } catch (error) {
-      console.error("Error fetching employees:", error);
       toast.error("Failed to load employees.");
     }
   };
@@ -109,8 +111,36 @@ const AnnualAppraisalForm = () => {
       });
       setDepartments(response.data.departments);
     } catch (error) {
-      console.error("Error fetching departments:", error);
       toast.error("Failed to load departments.");
+    }
+  };
+
+  const fetchAppraisal = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/appraisals/get-appraisal-by-id/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const data = response.data.appraisal;
+
+      setFormData({
+        employeeId: data.employeeId._id,
+        bannerId: data.bannerId,
+        classification: data.classification,
+        department: data.department._id,
+        accomplishments: data.accomplishments,
+        supervisorComments: data.supervisorComments,
+      });
+
+      setRatings(data.ratings);
+      calculateTotalRating(data.ratings);
+    } catch (error) {
+      toast.error("Failed to load appraisal data.");
     }
   };
 
@@ -118,13 +148,12 @@ const AnnualAppraisalForm = () => {
     const selectedEmployee = employees.find(
       (emp) => emp._id === selectedOption.value
     );
-
     if (selectedEmployee) {
-      setFormData({
-        ...formData,
-        employeeId: selectedEmployee._id, // include _id
+      setFormData((prev) => ({
+        ...prev,
+        employeeId: selectedEmployee._id,
         department: selectedEmployee.department?._id || "",
-      });
+      }));
     }
   };
 
@@ -135,9 +164,9 @@ const AnnualAppraisalForm = () => {
   const handleRatingChange = (e) => {
     const { name, value } = e.target;
     setRatings((prevRatings) => {
-      const updatedRatings = { ...prevRatings, [name]: value };
-      calculateTotalRating(updatedRatings);
-      return updatedRatings;
+      const updated = { ...prevRatings, [name]: value };
+      calculateTotalRating(updated);
+      return updated;
     });
   };
 
@@ -156,15 +185,13 @@ const AnnualAppraisalForm = () => {
   };
 
   const getPerformanceMessage = (rating) => {
-    if (rating < 50) {
+    if (rating < 50)
       return { text: "Needs Significant Improvement", color: "text-red-500" };
-    } else if (rating < 70) {
+    if (rating < 70)
       return { text: "Needs Improvement", color: "text-orange-500" };
-    } else if (rating < 90) {
+    if (rating < 90)
       return { text: "Satisfactory Performance", color: "text-blue-500" };
-    } else {
-      return { text: "Excellent Performance", color: "text-green-500" };
-    }
+    return { text: "Excellent Performance", color: "text-green-500" };
   };
 
   const performanceMessage = getPerformanceMessage(totalRating);
@@ -180,7 +207,7 @@ const AnnualAppraisalForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/appraisals/add-appraisal",
+        `http://localhost:5000/api/appraisals/edit-appraisal/${id}`,
         payload,
         {
           headers: {
@@ -191,23 +218,10 @@ const AnnualAppraisalForm = () => {
 
       if (response.data.success) {
         toast.success(response.data.message);
-        setFormData({
-          employeeName: "",
-          bannerId: "",
-          classification: "",
-          department: "",
-          accomplishments: "",
-          supervisorComments: "",
-        });
-        setRatings(
-          ratingFields.reduce((acc, field) => ({ ...acc, [field]: "" }), {})
-        );
-        setTotalRating(0);
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error("Error submitting appraisal:", error);
       toast.error(error.message);
     }
   };
@@ -218,14 +232,13 @@ const AnnualAppraisalForm = () => {
       <ToastContainer />
       <div className="mx-auto bg-white shadow-lg rounded-lg p-6">
         <h2 className="text-2xl font-bold text-center mb-4 text-gray-800">
-          Annual Appraisal Form
+          Edit Annual Appraisal
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Employee Info */}
+          {/* Employee and Department Info */}
           <div className="grid grid-cols-2 gap-4">
-            {/* Employee Selection */}
             <div>
-              <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
+              <label className="text-lg font-semibold text-gray-700 mb-1 block">
                 Employee
               </label>
               <Select
@@ -235,16 +248,28 @@ const AnnualAppraisalForm = () => {
                     value: employee._id,
                     label: `${employee.employeeId} - ${employee.name}`,
                   }))}
-                className="basic-multi-select"
-                classNamePrefix="select"
-                placeholder="Select Employee"
+                value={
+                  employees.find((emp) => emp._id === formData.employeeId)
+                    ? {
+                        value: formData.employeeId,
+                        label: `${
+                          employees.find(
+                            (emp) => emp._id === formData.employeeId
+                          ).employeeId
+                        } - ${
+                          employees.find(
+                            (emp) => emp._id === formData.employeeId
+                          ).name
+                        }`,
+                      }
+                    : null
+                }
                 onChange={handleEmployeeChange}
               />
             </div>
 
-            {/* Department Selection (Auto-updated) */}
             <div>
-              <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
+              <label className="text-lg font-semibold text-gray-700 mb-1 block">
                 Department
               </label>
               <Select
@@ -262,20 +287,17 @@ const AnnualAppraisalForm = () => {
                       }
                     : null
                 }
-                className="basic-multi-select"
-                classNamePrefix="select"
-                placeholder="Select Department"
-                isDisabled={true} // Department auto-filled
+                isDisabled={true}
               />
             </div>
+
             <div>
-              <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
+              <label className="text-lg font-semibold text-gray-700 mb-1 block">
                 Banner ID
               </label>
               <input
                 type="text"
                 name="bannerId"
-                placeholder="Banner ID #"
                 value={formData.bannerId}
                 onChange={handleChange}
                 className="p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -283,13 +305,12 @@ const AnnualAppraisalForm = () => {
             </div>
 
             <div>
-              <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
+              <label className="text-lg font-semibold text-gray-700 mb-1 block">
                 Classification
               </label>
               <input
                 type="text"
                 name="classification"
-                placeholder="Classification"
                 value={formData.classification}
                 onChange={handleChange}
                 className="p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -299,12 +320,11 @@ const AnnualAppraisalForm = () => {
 
           {/* Accomplishments */}
           <div>
-            <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
+            <label className="text-lg font-semibold text-gray-700 mb-1 block">
               Accomplishments
             </label>
             <textarea
               name="accomplishments"
-              placeholder="Accomplishments of Position Duties"
               value={formData.accomplishments}
               onChange={handleChange}
               className="p-2 border rounded w-full h-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -315,39 +335,41 @@ const AnnualAppraisalForm = () => {
           <h3 className="text-xl font-bold text-gray-800 mb-4">
             Performance Ratings
           </h3>
-          {ratingFields.map(({ key, label, description }) => (
-            <div key={key} className="p-4 bg-gray-100 rounded-lg shadow">
-              <label className="text-lg font-semibold text-gray-700 capitalize">
-                {label}:
-              </label>
-              <p className="text-sm text-gray-600 mt-1">{description}</p>
-              <div className="flex gap-4 mt-2">
-                {[
-                  "Failed",
-                  "Needs Improvement",
-                  "Adequate/Fair",
-                  "Excellent",
-                ].map((rating) => (
-                  <label
-                    key={rating}
-                    className="flex items-center gap-2 bg-gray-200 px-3 py-2 rounded-lg shadow cursor-pointer hover:bg-gray-300 transition"
-                  >
-                    <input
-                      type="radio"
-                      name={key}
-                      value={rating}
-                      checked={ratings[key] === rating}
-                      onChange={handleRatingChange}
-                      className="w-5 h-5 accent-blue-500 cursor-pointer"
-                    />
-                    <span className="text-gray-800">{rating}</span>
-                  </label>
-                ))}
+          <div className="space-y-6 bg-white">
+            {ratingFields.map(({ key, label, description }) => (
+              <div key={key} className="p-4 bg-gray-100 rounded-lg shadow">
+                <label className="text-lg font-semibold text-gray-700 capitalize">
+                  {label}:
+                </label>
+                <p className="text-sm text-gray-600 mt-1">{description}</p>
+                <div className="flex gap-4 mt-2">
+                  {[
+                    "Failed",
+                    "Needs Improvement",
+                    "Adequate/Fair",
+                    "Excellent",
+                  ].map((rating) => (
+                    <label
+                      key={rating}
+                      className="flex items-center gap-2 bg-gray-200 px-3 py-2 rounded-lg shadow cursor-pointer hover:bg-gray-300 transition"
+                    >
+                      <input
+                        type="radio"
+                        name={key}
+                        value={rating}
+                        checked={ratings[key] === rating}
+                        onChange={handleRatingChange}
+                        className="w-5 h-5 accent-blue-500 cursor-pointer"
+                      />
+                      <span className="text-gray-800">{rating}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
-          {/* Display Total Rating */}
+          {/* Total Rating */}
           <div className="text-center text-xl font-extrabold mt-4">
             Total Rating Score:{" "}
             <span className="text-blue-500">{totalRating}/100</span>
@@ -360,25 +382,24 @@ const AnnualAppraisalForm = () => {
 
           {/* Supervisor Comments */}
           <div>
-            <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
+            <label className="text-lg font-semibold text-gray-700 mb-1 block">
               Supervisor Comments
             </label>
             <textarea
               name="supervisorComments"
-              placeholder="Supervisor Comments"
               value={formData.supervisorComments}
               onChange={handleChange}
               className="p-2 border rounded w-full h-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <div className="flex justify-center items-center">
             <button
               type="submit"
               className="max-w-sm w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Submit Appraisal
+              Update Appraisal
             </button>
           </div>
         </form>
@@ -388,4 +409,4 @@ const AnnualAppraisalForm = () => {
   );
 };
 
-export default AnnualAppraisalForm;
+export default EditAppraisalForm;

@@ -16,7 +16,7 @@ const EmployeeHelpdesk = () => {
     const fetchQueries = async () => {
       try {
         const { data } = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/helpdesk/my-queries/${_id}`,
+          `http://localhost:5000/api/helpdesk/my-queries/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming token is stored in localStorage
@@ -46,7 +46,7 @@ const EmployeeHelpdesk = () => {
   const handleDelete = async (helpId) => {
     try {
       const { data } = await axios.delete(
-        `https://employee-management-system-backend-objq.onrender.com/api/helpdesk/delete-help/${helpId}`,
+        `http://localhost:5000/api/helpdesk/delete-help/${helpId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

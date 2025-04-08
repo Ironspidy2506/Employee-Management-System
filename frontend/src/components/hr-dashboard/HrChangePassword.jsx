@@ -22,7 +22,7 @@ const HrChangePassword = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get(
-          "https://employee-management-system-backend-objq.onrender.com/api/employees",
+          "http://localhost:5000/api/employees",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -67,7 +67,7 @@ const HrChangePassword = () => {
 
     try {
       const response = await axios.post(
-        "https://employee-management-system-backend-objq.onrender.com/api/users/hr-update-password",
+        "http://localhost:5000/api/users/hr-update-password",
         {
           employeeId: selectedEmployee.value,
           newPassword: passwordDetails.newPassword,

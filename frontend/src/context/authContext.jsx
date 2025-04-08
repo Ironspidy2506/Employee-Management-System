@@ -15,7 +15,7 @@ const authContext = ({ children }) => {
 
         if (token) {
           const response = await axios.get(
-            "https://employee-management-system-backend-objq.onrender.com/api/auth/verify",
+            "http://localhost:5000/api/auth/verify",
             {
               headers: {
                 Authorization: `Bearer ${token}`,

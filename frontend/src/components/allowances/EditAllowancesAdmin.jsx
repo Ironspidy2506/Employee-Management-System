@@ -26,7 +26,7 @@ const EditAllowancesAdmin = () => {
   const fetchEmployeeData = async () => {
     try {
       const response = await axios.get(
-        `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${formData.employeeId}`,
+        `http://localhost:5000/api/employees/allowances/summary/${formData.employeeId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -58,7 +58,7 @@ const EditAllowancesAdmin = () => {
 
     try {
       const response = await axios.put(
-        `https://employee-management-system-backend-objq.onrender.com/api/allowances/admin/edit-allowance/${formData.employeeId}`,
+        `http://localhost:5000/api/allowances/admin/edit-allowance/${formData.employeeId}`,
         formData,
         {
           headers: {

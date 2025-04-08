@@ -29,7 +29,7 @@ const EditAllowances = () => {
     const fetchEmployeeData = async () => {
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/summary/${user._id}`,
+          `http://localhost:5000/api/employees/summary/${user._id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -60,7 +60,7 @@ const EditAllowances = () => {
     const fetchAllowanceData = async () => {
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/allowances/edit/${_id}`,
+          `http://localhost:5000/api/allowances/edit/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -99,7 +99,7 @@ const EditAllowances = () => {
     e.preventDefault();
     try {
       const response = await axios.put(
-        `https://employee-management-system-backend-objq.onrender.com/api/allowances/edit/${_id}`,
+        `http://localhost:5000/api/allowances/edit/${_id}`,
         formData,
         {
           headers: {

@@ -21,7 +21,7 @@ config({ path: ".env" });
 
 app.use(
   cors({
-    origin: "https://employee-management-system-roan-pi.vercel.app",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
@@ -50,7 +50,7 @@ app.use("/api/fixed-allowances", fixedallowanceRouter);
 app.use("/api/helpdesk", helpdeskRouter);
 app.use("/api/holiday", holidayRouter);
 app.use("/api/performance", performanceRouter);
-app.use("/api/appraisal", appraisalRouter);
+app.use("/api/appraisals", appraisalRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server started on ${process.env.PORT}`);

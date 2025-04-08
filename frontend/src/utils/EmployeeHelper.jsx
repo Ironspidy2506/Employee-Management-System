@@ -4,7 +4,7 @@ import axios from "axios";
 export const fetchDepartments = async () => {
   let departments;
   try {
-    const response = await axios.get("https://employee-management-system-backend-objq.onrender.com/api/department", {
+    const response = await axios.get("http://localhost:5000/api/department", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -29,7 +29,7 @@ export const EmployeeButtons = ({ _id, onEmployeeDelete, user }) => {
     if (confirm) {
       try {
         const response = await axios.delete(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/delete/${_id}`,
+          `http://localhost:5000/api/employees/delete/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -36,7 +36,7 @@ const AddSalary = () => {
   const handleFetchEmployee = async () => {
     try {
       const response = await axios.get(
-        `https://employee-management-system-backend-objq.onrender.com/api/employees/allowances/summary/${employeeIdInput}`,
+        `http://localhost:5000/api/employees/allowances/summary/${employeeIdInput}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -59,7 +59,7 @@ const AddSalary = () => {
   const handleFetchGrossSalary = async () => {
     try {
       const { data } = await axios.get(
-        `https://employee-management-system-backend-objq.onrender.com/api/employees/${employeeIdInput}/${paymentMonth}/${paymentYear}`,
+        `http://localhost:5000/api/employees/${employeeIdInput}/${paymentMonth}/${paymentYear}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -163,7 +163,7 @@ const AddSalary = () => {
 
     try {
       const response = await axios.post(
-        "https://employee-management-system-backend-objq.onrender.com/api/salary/add",
+        "http://localhost:5000/api/salary/add",
         payload,
         {
           headers: {

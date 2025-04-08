@@ -19,7 +19,7 @@ const ApplyHelp = () => {
     const fetchEmployeeId = async () => {
       try {
         const { data } = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/employees/summary/${_id}`,
+          `http://localhost:5000/api/employees/summary/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -47,7 +47,7 @@ const ApplyHelp = () => {
 
     try {
       const { data } = await axios.put(
-        `https://employee-management-system-backend-objq.onrender.com/api/helpdesk/apply-help`,
+        `http://localhost:5000/api/helpdesk/apply-help`,
         {
           _id,
           query,

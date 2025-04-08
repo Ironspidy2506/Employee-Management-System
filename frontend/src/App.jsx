@@ -56,6 +56,9 @@ import HrChangePassword from "./components/hr-dashboard/HrChangePassword";
 import HrLeaveView from "./components/leave/HrLeaveView";
 import AnnualAppraisalForm from "./components/appraisal/AnnualAppraisalForm";
 import ViewAllAppraisal from "./components/appraisal/ViewAllAppraisal";
+import EditAppraisalForm from "./components/appraisal/EditAppraisalForm";
+import ViewAppraisal from "./components/appraisal/ViewAppraisal";
+import ViewMyAppraisal from "./components/appraisal/ViewMyAppraisal";
 
 const App = () => {
   return (
@@ -147,9 +150,25 @@ const App = () => {
           />
 
           <Route
-            path="/admin-dashboard/add-appraisal"
+            path="/admin-dashboard/appraisal/add-appraisal"
             element={<AnnualAppraisalForm />}
           />
+
+          <Route
+            path="/admin-dashboard/appraisal/edit-appraisal/:id"
+            element={<EditAppraisalForm />}
+          />
+
+          <Route
+            path="/admin-dashboard/appraisal/view-appraisal/:id"
+            element={<ViewAppraisal />}
+          />
+
+          <Route
+            path="/admin-dashboard/appraisal/edit-appraisal/:id"
+            element={<EditAppraisalForm />}
+          />
+
           <Route path="/admin-dashboard/ctc" element={<ViewEmployeeCTC />} />
 
           <Route
@@ -276,9 +295,25 @@ const App = () => {
           />
 
           <Route
-            path="/accounts-dashboard/add-appraisal"
+            path="/accounts-dashboard/appraisal/add-appraisal"
             element={<AnnualAppraisalForm />}
           />
+
+          <Route
+            path="/accounts-dashboard/appraisal/edit-appraisal/:id"
+            element={<EditAppraisalForm />}
+          />
+
+          <Route
+            path="/accounts-dashboard/appraisal/view-appraisal/:id"
+            element={<ViewAppraisal />}
+          />
+
+          <Route
+            path="/accounts-dashboard/appraisal/edit-appraisal/:id"
+            element={<EditAppraisalForm />}
+          />
+
           <Route
             path="/accounts-dashboard/performance"
             element={<ViewPerformanceAdmin />}
@@ -343,15 +378,26 @@ const App = () => {
             path="/hr-dashboard/performance"
             element={<ViewPerformanceAdmin />}
           />
-           <Route
+          <Route
             path="/hr-dashboard/appraisal"
             element={<ViewAllAppraisal />}
           />
 
           <Route
-            path="/hr-dashboard/add-appraisal"
+            path="/hr-dashboard/appraisal/add-appraisal"
             element={<AnnualAppraisalForm />}
           />
+
+          <Route
+            path="/hr-dashboard/appraisal/edit-appraisal/:id"
+            element={<EditAppraisalForm />}
+          />
+
+          <Route
+            path="/hr-dashboard/appraisal/view-appraisal/:id"
+            element={<ViewAppraisal />}
+          />
+
           <Route
             path="/hr-dashboard/onboarding-offboarding"
             element={<OnboardingOffboarding />}
@@ -385,7 +431,7 @@ const App = () => {
 
           <Route
             path="/employee-dashboard/appraisal"
-            element={<AnnualAppraisalForm />}
+            element={<ViewMyAppraisal />}
           />
           <Route
             path="/employee-dashboard/allowances/add"

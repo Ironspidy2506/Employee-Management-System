@@ -5,7 +5,6 @@ import Header from "../HeaderFooter/Header";
 import Footer from "../HeaderFooter/Footer";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAuth } from "../../context/authContext";
 
 const ratingFields = [
   {
@@ -61,8 +60,8 @@ const ratingFields = [
   },
 ];
 
-const ViewMyAppraisal = () => {
-  const { user } = useAuth();
+const ViewAppraisal = () => {
+  const { id } = useParams();
   const [appraisal, setAppraisal] = useState(null);
 
   useEffect(() => {
@@ -72,36 +71,18 @@ const ViewMyAppraisal = () => {
   const fetchAppraisal = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/appraisals/get-user-appraisal/${user._id}`,
+        `http://localhost:5000/api/appraisals/get-appraisal-by-id/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
-      if (response.data.success) {
-        toast.success(response.data.message);
-        setAppraisal(response.data.appraisal);
-      } else {
-        toast.error(response.data.message);
-      }
+      setAppraisal(response.data.appraisal);
     } catch (error) {
-      toast.error(error.message);
+      toast.error("Failed to load appraisal details.");
     }
   };
-
-  if (!appraisal) {
-    return (
-      <>
-        <Header />
-        <ToastContainer />
-        <div className="text-center py-10 text-gray-900 text-lg">
-          No Appraisal Data Found!
-        </div>
-        <Footer />
-      </>
-    );
-  }
 
   return (
     <>
@@ -119,7 +100,7 @@ const ViewMyAppraisal = () => {
           <Info label="Classification" value={appraisal.classification} />
           <Info
             label="Department"
-            value={appraisal.department?.departmentName}
+            value={appraisal?.department?.departmentName}
           />
         </div>
 
@@ -176,4 +157,4 @@ const SectionTitle = ({ title }) => (
   <h2 className="text-xl font-semibold text-gray-700 mb-3 mt-8">{title}</h2>
 );
 
-export default ViewMyAppraisal;
+export default ViewAppraisal;

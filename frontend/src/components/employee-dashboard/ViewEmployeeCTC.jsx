@@ -127,7 +127,7 @@ const ViewEmployeeCTC = () => {
     if (fetchType === "Monthly CTC") {
       try {
         const response = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/ctc/monthly/${month}/${year}`,
+          `http://localhost:5000/api/ctc/monthly/${month}/${year}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -149,7 +149,7 @@ const ViewEmployeeCTC = () => {
     // else if (fetchType === "Yearly CTC") {
     //   try {
     //     const { data } = await axios.get(
-    //       `https://employee-management-system-backend-objq.onrender.com/api/ctc/yearly/${year}`,
+    //       `http://localhost:5000/api/ctc/yearly/${year}`,
     //       {
     //         headers: {
     //           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -170,7 +170,7 @@ const ViewEmployeeCTC = () => {
     else {
       try {
         const { data } = await axios.get(
-          `https://employee-management-system-backend-objq.onrender.com/api/ctc/employee/${employeeId}`,
+          `http://localhost:5000/api/ctc/employee/${employeeId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -17,7 +17,7 @@ const OnboardingOffboarding = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/employees/allowances/summary/${employeeId}`,
+        `https://korus-ems-backend.onrender.com/api/employees/allowances/summary/${employeeId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -43,7 +43,7 @@ const OnboardingOffboarding = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/employees/update-journey/${employeeId}`,
+        `https://korus-ems-backend.onrender.com/api/employees/update-journey/${employeeId}`,
         {
           doj: employeeData.doj,
           dol: employeeData.dol,

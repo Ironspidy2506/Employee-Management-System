@@ -92,7 +92,7 @@ const AnnualAppraisalForm = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/employees", {
+      const response = await axios.get("https://korus-ems-backend.onrender.com/api/employees", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setEmployees(response.data.employees);
@@ -104,7 +104,7 @@ const AnnualAppraisalForm = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/department", {
+      const response = await axios.get("https://korus-ems-backend.onrender.com/api/department", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setDepartments(response.data.departments);
@@ -180,7 +180,7 @@ const AnnualAppraisalForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/appraisals/add-appraisal",
+        "https://korus-ems-backend.onrender.com/api/appraisals/add-appraisal",
         payload,
         {
           headers: {

@@ -95,7 +95,7 @@ const EditAppraisalForm = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/employees", {
+      const response = await axios.get("https://korus-ems-backend.onrender.com/api/employees", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setEmployees(response.data.employees);
@@ -106,7 +106,7 @@ const EditAppraisalForm = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/department", {
+      const response = await axios.get("https://korus-ems-backend.onrender.com/api/department", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setDepartments(response.data.departments);
@@ -118,7 +118,7 @@ const EditAppraisalForm = () => {
   const fetchAppraisal = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/appraisals/get-appraisal-by-id/${id}`,
+        `https://korus-ems-backend.onrender.com/api/appraisals/get-appraisal-by-id/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -207,7 +207,7 @@ const EditAppraisalForm = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/appraisals/edit-appraisal/${id}`,
+        `https://korus-ems-backend.onrender.com/api/appraisals/edit-appraisal/${id}`,
         payload,
         {
           headers: {

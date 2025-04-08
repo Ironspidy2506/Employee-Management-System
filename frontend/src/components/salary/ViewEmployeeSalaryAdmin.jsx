@@ -14,7 +14,7 @@ const ViewEmployeeSalaryAdmin = () => {
     const getEmployeeSummary = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/employees/${_id}`,
+          `https://korus-ems-backend.onrender.com/api/employees/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -36,7 +36,7 @@ const ViewEmployeeSalaryAdmin = () => {
     const fetchSalaryHistory = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/salary/employee/${_id}`,
+          `https://korus-ems-backend.onrender.com/api/salary/employee/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

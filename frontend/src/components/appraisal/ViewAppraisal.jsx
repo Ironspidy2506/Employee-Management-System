@@ -71,7 +71,7 @@ const ViewAppraisal = () => {
   const fetchAppraisal = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/appraisals/get-appraisal-by-id/${id}`,
+        `https://korus-ems-backend.onrender.com/api/appraisals/get-appraisal-by-id/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

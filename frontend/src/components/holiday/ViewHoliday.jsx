@@ -11,7 +11,7 @@ const ViewHoliday = () => {
     const fetchHolidays = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get("http://localhost:5000/api/holiday", {
+        const { data } = await axios.get("https://korus-ems-backend.onrender.com/api/holiday", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

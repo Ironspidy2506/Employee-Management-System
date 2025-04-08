@@ -24,7 +24,7 @@ const EmployeeList = () => {
       setEmpLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/employees",
+          "https://korus-ems-backend.onrender.com/api/employees",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

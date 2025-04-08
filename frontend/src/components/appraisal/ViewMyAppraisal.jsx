@@ -72,7 +72,7 @@ const ViewMyAppraisal = () => {
   const fetchAppraisal = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/appraisals/get-user-appraisal/${user._id}`,
+        `https://korus-ems-backend.onrender.com/api/appraisals/get-user-appraisal/${user._id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

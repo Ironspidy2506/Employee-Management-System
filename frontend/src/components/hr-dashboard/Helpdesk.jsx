@@ -14,7 +14,7 @@ const Helpdesk = () => {
 
   const fetchHelpRequests = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/helpdesk", {
+      const response = await axios.get("https://korus-ems-backend.onrender.com/api/helpdesk", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -42,7 +42,7 @@ const Helpdesk = () => {
   const handleResolve = async (helpId) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/helpdesk/resolve-help/${helpId}`,
+        `https://korus-ems-backend.onrender.com/api/helpdesk/resolve-help/${helpId}`,
         {},
         {
           headers: {
@@ -131,7 +131,7 @@ const Helpdesk = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/helpdesk/add-response/${helpId}`,
+        `https://korus-ems-backend.onrender.com/api/helpdesk/add-response/${helpId}`,
         { response: responseText },
         {
           headers: {

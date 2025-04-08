@@ -22,7 +22,7 @@ const ViewEmployeeAllowance = () => {
         const [allowancesResponse, fixedAllowancesResponse] = await Promise.all(
           [
             axios.get(
-              `http://localhost:5000/api/allowances/history/${user._id}`,
+              `https://korus-ems-backend.onrender.com/api/allowances/history/${user._id}`,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -30,7 +30,7 @@ const ViewEmployeeAllowance = () => {
               }
             ),
             axios.get(
-              `http://localhost:5000/api/fixed-allowances/history/${user._id}`,
+              `https://korus-ems-backend.onrender.com/api/fixed-allowances/history/${user._id}`,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -108,7 +108,7 @@ const ViewEmployeeAllowance = () => {
     // Confirm deletion action
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/allowances/delete/${_id}`,
+        `https://korus-ems-backend.onrender.com/api/allowances/delete/${_id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

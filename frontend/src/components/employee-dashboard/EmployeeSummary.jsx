@@ -16,7 +16,7 @@ const EmployeeSummary = () => {
     const fetchEmployeeData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/employees/summary/${user._id}`,
+          `https://korus-ems-backend.onrender.com/api/employees/summary/${user._id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -34,7 +34,7 @@ const EmployeeSummary = () => {
     const fetchAllEmployees = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/employees",
+          "https://korus-ems-backend.onrender.com/api/employees",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

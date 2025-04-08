@@ -36,7 +36,7 @@ const AddSalary = () => {
   const handleFetchEmployee = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/employees/allowances/summary/${employeeIdInput}`,
+        `https://korus-ems-backend.onrender.com/api/employees/allowances/summary/${employeeIdInput}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -59,7 +59,7 @@ const AddSalary = () => {
   const handleFetchGrossSalary = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/employees/${employeeIdInput}/${paymentMonth}/${paymentYear}`,
+        `https://korus-ems-backend.onrender.com/api/employees/${employeeIdInput}/${paymentMonth}/${paymentYear}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -163,7 +163,7 @@ const AddSalary = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/salary/add",
+        "https://korus-ems-backend.onrender.com/api/salary/add",
         payload,
         {
           headers: {

@@ -20,7 +20,7 @@ const DepartmentList = () => {
       setDepLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/department",
+          "https://korus-ems-backend.onrender.com/api/department",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

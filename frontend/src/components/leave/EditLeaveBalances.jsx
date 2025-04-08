@@ -12,7 +12,7 @@ const EditLeaveBalances = () => {
   const handleFetchEmployee = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/employees/allowances/summary/${employeeId}`,
+        `https://korus-ems-backend.onrender.com/api/employees/allowances/summary/${employeeId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -37,7 +37,7 @@ const EditLeaveBalances = () => {
   const handleUpdateLeaveBalance = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/employees/edit-leave-balance/${employeeId}`,
+        `https://korus-ems-backend.onrender.com/api/employees/edit-leave-balance/${employeeId}`,
         {
           el: employeeData.leaveBalance.el,
           cl: employeeData.leaveBalance.cl,

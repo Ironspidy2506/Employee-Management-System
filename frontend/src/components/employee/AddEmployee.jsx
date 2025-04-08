@@ -42,7 +42,7 @@ const AddEmployee = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/employees/add",
+        "https://korus-ems-backend.onrender.com/api/employees/add",
         formDataObj,
         {
           headers: {

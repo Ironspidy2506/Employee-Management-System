@@ -45,7 +45,7 @@ const ViewEmployeeSalary = () => {
     setError(null);
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/employees/salary/${user._id}?paymentMonth=${paymentMonth}&paymentYear=${paymentYear}`,
+        `https://korus-ems-backend.onrender.com/api/employees/salary/${user._id}?paymentMonth=${paymentMonth}&paymentYear=${paymentYear}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

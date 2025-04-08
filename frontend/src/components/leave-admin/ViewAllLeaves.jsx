@@ -260,7 +260,7 @@ const ViewAllLeaves = () => {
                     <button
                       onClick={() =>
                         window.open(
-                          `http://localhost:5000/api/leaves/attachment/${leave._id}`,
+                          `https://korus-ems-backend.onrender.com/api/leaves/attachment/${leave._id}`,
                           "_blank"
                         )
                       }

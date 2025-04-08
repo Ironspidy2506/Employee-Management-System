@@ -157,7 +157,7 @@ const ViewAllAppraisal = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan="5"
+                    colSpan="6"
                     className="text-center px-6 py-4 text-gray-500"
                   >
                     No appraisals found.

@@ -4,7 +4,7 @@ import axios from "axios";
 import { EmployeeButtons } from "../../utils/EmployeeHelper";
 import { useAuth } from "../../context/authContext";
 
-const EmployeeList = () => {
+const ExitedEmployeeList = () => {
   const { user } = useAuth();
   const [employees, setEmployees] = useState([]);
   const [empLoading, setEmpLoading] = useState(false);
@@ -34,7 +34,7 @@ const EmployeeList = () => {
 
         if (response.data.success) {
           const data = response.data.employees
-            .filter((emp) => emp.dol === undefined) // Filter active employees only
+            .filter((emp) => emp.dol !== undefined) // Filter exited employees only
             .map((emp) => ({
               _id: emp._id,
               employeeId: emp.employeeId,
@@ -128,18 +128,6 @@ const EmployeeList = () => {
               onChange={handleFilter}
               className="w-full md:w-auto flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-            <Link
-              to={`/${user.role}-dashboard/add-employee`}
-              className="px-4 py-2 bg-blue-500 text-lg text-white rounded-md hover:bg-blue-600 transition duration-300"
-            >
-              Add New Employee
-            </Link>
-            <Link
-              to={`/${user.role}-dashboard/employees/exited-employees`}
-              className="px-4 py-2 bg-rose-500 text-lg text-white rounded-md hover:bg-rose-600 transition duration-300"
-            >
-              Exited Employees
-            </Link>
           </div>
 
           <table className="w-full mt-6 border-collapse border border-gray-300">
@@ -209,4 +197,4 @@ const EmployeeList = () => {
   );
 };
 
-export default EmployeeList;
+export default ExitedEmployeeList;

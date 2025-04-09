@@ -367,6 +367,28 @@ const getLeaveAttachment = async (req, res) => {
   }
 };
 
+const updateReasonOfRejection = async (req, res) => {
+  try {
+    const { leaveId } = req.params;
+    const { response } = req.body;
+    const leave = await Leave.findById(leaveId);
+
+    if (!leave) {
+      return res.json({ success: false, message: "Leave not found" });
+    }
+
+    leave.ror = response;
+    await leave.save();
+
+    res.json({
+      success: true,
+      message: "Reason of rejection updated successfully",
+    });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 export {
   getLeaveHistory,
   applyForLeave,
@@ -378,4 +400,5 @@ export {
   approveOrReject,
   getSummary,
   getLeaveAttachment,
+  updateReasonOfRejection
 };

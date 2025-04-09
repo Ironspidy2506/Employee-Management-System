@@ -7,11 +7,13 @@ import {
   FaHourglassHalf,
   FaTimesCircle,
   FaUsers,
+  FaUsersSlash,
 } from "react-icons/fa";
 import axios from "axios"; // Import axios to make API requests
 
 const AdminSummary = () => {
   const [employeeCount, setEmployeeCount] = useState(0);
+  const [employeeExitCount, setEmployeeExitCount] = useState(0);
   const [departmentCount, setDepartmentCount] = useState(0);
   const [leaveApplied, setLeaveApplied] = useState(0);
   const [leaveApproved, setLeaveApproved] = useState(0);
@@ -44,10 +46,24 @@ const AdminSummary = () => {
           ]);
 
         if (employeeResponse.data.success) {
-          setEmployeeCount(employeeResponse.data.employees.length);
-
           // Process upcoming birthdays
           const employees = employeeResponse.data.employees;
+
+          const activeEmployees = employees.filter(
+            (emp) => emp.dol === undefined
+          );
+
+          // Set the count
+          setEmployeeCount(activeEmployees.length);
+
+          // Filter exited employees (those with a valid dol)
+          const exitedEmployees = employees.filter((emp) => {
+            if (!emp.dol) return false;
+            const dol = new Date(emp.dol);
+            return !isNaN(dol.getTime());
+          });
+          setEmployeeExitCount(exitedEmployees.length);
+
           const today = new Date();
           const upcoming = employees
             .map((employee) => {
@@ -110,6 +126,11 @@ const AdminSummary = () => {
             icon={<FaUsers />}
             text={"Total Employees"}
             number={employeeCount}
+          />
+          <SummaryCard
+            icon={<FaUsersSlash />}
+            text={"Employees Exited"}
+            number={employeeExitCount}
           />
           <SummaryCard
             icon={<FaBuilding />}

@@ -58,6 +58,9 @@ const leaveSchema = new mongoose.Schema({
   rejectedBy: {
     type: String,
   },
+  ror: {
+    type: String,
+  },
   lastUpdated: {
     type: Date,
     default: Date.now,

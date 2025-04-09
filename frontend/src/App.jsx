@@ -59,6 +59,7 @@ import ViewAllAppraisal from "./components/appraisal/ViewAllAppraisal";
 import EditAppraisalForm from "./components/appraisal/EditAppraisalForm";
 import ViewAppraisal from "./components/appraisal/ViewAppraisal";
 import ViewMyAppraisal from "./components/appraisal/ViewMyAppraisal";
+import ExitedEmployeeList from "./components/employee/ExitedEmployeeList";
 
 const App = () => {
   return (
@@ -96,6 +97,11 @@ const App = () => {
             element={<EditDepartment />}
           />
           <Route path="/admin-dashboard/employees" element={<EmployeeList />} />
+          <Route
+            path="/admin-dashboard/employees/exited-employees"
+            element={<ExitedEmployeeList />}
+          />
+
           <Route
             path="/admin-dashboard/employees/:_id"
             element={<ViewEmployee />}
@@ -219,6 +225,11 @@ const App = () => {
             path="/accounts-dashboard/employees"
             element={<EmployeeList />}
           />
+          <Route
+            path="/accounts-dashboard/employees/exited-employees"
+            element={<ExitedEmployeeList />}
+          />
+
           <Route
             path="/accounts-dashboard/employees/:_id"
             element={<ViewEmployee />}
@@ -352,6 +363,10 @@ const App = () => {
             element={<EditDepartment />}
           />
           <Route path="/hr-dashboard/employees" element={<EmployeeList />} />
+          <Route
+            path="/hr-dashboard/employees/exited-employees"
+            element={<ExitedEmployeeList />}
+          />
           <Route
             path="/hr-dashboard/employees/:_id"
             element={<ViewEmployee />}

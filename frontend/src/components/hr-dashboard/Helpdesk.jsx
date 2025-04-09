@@ -161,7 +161,7 @@ const Helpdesk = () => {
   return (
     <>
       <ToastContainer />
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="p-6 mx-auto">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Helpdesk</h2>
 
         {/* Search Bar */}

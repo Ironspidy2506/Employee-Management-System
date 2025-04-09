@@ -7,6 +7,7 @@ import {
 } from "../../utils/AdminLeaveHelper.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 const ViewAllLeaves = () => {
   const { user } = useAuth();
@@ -15,6 +16,8 @@ const ViewAllLeaves = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [visibleRecords, setVisibleRecords] = useState(50); // show first 50 initially
+  const [showTextArea, setShowTextArea] = useState(null);
+  const [responseData, setResponseData] = useState({});
 
   const navigate = useNavigate();
   const userId = user._id;
@@ -23,11 +26,17 @@ const ViewAllLeaves = () => {
     setVisibleRecords((prev) => prev + 10); // load 10 more on each click
   };
 
+  const handleResponseChange = (e, leaveId) => {
+    setResponseData((prev) => ({
+      ...prev,
+      [leaveId]: e.target.value,
+    }));
+  };
+
   useEffect(() => {
     const fetchLeaveHistory = async () => {
       try {
         const data = await getLeaveRecords();
-        console.log(data);
 
         setLeaveHistory(data);
         setFilteredHistory(data);
@@ -117,6 +126,35 @@ const ViewAllLeaves = () => {
     setFilteredHistory(filtered);
   };
 
+  const handleSaveResponse = async (leaveId) => {
+    const response = responseData[leaveId];
+    try {
+      const { data } = await axios.post(
+        `https://korus-ems-backend.onrender.com/api/leaves/update-leave-ror/${leaveId}`,
+        response,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+
+    setShowTextArea(null);
+  };
+
+  const handleCloseResponse = (leaveId) => {
+    setShowTextArea(null);
+  };
+
   return (
     <div className="p-6 bg-white">
       <ToastContainer />
@@ -196,6 +234,9 @@ const ViewAllLeaves = () => {
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Status
+              </th>
+              <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                Reason of Rejection
               </th>
               <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
                 Actions
@@ -286,6 +327,51 @@ const ViewAllLeaves = () => {
                       : ""
                     : null}
                 </td>
+
+                <td className="px-4 py-2 text-center text-sm font-semibold">
+                  {leave.status === "rejected" ? (
+                    <div>
+                      {showTextArea !== leave._id && (
+                        <button
+                          onClick={() => setShowTextArea(leave._id)}
+                          className="mt-2 bg-blue-500 text-white px-2 py-1 rounded-md"
+                        >
+                          Write a response
+                        </button>
+                      )}
+
+                      {/* Response Textarea */}
+                      {showTextArea === leave._id && (
+                        <div className="mt-2">
+                          <textarea
+                            rows="4"
+                            value={responseData[leave._id] || ""}
+                            onChange={(e) => handleResponseChange(e, leave._id)}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Write your response here..."
+                          />
+                          <div className="mt-2 flex justify-end gap-1">
+                            <button
+                              onClick={() => handleSaveResponse(leave._id)}
+                              className="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => handleCloseResponse(leave._id)}
+                              className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    leave.ror
+                  )}
+                </td>
+
                 <td className="px-4 py-2 text-sm text-gray-800">
                   {leave.status === "pending" ? (
                     <>

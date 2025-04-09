@@ -12,6 +12,7 @@ import {
   approveOrReject,
   getSummary,
   getLeaveAttachment,
+  updateReasonOfRejection,
 } from "../controllers/leaveController.js";
 
 const router = express.Router();
@@ -36,7 +37,11 @@ router.get("/:userId", authMiddleware, getLeaveBalance);
 router.get("/admin/getLeaves", authMiddleware, getAllLeaves);
 router.post("/:action/:leaveId", authMiddleware, approveOrReject);
 router.get("/fetch/summary", authMiddleware, getSummary);
-
 router.get("/attachment/:leaveId", getLeaveAttachment);
+router.post(
+  "/update-leave-ror/:leaveId",
+  authMiddleware,
+  updateReasonOfRejection
+);
 
 export default router;

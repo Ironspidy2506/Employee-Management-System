@@ -51,7 +51,7 @@ const HrDashboard = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col ml-0 lg:ml-64">
         {/* Navbar */}
-        <Navbar toggleSidebar={toggleSidebar} />
+        <Navbar toggleSidebar={toggleSidebar}  />
 
         {/* Dashboard Content */}
         <div className="flex-1 p-6">

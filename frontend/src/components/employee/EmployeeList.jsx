@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { EmployeeButtons } from "../../utils/EmployeeHelper";
@@ -6,10 +6,20 @@ import { useAuth } from "../../context/authContext";
 
 const EmployeeList = () => {
   const { user } = useAuth();
+  const printRef = useRef();
   const [employees, setEmployees] = useState([]);
   const [empLoading, setEmpLoading] = useState(false);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc"); // Default sorting in ascending order
+
+  const handlePrint = () => {
+    const originalContents = document.body.innerHTML;
+    const printContents = printRef.current.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    window.location.reload(); // Reload to restore interactivity
+  };
 
   const onEmployeeDelete = async (_id) => {
     const data = employees.filter((emp) => emp._id !== _id);
@@ -140,69 +150,77 @@ const EmployeeList = () => {
             >
               Exited Employees
             </Link>
+            <button
+              onClick={handlePrint}
+              className="px-4 py-2 bg-green-500 text-lg text-white rounded-md hover:bg-green-600 transition duration-300"
+            >
+              Print List
+            </button>
           </div>
 
-          <table className="w-full mt-6 border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border border-gray-300 px-2 py-1 text-base">
-                  S.No.
-                </th>
-                <th
-                  className="border border-gray-300 px-2 py-1 text-base cursor-pointer"
-                  onClick={handleSort}
-                >
-                  Employee ID
-                </th>
-                <th className="border border-gray-300 px-2 py-1 text-base">
-                  Name
-                </th>
-                <th className="border border-gray-300 px-2 py-1 text-base">
-                  Date of Birth
-                </th>
-                <th className="border border-gray-300 px-2 py-1 text-base">
-                  Department
-                </th>
-                <th className="border border-gray-300 px-2 py-1 text-base">
-                  Contact No.
-                </th>
-                <th className="border border-gray-300 px-2 py-1 text-base">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredEmployees.map((emp) => (
-                <tr key={emp._id} className="odd:bg-white even:bg-gray-50">
-                  <td className="border border-gray-300 px-2 py-1 text-base text-center">
-                    {emp.sno}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1 text-base text-center">
-                    {emp.employeeId}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1 text-base">
-                    {emp.name}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1 text-base text-center">
-                    {formatDate(emp.dob)}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1 text-base text-center">
-                    {emp.department}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1 text-base text-center">
-                    {emp.contactNo}
-                  </td>
-                  <td className="border border-gray-300 px-2 py-1 text-base text-center flex justify-center">
-                    <EmployeeButtons
-                      _id={emp._id}
-                      onEmployeeDelete={onEmployeeDelete}
-                      user={user}
-                    />
-                  </td>
+          <div ref={printRef}>
+            <table className="w-full mt-6 border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border border-gray-300 px-2 py-1 text-base">
+                    S.No.
+                  </th>
+                  <th
+                    className="border border-gray-300 px-2 py-1 text-base cursor-pointer"
+                    onClick={handleSort}
+                  >
+                    Employee ID
+                  </th>
+                  <th className="border border-gray-300 px-2 py-1 text-base">
+                    Name
+                  </th>
+                  <th className="border border-gray-300 px-2 py-1 text-base">
+                    Date of Birth
+                  </th>
+                  <th className="border border-gray-300 px-2 py-1 text-base">
+                    Department
+                  </th>
+                  <th className="border border-gray-300 px-2 py-1 text-base">
+                    Contact No.
+                  </th>
+                  <th className="border border-gray-300 px-2 py-1 text-base print:hidden">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredEmployees.map((emp) => (
+                  <tr key={emp._id} className="odd:bg-white even:bg-gray-50">
+                    <td className="border border-gray-300 px-2 py-1 text-base text-center">
+                      {emp.sno}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1 text-base text-center">
+                      {emp.employeeId}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1 text-base">
+                      {emp.name}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1 text-base text-center">
+                      {formatDate(emp.dob)}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1 text-base text-center">
+                      {emp.department}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1 text-base text-center">
+                      {emp.contactNo}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1 text-base text-center flex justify-center print:hidden">
+                      <EmployeeButtons
+                        _id={emp._id}
+                        onEmployeeDelete={onEmployeeDelete}
+                        user={user}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </>

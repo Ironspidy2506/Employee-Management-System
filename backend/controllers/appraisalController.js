@@ -9,10 +9,9 @@ const addAppraisal = async (req, res) => {
     const {
       employeeId,
       employeeName,
-      bannerId,
-      classification,
       department,
       accomplishments,
+      leadId,
       supervisorComments,
       ratings,
       totalRating,
@@ -20,14 +19,14 @@ const addAppraisal = async (req, res) => {
 
     const employee = await Employee.findById(employeeId);
     const empDepartment = await Department.findById(department);
+    const lead = await Employee.findById(leadId);
 
     const newAppraisal = new Appraisal({
       employeeId: employee,
       department: empDepartment,
       employeeName,
-      bannerId,
-      classification,
       accomplishments,
+      supervisor: lead,
       supervisorComments,
       ratings,
       totalRating,
@@ -54,10 +53,9 @@ const editAppraisal = async (req, res) => {
     const {
       employeeId,
       employeeName,
-      bannerId,
-      classification,
       department,
       accomplishments,
+      leadId,
       supervisorComments,
       ratings,
       totalRating,
@@ -65,14 +63,14 @@ const editAppraisal = async (req, res) => {
 
     const employee = await Employee.findById(employeeId);
     const empDepartment = await Department.findById(department);
+    const lead = await Employee.findById(leadId);
 
     const updatedData = {
       employeeId: employee,
       employeeName,
-      bannerId,
-      classification,
       department: empDepartment,
       accomplishments,
+      supervisor: leadId,
       supervisorComments,
       ratings,
       totalRating,
@@ -125,6 +123,7 @@ const deleteAppraisal = async (req, res) => {
 const getAppraisals = async (req, res) => {
   try {
     const appraisals = await Appraisal.find()
+      .populate("supervisor")
       .populate("employeeId")
       .populate("department");
 
@@ -142,6 +141,7 @@ const getAppraisalById = async (req, res) => {
   try {
     const { id } = req.params;
     const appraisal = await Appraisal.findById(id)
+      .populate("supervisor")
       .populate("employeeId")
       .populate("department");
 

@@ -21,7 +21,10 @@ config({ path: ".env" });
 
 app.use(
   cors({
-    origin: "https://employee-management-system-roan-pi.vercel.app",
+    origin: [
+      "https://employee-management-system-roan-pi.vercel.app",
+      "http://localhost:5173",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })

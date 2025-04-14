@@ -76,12 +76,15 @@ const EditAppraisalForm = () => {
 
   const [formData, setFormData] = useState({
     employeeId: "",
-    bannerId: "",
-    classification: "",
     department: "",
     accomplishments: "",
     supervisorComments: "",
+    leadId: "",
   });
+
+  const leads = employees
+    .filter((emp) => emp.role === "Lead")
+    .sort((a, b) => a.employeeId - b.employeeId);
 
   const [ratings, setRatings] = useState(
     ratingFields.reduce((acc, field) => ({ ...acc, [field]: "" }), {})
@@ -130,9 +133,8 @@ const EditAppraisalForm = () => {
 
       setFormData({
         employeeId: data.employeeId._id,
-        bannerId: data.bannerId,
-        classification: data.classification,
         department: data.department._id,
+        leadId: data.supervisor._id,
         accomplishments: data.accomplishments,
         supervisorComments: data.supervisorComments,
       });
@@ -185,13 +187,17 @@ const EditAppraisalForm = () => {
   };
 
   const getPerformanceMessage = (rating) => {
-    if (rating < 50)
-      return { text: "Needs Significant Improvement", color: "text-red-500" };
-    if (rating < 70)
+    if (rating < 65) {
+      return { text: "Unsatisfactory", color: "text-red-500" };
+    } else if (rating < 70) {
       return { text: "Needs Improvement", color: "text-orange-500" };
-    if (rating < 90)
-      return { text: "Satisfactory Performance", color: "text-blue-500" };
-    return { text: "Excellent Performance", color: "text-green-500" };
+    } else if (rating < 85) {
+      return { text: "Average", color: "text-yellow-500" };
+    } else if (rating < 95) {
+      return { text: "Very Good", color: "text-blue-500" };
+    } else {
+      return { text: "Excellent", color: "text-green-500" };
+    }
   };
 
   const performanceMessage = getPerformanceMessage(totalRating);
@@ -290,32 +296,43 @@ const EditAppraisalForm = () => {
                 isDisabled={true}
               />
             </div>
-
-            <div>
-              <label className="text-lg font-semibold text-gray-700 mb-1 block">
-                Banner ID
-              </label>
-              <input
-                type="text"
-                name="bannerId"
-                value={formData.bannerId}
-                onChange={handleChange}
-                className="p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="text-lg font-semibold text-gray-700 mb-1 block">
-                Classification
-              </label>
-              <input
-                type="text"
-                name="classification"
-                value={formData.classification}
-                onChange={handleChange}
-                className="p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+          </div>
+          <div>
+            <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
+              Supervisor
+            </label>
+            <Select
+              options={leads.map((lead) => ({
+                value: lead._id,
+                label: `${lead.employeeId} - ${lead.name}`,
+              }))}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              placeholder="Select Lead"
+              onChange={(selectedOption) =>
+                setFormData({ ...formData, leadId: selectedOption.value })
+              }
+              value={
+                leads.find((l) => l._id === formData.leadId)
+                  ? {
+                      value: formData.leadId,
+                      label: leads.find((l) => l._id === formData.leadId)?.name,
+                    }
+                  : null
+              }
+            />
+          </div>
+          <div>
+            <label className="text-lg font-semibold text-gray-700 capitalize mb-1 block">
+              Supervisor Comments
+            </label>
+            <textarea
+              name="supervisorComments"
+              placeholder="Supervisor Comments"
+              value={formData.supervisorComments}
+              onChange={handleChange}
+              className="p-2 border rounded w-full h-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
 
           {/* Accomplishments */}
@@ -381,17 +398,6 @@ const EditAppraisalForm = () => {
           </div>
 
           {/* Supervisor Comments */}
-          <div>
-            <label className="text-lg font-semibold text-gray-700 mb-1 block">
-              Supervisor Comments
-            </label>
-            <textarea
-              name="supervisorComments"
-              value={formData.supervisorComments}
-              onChange={handleChange}
-              className="p-2 border rounded w-full h-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
 
           {/* Submit */}
           <div className="flex justify-center items-center">

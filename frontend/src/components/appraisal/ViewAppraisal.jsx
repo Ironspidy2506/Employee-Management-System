@@ -78,11 +78,22 @@ const ViewAppraisal = () => {
           },
         }
       );
+
+      console.log(response);
+
       setAppraisal(response.data.appraisal);
     } catch (error) {
       toast.error("Failed to load appraisal details.");
     }
   };
+
+  if (!appraisal) {
+    return (
+      <div className="text-center text-gray-500 py-10">
+        Loading appraisal...
+      </div>
+    );
+  }
 
   return (
     <>
@@ -95,13 +106,29 @@ const ViewAppraisal = () => {
 
         {/* Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-base mb-8">
-          <Info label="Employee Name" value={appraisal.employeeId?.name} />
-          <Info label="Banner ID" value={appraisal.bannerId} />
-          <Info label="Classification" value={appraisal.classification} />
+          <Info
+            label="Employee Name"
+            value={appraisal?.employeeId?.name || "N/A"}
+          />
           <Info
             label="Department"
-            value={appraisal?.department?.departmentName}
+            value={appraisal?.department?.departmentName || "N/A"}
           />
+        </div>
+
+        <SectionTitle title="Supervisor" />
+        <div className="bg-gray-100 p-4 rounded-lg mb-8 text-gray-700 whitespace-pre-line">
+          {appraisal.supervisor?.name || "No supervisor added."}
+        </div>
+
+        <SectionTitle title="Supervisor Comments" />
+        <div className="bg-gray-100 p-4 rounded-lg text-gray-700 whitespace-pre-line">
+          {appraisal.supervisorComments || "No comments provided."}
+        </div>
+
+        <SectionTitle title="Accomplishments" />
+        <div className="bg-gray-100 p-4 rounded-lg mb-8 text-gray-700 whitespace-pre-line">
+          {appraisal.accomplishments || "No accomplishments provided."}
         </div>
 
         {/* Ratings Section */}
@@ -127,18 +154,6 @@ const ViewAppraisal = () => {
         <SectionTitle title="Total Rating" />
         <div className="bg-indigo-100 text-indigo-800 font-bold px-5 py-2 inline-block rounded-lg text-lg mb-8">
           {appraisal.totalRating}
-        </div>
-
-        {/* Accomplishments */}
-        <SectionTitle title="Accomplishments" />
-        <div className="bg-gray-100 p-4 rounded-lg mb-8 text-gray-700 whitespace-pre-line">
-          {appraisal.accomplishments || "No accomplishments provided."}
-        </div>
-
-        {/* Supervisor Comments */}
-        <SectionTitle title="Supervisor Comments" />
-        <div className="bg-gray-100 p-4 rounded-lg text-gray-700 whitespace-pre-line">
-          {appraisal.supervisorComments || "No comments provided."}
         </div>
       </div>
       <Footer />

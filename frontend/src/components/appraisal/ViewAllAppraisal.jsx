@@ -9,6 +9,7 @@ import { useAuth } from "../../context/authContext";
 const ViewAllAppraisal = () => {
   const { user } = useAuth();
   const [appraisals, setAppraisals] = useState([]);
+  const [selectedYear, setSelectedYear] = useState("All");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,6 +65,31 @@ const ViewAllAppraisal = () => {
     }
   };
 
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const latestYear =
+    appraisals.length > 0
+      ? Math.max(
+          ...appraisals.map((item) => new Date(item.createdAt).getFullYear())
+        )
+      : new Date().getFullYear();
+
+  const years = Array.from({ length: 5 }, (_, i) => latestYear + i);
+
+  const filteredAppraisals =
+    selectedYear === "All"
+      ? appraisals
+      : appraisals.filter(
+          (item) =>
+            new Date(item.createdAt).getFullYear().toString() === selectedYear
+        );
+
   return (
     <>
       <ToastContainer />
@@ -80,6 +106,21 @@ const ViewAllAppraisal = () => {
           </button>
         </div>
 
+        <div className="flex justify-end mb-4">
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+            className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="All">All Years</option>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden">
             <thead className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
@@ -94,10 +135,13 @@ const ViewAllAppraisal = () => {
                   Department
                 </th>
                 <th className="px-6 py-3 text-center text-sm font-semibold tracking-wider">
-                  Banner ID
+                  Supervisor
                 </th>
                 <th className="px-6 py-3 text-center text-sm font-semibold tracking-wider">
                   Total Rating
+                </th>
+                <th className="px-6 py-3 text-center text-sm font-semibold tracking-wider">
+                  Added Date
                 </th>
                 <th className="px-6 py-3 text-center text-sm font-semibold tracking-wider">
                   Actions
@@ -105,8 +149,8 @@ const ViewAllAppraisal = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {appraisals.length > 0 ? (
-                appraisals.map((appraisal) => (
+              {filteredAppraisals.length > 0 ? (
+                filteredAppraisals.map((appraisal) => (
                   <tr
                     key={appraisal._id}
                     className="hover:bg-gray-50 transition"
@@ -121,10 +165,13 @@ const ViewAllAppraisal = () => {
                       {appraisal.department?.departmentName}
                     </td>
                     <td className="px-6 py-4 text-sm text-center text-gray-700">
-                      {appraisal.bannerId}
+                      {appraisal.supervisor?.name}
                     </td>
                     <td className="px-6 py-4 font-semibold text-center text-blue-600 text-sm">
                       {appraisal.totalRating}/100
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-center text-blue-600 text-sm">
+                      {formatDate(appraisal.createdAt)}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex justify-center gap-3">
@@ -157,7 +204,7 @@ const ViewAllAppraisal = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan="6"
+                    colSpan="7"
                     className="text-center px-6 py-4 text-gray-500"
                   >
                     No appraisals found.

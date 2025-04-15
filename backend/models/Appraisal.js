@@ -16,11 +16,13 @@ const appraisalSchema = new Schema(
     accomplishments: {
       type: String,
     },
-    supervisor: {
-      type: Schema.Types.ObjectId,
-      ref: "employee",
-      required: true,
-    },
+    supervisor: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "employee",
+        required: true,
+      },
+    ],
     supervisorComments: {
       type: String,
     },

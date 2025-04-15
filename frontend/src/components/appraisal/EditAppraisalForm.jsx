@@ -4,8 +4,9 @@ import axios from "axios";
 import Header from "../HeaderFooter/Header";
 import Footer from "../HeaderFooter/Footer";
 import { ToastContainer, toast } from "react-toastify";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../context/authContext";
 
 const ratingScale = {
   Failed: 25,
@@ -70,6 +71,8 @@ const ratingFields = [
 
 const EditAppraisalForm = () => {
   const { id } = useParams();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [totalRating, setTotalRating] = useState(0);
@@ -79,7 +82,7 @@ const EditAppraisalForm = () => {
     department: "",
     accomplishments: "",
     supervisorComments: "",
-    leadId: "",
+    leadIds: [],
   });
 
   const leads = employees
@@ -134,7 +137,9 @@ const EditAppraisalForm = () => {
       setFormData({
         employeeId: data.employeeId._id,
         department: data.department._id,
-        leadId: data.supervisor._id,
+        leadIds: Array.isArray(data.supervisor)
+          ? data.supervisor.map((sup) => sup._id)
+          : [], // fallback
         accomplishments: data.accomplishments,
         supervisorComments: data.supervisorComments,
       });
@@ -224,6 +229,9 @@ const EditAppraisalForm = () => {
 
       if (response.data.success) {
         toast.success(response.data.message);
+        setTimeout(() => {
+          navigate(`/${user.role}-dashboard/appraisal`);
+        }, 500);
       } else {
         toast.error(response.data.message);
       }
@@ -308,18 +316,20 @@ const EditAppraisalForm = () => {
               }))}
               className="basic-multi-select"
               classNamePrefix="select"
-              placeholder="Select Lead"
-              onChange={(selectedOption) =>
-                setFormData({ ...formData, leadId: selectedOption.value })
+              placeholder="Select Lead(s)"
+              isMulti
+              onChange={(selectedOptions) =>
+                setFormData({
+                  ...formData,
+                  leadIds: selectedOptions.map((opt) => opt.value),
+                })
               }
-              value={
-                leads.find((l) => l._id === formData.leadId)
-                  ? {
-                      value: formData.leadId,
-                      label: leads.find((l) => l._id === formData.leadId)?.name,
-                    }
-                  : null
-              }
+              value={leads
+                .filter((lead) => formData.leadIds.includes(lead._id))
+                .map((lead) => ({
+                  value: lead._id,
+                  label: `${lead.employeeId} - ${lead.name}`,
+                }))}
             />
           </div>
           <div>

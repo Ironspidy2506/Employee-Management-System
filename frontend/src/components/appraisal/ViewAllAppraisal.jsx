@@ -165,8 +165,14 @@ const ViewAllAppraisal = () => {
                       {appraisal.department?.departmentName}
                     </td>
                     <td className="px-6 py-4 text-sm text-center text-gray-700">
-                      {appraisal.supervisor?.name}
+                      {Array.isArray(appraisal.supervisor) &&
+                      appraisal.supervisor.length > 0
+                        ? appraisal.supervisor.map((sup, index) => (
+                            <div key={sup._id || index}>{sup.name}</div>
+                          ))
+                        : "N/A"}
                     </td>
+
                     <td className="px-6 py-4 font-semibold text-center text-blue-600 text-sm">
                       {appraisal.totalRating}/100
                     </td>

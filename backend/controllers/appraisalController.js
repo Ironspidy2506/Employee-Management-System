@@ -11,7 +11,7 @@ const addAppraisal = async (req, res) => {
       employeeName,
       department,
       accomplishments,
-      leadId,
+      leadIds,
       supervisorComments,
       ratings,
       totalRating,
@@ -19,14 +19,15 @@ const addAppraisal = async (req, res) => {
 
     const employee = await Employee.findById(employeeId);
     const empDepartment = await Department.findById(department);
-    const lead = await Employee.findById(leadId);
+
+    const leads = await Employee.find({ _id: { $in: leadIds } });
 
     const newAppraisal = new Appraisal({
       employeeId: employee,
       department: empDepartment,
       employeeName,
       accomplishments,
-      supervisor: lead,
+      supervisor: leads,
       supervisorComments,
       ratings,
       totalRating,
@@ -45,7 +46,6 @@ const addAppraisal = async (req, res) => {
 };
 
 // Edit/update an existing appraisal
-// Edit/update an existing appraisal
 const editAppraisal = async (req, res) => {
   try {
     const { id } = req.params;
@@ -55,7 +55,7 @@ const editAppraisal = async (req, res) => {
       employeeName,
       department,
       accomplishments,
-      leadId,
+      leadIds,
       supervisorComments,
       ratings,
       totalRating,
@@ -63,14 +63,14 @@ const editAppraisal = async (req, res) => {
 
     const employee = await Employee.findById(employeeId);
     const empDepartment = await Department.findById(department);
-    const lead = await Employee.findById(leadId);
+    const leads = await Employee.find({ _id: { $in: leadIds } });
 
     const updatedData = {
       employeeId: employee,
       employeeName,
       department: empDepartment,
       accomplishments,
-      supervisor: leadId,
+      supervisor: leads,
       supervisorComments,
       ratings,
       totalRating,
@@ -92,9 +92,10 @@ const editAppraisal = async (req, res) => {
     res.json({
       success: true,
       message: "Appraisal updated successfully",
-      appraisal: updatedAppraisal,
     });
   } catch (error) {
+    console.log(error);
+    
     res.json({ success: false, message: error.message });
   }
 };

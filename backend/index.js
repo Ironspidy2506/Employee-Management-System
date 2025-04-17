@@ -37,10 +37,6 @@ dbConnect();
 
 app.use(express.static("public/uploads"));
 
-app.get("/ping", (req, res) => {
-  res.status(200).send("pong");
-});
-
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/department", departmentRouter);
@@ -55,6 +51,8 @@ app.use("/api/holiday", holidayRouter);
 app.use("/api/performance", performanceRouter);
 app.use("/api/appraisals", appraisalRouter);
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server started on ${process.env.PORT}`);
+app.get("/api/ping", (req, res) => {
+  res.status(200).send("pong");
 });
+
+export const handler = serverless(app);

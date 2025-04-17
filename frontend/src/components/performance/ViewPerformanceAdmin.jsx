@@ -22,7 +22,7 @@ const ViewPerformanceAdmin = () => {
         }
 
         const { data } = await axios.get(
-          `https://korus-ems-backend.onrender.com/api/performance/month-year-basis/${month}/${year}`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/performance/month-year-basis/${month}/${year}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -44,7 +44,7 @@ const ViewPerformanceAdmin = () => {
 
         const empId = Number(employeeId.trim());
         const { data } = await axios.post(
-          `https://korus-ems-backend.onrender.com/api/performance/get-employee-performance`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/performance/get-employee-performance`,
           { empId },
           {
             headers: {

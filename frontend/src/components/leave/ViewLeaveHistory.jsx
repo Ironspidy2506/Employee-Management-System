@@ -256,7 +256,7 @@ const ViewLeaveHistory = () => {
                       <button
                         onClick={() =>
                           window.open(
-                            `https://korus-ems-backend.onrender.com/api/leaves/attachment/${leave._id}`,
+                            `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/attachment/${leave._id}`,
                             "_blank"
                           )
                         }

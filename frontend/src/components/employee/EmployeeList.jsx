@@ -34,7 +34,7 @@ const EmployeeList = () => {
       setEmpLoading(true);
       try {
         const response = await axios.get(
-          "https://korus-ems-backend.onrender.com/api/employees",
+          "https://korus-employee-management-system-mern-stack.vercel.app/api/employees",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

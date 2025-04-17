@@ -36,7 +36,7 @@ const AddSalary = () => {
   const handleFetchEmployee = async () => {
     try {
       const response = await axios.get(
-        `https://korus-ems-backend.onrender.com/api/employees/allowances/summary/${employeeIdInput}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/allowances/summary/${employeeIdInput}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -59,7 +59,7 @@ const AddSalary = () => {
   const handleFetchGrossSalary = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-ems-backend.onrender.com/api/employees/${employeeIdInput}/${paymentMonth}/${paymentYear}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/${employeeIdInput}/${paymentMonth}/${paymentYear}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -163,7 +163,7 @@ const AddSalary = () => {
 
     try {
       const response = await axios.post(
-        "https://korus-ems-backend.onrender.com/api/salary/add",
+        "https://korus-employee-management-system-mern-stack.vercel.app/api/salary/add",
         payload,
         {
           headers: {

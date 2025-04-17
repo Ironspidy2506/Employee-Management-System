@@ -36,7 +36,7 @@ const ViewAllFixedAllowances = () => {
     const fetchAllowanceData = async () => {
       try {
         const response = await axios.get(
-          `https://korus-ems-backend.onrender.com/api/fixed-allowances/fetchAllHistory`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/fixed-allowances/fetchAllHistory`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

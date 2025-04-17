@@ -31,7 +31,7 @@ const ApplyLeave = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get(
-          "https://korus-ems-backend.onrender.com/api/employees",
+          "https://korus-employee-management-system-mern-stack.vercel.app/api/employees",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -143,7 +143,7 @@ const ApplyLeave = () => {
 
     try {
       const response = await axios.post(
-        `https://korus-ems-backend.onrender.com/api/leaves/apply/${userId}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/apply/${userId}`,
         leaveData,
         {
           headers: {

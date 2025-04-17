@@ -27,7 +27,7 @@ const EditSalary = () => {
   const handleFetchEmployee = async () => {
     try {
       const response = await axios.get(
-        `https://korus-ems-backend.onrender.com/api/employees/allowances/summary/${employeeIdInput}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/allowances/summary/${employeeIdInput}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }

@@ -16,7 +16,7 @@ const EmployeeHelpdesk = () => {
     const fetchQueries = async () => {
       try {
         const { data } = await axios.get(
-          `https://korus-ems-backend.onrender.com/api/helpdesk/my-queries/${_id}`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/helpdesk/my-queries/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming token is stored in localStorage
@@ -46,7 +46,7 @@ const EmployeeHelpdesk = () => {
   const handleDelete = async (helpId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-ems-backend.onrender.com/api/helpdesk/delete-help/${helpId}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/helpdesk/delete-help/${helpId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

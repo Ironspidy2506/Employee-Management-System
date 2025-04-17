@@ -3,7 +3,7 @@ import axios from "axios";
 export const getLeaveRecords = async () => {
   try {
     const response = await axios.get(
-      `https://korus-ems-backend.onrender.com/api/leaves/admin/getLeaves`,
+      `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/admin/getLeaves`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -20,7 +20,7 @@ export const getLeaveRecords = async () => {
 
 export const approveRejectLeave = async (leaveId, action) => {
   try {
-    const response = await axios.post(`https://korus-ems-backend.onrender.com/api/leaves/${action}/${leaveId}`, {}, {
+    const response = await axios.post(`https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/${action}/${leaveId}`, {}, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

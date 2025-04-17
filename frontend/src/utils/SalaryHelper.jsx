@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 export const fetchDepartments = async () => {
   let departments;
   try {
-    const response = await axios.get("https://korus-ems-backend.onrender.com/api/department", {
+    const response = await axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/department", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -26,7 +26,7 @@ export const fetchEmployeeById = async (_id) => {
   let employees;
   try {
     const response = await axios.get(
-      `https://korus-ems-backend.onrender.com/api/employees/allowances/summary/${_id}`,
+      `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/allowances/summary/${_id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -52,7 +52,7 @@ export const getSalaryDetails = async ({
 }) => {
   try {
     const response = await axios.get(
-      `https://korus-ems-backend.onrender.com/api/salary/${employeeId}?paymentMonth=${paymentMonth}&paymentYear=${paymentYear}`,
+      `https://korus-employee-management-system-mern-stack.vercel.app/api/salary/${employeeId}?paymentMonth=${paymentMonth}&paymentYear=${paymentYear}`,
       { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
     );
 
@@ -65,7 +65,7 @@ export const getSalaryDetails = async ({
 
 export const updateSalary = async (employeeId, payload) => {
   try {
-    await axios.put(`https://korus-ems-backend.onrender.com/api/salary/${employeeId}`, payload, {
+    await axios.put(`https://korus-employee-management-system-mern-stack.vercel.app/api/salary/${employeeId}`, payload, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
   } catch (error) {

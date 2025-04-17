@@ -22,7 +22,7 @@ const HrChangePassword = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get(
-          "https://korus-ems-backend.onrender.com/api/employees",
+          "https://korus-employee-management-system-mern-stack.vercel.app/api/employees",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -67,7 +67,7 @@ const HrChangePassword = () => {
 
     try {
       const response = await axios.post(
-        "https://korus-ems-backend.onrender.com/api/users/hr-update-password",
+        "https://korus-employee-management-system-mern-stack.vercel.app/api/users/hr-update-password",
         {
           employeeId: selectedEmployee.value,
           newPassword: passwordDetails.newPassword,

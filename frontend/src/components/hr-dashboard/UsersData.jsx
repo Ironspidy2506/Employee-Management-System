@@ -9,7 +9,7 @@ const UsersData = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("https://korus-ems-backend.onrender.com/api/users", {
+        const response = await axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/users", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -25,7 +25,7 @@ const UsersData = () => {
   // Handle user deletion
   const deleteUser = async (userId) => {
     try {
-      await axios.delete(`https://korus-ems-backend.onrender.com/api/users/delete/${userId}`, {
+      await axios.delete(`https://korus-employee-management-system-mern-stack.vercel.app/api/users/delete/${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

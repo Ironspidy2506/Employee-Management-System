@@ -42,7 +42,7 @@ const AddEmployee = () => {
 
     try {
       const response = await axios.post(
-        "https://korus-ems-backend.onrender.com/api/employees/add",
+        "https://korus-employee-management-system-mern-stack.vercel.app/api/employees/add",
         formDataObj,
         {
           headers: {

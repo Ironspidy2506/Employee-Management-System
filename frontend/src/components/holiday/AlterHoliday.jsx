@@ -21,7 +21,7 @@ const AlterHoliday = () => {
   // Fetch holidays from the server
   const getHolidays = async () => {
     try {
-      const { data } = await axios.get("https://korus-ems-backend.onrender.com/api/holiday", {
+      const { data } = await axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/holiday", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -53,7 +53,7 @@ const AlterHoliday = () => {
 
     try {
       const { data } = await axios.post(
-        "https://korus-ems-backend.onrender.com/api/holiday/add-holiday",
+        "https://korus-employee-management-system-mern-stack.vercel.app/api/holiday/add-holiday",
         { name: holidayName, date: holidayDate },
         {
           headers: {
@@ -79,7 +79,7 @@ const AlterHoliday = () => {
   const editHoliday = async (_id, updatedHoliday) => {
     try {
       const { data } = await axios.put(
-        `https://korus-ems-backend.onrender.com/api/holiday/edit-holiday/${_id}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/holiday/edit-holiday/${_id}`,
         updatedHoliday,
         {
           headers: {
@@ -113,7 +113,7 @@ const AlterHoliday = () => {
   const deleteHoliday = async (_id) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-ems-backend.onrender.com/api/holiday/delete-holiday/${_id}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/holiday/delete-holiday/${_id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

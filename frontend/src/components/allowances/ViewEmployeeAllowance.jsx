@@ -22,7 +22,7 @@ const ViewEmployeeAllowance = () => {
         const [allowancesResponse, fixedAllowancesResponse] = await Promise.all(
           [
             axios.get(
-              `https://korus-ems-backend.onrender.com/api/allowances/history/${user._id}`,
+              `https://korus-employee-management-system-mern-stack.vercel.app/api/allowances/history/${user._id}`,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -30,7 +30,7 @@ const ViewEmployeeAllowance = () => {
               }
             ),
             axios.get(
-              `https://korus-ems-backend.onrender.com/api/fixed-allowances/history/${user._id}`,
+              `https://korus-employee-management-system-mern-stack.vercel.app/api/fixed-allowances/history/${user._id}`,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -108,7 +108,7 @@ const ViewEmployeeAllowance = () => {
     // Confirm deletion action
     try {
       const response = await axios.delete(
-        `https://korus-ems-backend.onrender.com/api/allowances/delete/${_id}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/allowances/delete/${_id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

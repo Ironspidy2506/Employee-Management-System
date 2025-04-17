@@ -38,7 +38,7 @@ const EditEmployee = () => {
       setEmpLoading(true);
       try {
         const response = await axios.get(
-          `https://korus-ems-backend.onrender.com/api/employees/${_id}`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -85,7 +85,7 @@ const EditEmployee = () => {
 
     try {
       const response = await axios.put(
-        `https://korus-ems-backend.onrender.com/api/employees/${_id}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/${_id}`,
         formDataObj,
         {
           headers: {

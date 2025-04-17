@@ -19,7 +19,7 @@ const ApplyHelp = () => {
     const fetchEmployeeId = async () => {
       try {
         const { data } = await axios.get(
-          `https://korus-ems-backend.onrender.com/api/employees/summary/${_id}`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/summary/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -47,7 +47,7 @@ const ApplyHelp = () => {
 
     try {
       const { data } = await axios.put(
-        `https://korus-ems-backend.onrender.com/api/helpdesk/apply-help`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/helpdesk/apply-help`,
         {
           _id,
           query,

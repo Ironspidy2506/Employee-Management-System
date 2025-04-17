@@ -9,7 +9,7 @@ export const DepartmentButtons = ({ _id, onDepartmentDelete, user }) => {
     if (confirm) {
       try {
         const response = await axios.delete(
-          `https://korus-ems-backend.onrender.com/api/department/${_id}`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/department/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -16,7 +16,7 @@ const ViewAllAppraisal = () => {
     const fetchAppraisals = async () => {
       try {
         const { data } = await axios.get(
-          "https://korus-ems-backend.onrender.com/api/appraisals/view-all-appraisals",
+          "https://korus-employee-management-system-mern-stack.vercel.app/api/appraisals/view-all-appraisals",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -44,7 +44,7 @@ const ViewAllAppraisal = () => {
   const handleDelete = async (id) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-ems-backend.onrender.com/api/appraisals/delete-appraisal/${id}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/appraisals/delete-appraisal/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

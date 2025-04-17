@@ -11,7 +11,7 @@ const ViewHoliday = () => {
     const fetchHolidays = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get("https://korus-ems-backend.onrender.com/api/holiday", {
+        const { data } = await axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/holiday", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

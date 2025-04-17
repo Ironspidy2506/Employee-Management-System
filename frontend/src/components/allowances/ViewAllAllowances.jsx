@@ -43,7 +43,7 @@ const ViewAllAllowances = () => {
     const fetchAllowanceData = async () => {
       try {
         const response = await axios.get(
-          `https://korus-ems-backend.onrender.com/api/allowances/fetchAllHistory`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/allowances/fetchAllHistory`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

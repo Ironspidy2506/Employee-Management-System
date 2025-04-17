@@ -33,7 +33,7 @@ const ViewSalary = () => {
     if (selectedOption === "monthly") {
       try {
         const response = await axios.get(
-          `https://korus-ems-backend.onrender.com/api/salary/monthly-wise/${month}/${year}`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/salary/monthly-wise/${month}/${year}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -52,7 +52,7 @@ const ViewSalary = () => {
     } else {
       try {
         const response = await axios.get(
-          `https://korus-ems-backend.onrender.com/api/salary/employee-wise/${employeeId}`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/salary/employee-wise/${employeeId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

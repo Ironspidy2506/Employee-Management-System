@@ -23,7 +23,7 @@ const AddDepartment = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://korus-ems-backend.onrender.com/api/department/add",
+        "https://korus-employee-management-system-mern-stack.vercel.app/api/department/add",
         department,
         {
           headers: {

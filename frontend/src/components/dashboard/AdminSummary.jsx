@@ -28,17 +28,17 @@ const AdminSummary = () => {
         // Create an array of promises for concurrent requests
         const [employeeResponse, departmentResponse, leaveResponse] =
           await Promise.all([
-            axios.get("https://korus-ems-backend.onrender.com/api/employees", {
+            axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/employees", {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             }),
-            axios.get("https://korus-ems-backend.onrender.com/api/department", {
+            axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/department", {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             }),
-            axios.get("https://korus-ems-backend.onrender.com/api/leaves/fetch/summary", {
+            axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/fetch/summary", {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },

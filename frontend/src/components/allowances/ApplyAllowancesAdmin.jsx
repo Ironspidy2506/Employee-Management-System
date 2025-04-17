@@ -31,7 +31,7 @@ const ApplyAllowancesAdmin = () => {
 
     try {
       const response = await axios.get(
-        `https://korus-ems-backend.onrender.com/api/employees/allowances/summary/${formData.employeeId}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/allowances/summary/${formData.employeeId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -65,7 +65,7 @@ const ApplyAllowancesAdmin = () => {
 
     try {
       const response = await axios.post(
-        `https://korus-ems-backend.onrender.com/api/allowances/admin/add-allowance/${formData.employeeId}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/allowances/admin/add-allowance/${formData.employeeId}`,
         formData,
         {
           headers: {

@@ -99,7 +99,7 @@ const AnnualAppraisalForm = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get("https://korus-ems-backend.onrender.com/api/employees", {
+      const response = await axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/employees", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setEmployees(response.data.employees);
@@ -111,7 +111,7 @@ const AnnualAppraisalForm = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("https://korus-ems-backend.onrender.com/api/department", {
+      const response = await axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/department", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setDepartments(response.data.departments);
@@ -189,7 +189,7 @@ const AnnualAppraisalForm = () => {
 
     try {
       const response = await axios.post(
-        "https://korus-ems-backend.onrender.com/api/appraisals/add-appraisal",
+        "https://korus-employee-management-system-mern-stack.vercel.app/api/appraisals/add-appraisal",
         payload,
         {
           headers: {

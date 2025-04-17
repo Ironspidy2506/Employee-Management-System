@@ -15,7 +15,7 @@ const ViewAppliedLeavesTeamLead = () => {
   const getAppliedLeaves = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-ems-backend.onrender.com/api/users/get-leave-for-approvals/${userId}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/users/get-leave-for-approvals/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -47,7 +47,7 @@ const ViewAppliedLeavesTeamLead = () => {
   const handleAction = async (leaveId, action) => {
     try {
       const { data } = await axios.post(
-        `https://korus-ems-backend.onrender.com/api/users/leave-action/${userId}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/users/leave-action/${userId}`,
         { leaveId, action },
         {
           headers: {

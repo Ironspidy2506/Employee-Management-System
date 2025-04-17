@@ -130,7 +130,7 @@ const ViewAllLeaves = () => {
     const response = responseData[leaveId];
     try {
       const { data } = await axios.post(
-        `https://korus-ems-backend.onrender.com/api/leaves/update-leave-ror/${leaveId}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/update-leave-ror/${leaveId}`,
         response,
         {
           headers: {
@@ -301,7 +301,7 @@ const ViewAllLeaves = () => {
                     <button
                       onClick={() =>
                         window.open(
-                          `https://korus-ems-backend.onrender.com/api/leaves/attachment/${leave._id}`,
+                          `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/attachment/${leave._id}`,
                           "_blank"
                         )
                       }

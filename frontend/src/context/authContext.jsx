@@ -15,7 +15,7 @@ const authContext = ({ children }) => {
 
         if (token) {
           const response = await axios.get(
-            "https://korus-ems-backend.onrender.com/api/auth/verify",
+            "https://korus-employee-management-system-mern-stack.vercel.app/api/auth/verify",
             {
               headers: {
                 Authorization: `Bearer ${token}`,

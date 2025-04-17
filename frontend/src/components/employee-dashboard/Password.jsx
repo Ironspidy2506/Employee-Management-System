@@ -27,7 +27,7 @@ const Password = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-ems-backend.onrender.com/api/users/update-password/${user._id}`,
+        `https://korus-employee-management-system-mern-stack.vercel.app/api/users/update-password/${user._id}`,
         passwordDetails,
         {
           headers: {

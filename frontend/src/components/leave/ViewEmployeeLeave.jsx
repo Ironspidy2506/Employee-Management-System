@@ -15,7 +15,7 @@ const ViewEmployeeLeave = () => {
     const getEmployeeLeaveBalance = async () => {
       try {
         const response = await axios.get(
-          `https://korus-ems-backend.onrender.com/api/employees/${_id}`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -36,7 +36,7 @@ const ViewEmployeeLeave = () => {
     const fetchLeaveHistory = async () => {
       try {
         const response = await axios.get(
-          `https://korus-ems-backend.onrender.com/api/employees/leaves/${_id}`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/leaves/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

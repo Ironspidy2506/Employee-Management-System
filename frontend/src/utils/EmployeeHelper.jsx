@@ -4,7 +4,7 @@ import axios from "axios";
 export const fetchDepartments = async () => {
   let departments;
   try {
-    const response = await axios.get("https://korus-ems-backend.onrender.com/api/department", {
+    const response = await axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/department", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -29,7 +29,7 @@ export const EmployeeButtons = ({ _id, onEmployeeDelete, user }) => {
     if (confirm) {
       try {
         const response = await axios.delete(
-          `https://korus-ems-backend.onrender.com/api/employees/delete/${_id}`,
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/employees/delete/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -35,8 +35,6 @@ app.use(express.urlencoded({ extended: true }));
 
 dbConnect();
 
-app.use(express.static("public/uploads"));
-
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/department", departmentRouter);
@@ -51,8 +49,8 @@ app.use("/api/holiday", holidayRouter);
 app.use("/api/performance", performanceRouter);
 app.use("/api/appraisals", appraisalRouter);
 
-app.get("/api/ping", (req, res) => {
-  res.status(200).send("pong");
-});
+app.get("/",(req, res)=>{
+  res.send("Hello");
+})
 
-export const handler = serverless(app);
+export default app;

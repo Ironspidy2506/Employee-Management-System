@@ -132,15 +132,27 @@ const HrLeaveView = () => {
             className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
-        <div className="flex justify-start mb-4">
-          <button
-            onClick={() =>
-              navigate("/hr-dashboard/leave/employeesLeaveBalances")
-            }
-            className="w-full sm:w-auto px-5 py-2 text-center text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-          >
-            Edit Leave Balances
-          </button>
+        <div className="flex justify-start gap-2">
+          <div className="mb-4">
+            <button
+              onClick={() =>
+                navigate("/hr-dashboard/leave/employeesLeaveBalances")
+              }
+              className="w-full sm:w-auto px-5 py-2 text-center text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+            >
+              Edit Leave Balances
+            </button>
+          </div>
+          <div className="mb-4">
+            <button
+              onClick={() =>
+                navigate("/hr-dashboard/leave/view-employeesLeaveBalances")
+              }
+              className="w-full sm:w-auto px-5 py-2 text-center text-base font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50"
+            >
+              View Remaining Leaves
+            </button>
+          </div>
         </div>
 
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">

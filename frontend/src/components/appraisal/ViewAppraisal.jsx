@@ -11,52 +11,126 @@ const ratingFields = [
     key: "Punctuality",
     label: "Punctuality",
     description: "Reports to work on time.",
+    descriptions: {
+      1: "Frequently late for work or meetings, leaves early or extends breaks without approval, absences regularly disrupt projects or require work redistribution, fails to notify or follow protocol for leave or absences.",
+      2: "Communicates inconsistently about attendance or availability; occasionally late; needs reminders.",
+      3: "Regularly on time; meets punctuality expectations.",
+      4: "Always punctual; shows respect for others' time, takes responsibility to ensure coverage or catch-up after absence.",
+      5: "Arrives early or on time consistently; models ideal behavior for others, always ready to compensate for time missed without prompting.",
+    },
+  },
+  {
+    key: "JobKnowledge",
+    label: "Understanding of Engineering Principles (Job Knowledge)",
+    description:
+      "Demonstrates knowledge of engineering principles required for the role.",
+    descriptions: {
+      1: "Lacks required knowledge for the role and level.",
+      2: "Basic understanding, but makes frequent errors.",
+      3: "Requires regular supervision, but mostly gets it right.",
+      4: "Applies concepts with minimal guidance.",
+      5: "Applies engineering concepts independently and correctly.",
+    },
+  },
+  {
+    key: "DesignAccuracy",
+    label: "Design/Drafting Accuracy",
+    description:
+      "Produces precise and error-free technical work including drawings and calculations.",
+    descriptions: {
+      1: "Frequent design errors; requires constant corrections.",
+      2: "Occasional mistakes; requires rework.",
+      3: "Consistently accurate; minor issues only.",
+      4: "Double-checks own work; rarely requires changes.",
+      5: "Meticulous, spotless technical work; often catches others’ errors.",
+    },
+  },
+  {
+    key: "SoftwareProficiency",
+    label: "Software Proficiency",
+    description:
+      "Demonstrates skill and efficiency using required technical software tools.",
+    descriptions: {
+      1: "Unable to perform without full assistance.",
+      2: "Struggles with basic functions, limited software skills.",
+      3: "Average, needs occasional help.",
+      4: "Proficient and efficient, skilled in multiple functions.",
+      5: "Advanced level, capable of training others.",
+    },
+  },
+  {
+    key: "DocumentationQuality",
+    label: "Detailing & Documentation Quality",
+    description:
+      "Prepares thorough, well-structured documents with clear detailing.",
+    descriptions: {
+      1: "Incomplete or poorly formatted documentation.",
+      2: "Frequent quality gaps in documents.",
+      3: "Acceptable documentation with minor gaps.",
+      4: "Good quality, mostly self-checked.",
+      5: "Consistently complete, clear, and well-organized documentation.",
+    },
+  },
+  {
+    key: "Timeliness",
+    label: "Task Completion Timeliness",
+    description: "Completes assigned tasks within the expected time frame.",
+    descriptions: {
+      1: "Consistently behind schedule.",
+      2: "Often late, even after reminders.",
+      3: "Meets most deadlines with reminders.",
+      4: "Usually on time without reminders.",
+      5: "Always on or ahead of schedule.",
+    },
+  },
+  {
+    key: "TaskVolume",
+    label: "Task Volume / Output",
+    description: "Maintains expected productivity and output volume.",
+    descriptions: {
+      1: "Low output; tasks often reassigned.",
+      2: "Below expected output.",
+      3: "Meets expected workload.",
+      4: "Above average; dependable.",
+      5: "High output while maintaining quality.",
+    },
+  },
+  {
+    key: "TimeUtilization",
+    label: "Time Utilization",
+    description: "Uses work hours productively and manages time effectively.",
+    descriptions: {
+      1: "Frequently unproductive.",
+      2: "Easily distracted, inefficient.",
+      3: "Adequately productive.",
+      4: "Occasionally needs redirection.",
+      5: "Fully productive; minimal idle time.",
+    },
+  },
+  {
+    key: "Initiative",
+    label: "Initiative",
+    description: "Takes proactive steps and ownership of responsibilities.",
+    descriptions: {
+      1: "Avoids taking ownership.",
+      2: "Passive, waits for instructions.",
+      3: "Fulfills own responsibilities adequately.",
+      4: "Frequently proactive.",
+      5: "Takes full ownership and leads without prompting.",
+    },
   },
   {
     key: "Attendance",
     label: "Attendance",
     description:
-      "Regularly attends office and gives prior intimation in case of leave.",
-  },
-  {
-    key: "JobKnowledge",
-    label: "Job Knowledge",
-    description: "Does work without assistance.",
-  },
-  {
-    key: "HumanRelations",
-    label: "Human Relations",
-    description: "Helps others when their workload increases.",
-  },
-  {
-    key: "QualityOfWork",
-    label: "Quality of Work",
-    description: "Does work consistently without errors.",
-  },
-  {
-    key: "Performance",
-    label: "Performance",
-    description: "Consistently meets schedule.",
-  },
-  {
-    key: "ProfessionalDevelopment",
-    label: "Professional Development",
-    description: "Seeks keen interest to acquire new skills for upgradation.",
-  },
-  {
-    key: "Dedication",
-    label: "Dedication",
-    description: "Available to work especially during demanding situations.",
-  },
-  {
-    key: "WorkHabits",
-    label: "Work Habits",
-    description: "Uses work time appropriately.",
-  },
-  {
-    key: "Initiative",
-    label: "Initiative",
-    description: "Regularly volunteers for additional tasks and projects.",
+      "Maintains consistent presence at work with proper leave communication.",
+    descriptions: {
+      1: "Frequently absent without valid reason; unreliable presence.",
+      2: "Inconsistent on-site presence; noticeable availability gaps.",
+      3: "Regularly available in office.",
+      4: "Very dependable; mostly available and supports team.",
+      5: "Highly reliable and sets a positive attendance example.",
+    },
   },
 ];
 
@@ -118,7 +192,12 @@ const ViewAppraisal = () => {
 
         <SectionTitle title="Supervisor" />
         <div className="bg-gray-100 p-4 rounded-lg mb-8 text-gray-700 whitespace-pre-line">
-          {appraisal.supervisor?.name || "No supervisor added."}
+          {Array.isArray(appraisal.supervisor) &&
+          appraisal.supervisor.length > 0
+            ? appraisal.supervisor.map((sup, index) => (
+                <div key={sup._id || index}>{sup.name}</div>
+              ))
+            : "No Supervisor Added."}
         </div>
 
         <SectionTitle title="Supervisor Comments" />
@@ -143,8 +222,12 @@ const ViewAppraisal = () => {
               <div className="text-sm text-gray-500 mb-2">
                 {field.description}
               </div>
-              <div className="inline-block px-3 py-1 text-sm font-semibold bg-indigo-100 text-indigo-700 rounded-full">
+              <div className="inline-block px-3 py-1 text-md font-semibold bg-indigo-100 text-indigo-700 rounded-full">
                 {appraisal.ratings?.[field.key] ?? "N/A"}
+              </div>
+              <div className="mt-2 text-gray-600">
+                {/* Display the description for the rating */}
+                {field.descriptions[appraisal.ratings?.[field.key]] ?? "N/A"}
               </div>
             </div>
           ))}

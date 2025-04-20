@@ -387,6 +387,10 @@ const App = () => {
             path="/hr-dashboard/leave/employeesLeaveBalances"
             element={<EditLeaveBalances />}
           />
+          <Route
+            path="/hr-dashboard/leave/view-employeesLeaveBalances"
+            element={<ViewEmployeesLeaveCount />}
+          />
           <Route path="/hr-dashboard/users" element={<UsersData />} />
           <Route path="/hr-dashboard/helpdesk" element={<Helpdesk />} />
           <Route

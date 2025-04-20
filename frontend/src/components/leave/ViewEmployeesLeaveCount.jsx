@@ -93,7 +93,7 @@ const ViewEmployeesLeaveCount = () => {
   return (
     <div className="p-6 space-y-6 bg-white">
       {/* Table Section */}
-      <div className="overflow-y-auto max-h-[525px]">
+      <div className="overflow-y-auto max-h-[600px]">
         {" "}
         {/* Set a max height for scrolling */}
         <h2 className="text-2xl font-bold mb-4 text-gray-800">

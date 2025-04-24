@@ -199,7 +199,7 @@ const EditLeaveBalances = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-600">
-                  Others
+                  Others/ Late Hours Deduction
                 </label>
                 <input
                   type="number"

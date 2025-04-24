@@ -11,6 +11,7 @@ import leaveRouter from "./routes/leave.js";
 import allowanceRouter from "./routes/allowance.js";
 import fixedallowanceRouter from "./routes/fixedallowance.js";
 import userRouter from "./routes/users.js";
+import messageRouter from "./routes/message.js";
 import helpdeskRouter from "./routes/helpdesk.js";
 import holidayRouter from "./routes/holiday.js";
 import performanceRouter from "./routes/performance.js";
@@ -45,12 +46,15 @@ app.use("/api/leaves", leaveRouter);
 app.use("/api/allowances", allowanceRouter);
 app.use("/api/fixed-allowances", fixedallowanceRouter);
 app.use("/api/helpdesk", helpdeskRouter);
+app.use("/api/message", messageRouter);
 app.use("/api/holiday", holidayRouter);
 app.use("/api/performance", performanceRouter);
 app.use("/api/appraisals", appraisalRouter);
 
-app.get("/",(req, res)=>{
+app.get("/", (req, res) => {
   res.send("Hello");
-})
+});
 
-export default app;
+app.listen(5000, () => {
+  console.log('Server started on 5000');
+});

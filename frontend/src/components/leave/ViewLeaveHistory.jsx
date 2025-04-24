@@ -136,7 +136,7 @@ const ViewLeaveHistory = () => {
             </div>
             <div className="h-8 w-px bg-gray-300"></div>
             <div className="text-md font-semibold text-gray-700">
-              Others: {leaveCounts.others}
+              Others/ Late Hours Deduction: {leaveCounts.others}
             </div>
           </div>
 

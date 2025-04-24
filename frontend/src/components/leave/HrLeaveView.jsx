@@ -225,7 +225,9 @@ const HrLeaveView = () => {
                   {leave.employeeId?.department?.departmentName}
                 </td>
                 <td className="px-4 py-2 text-center text-sm text-gray-800">
-                  {leave.type.toUpperCase()}
+                  {leave.type.toLowerCase() === "others"
+                    ? "Others/Late Hours Deduction"
+                    : leave.type.toUpperCase()}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-800">
                   {formatDate(leave.startDate)}

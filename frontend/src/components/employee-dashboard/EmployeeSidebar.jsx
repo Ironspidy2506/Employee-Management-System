@@ -14,6 +14,7 @@ import { FaKey } from "react-icons/fa6";
 import { IoIosMail } from "react-icons/io";
 import { useAuth } from "../../context/authContext";
 import KorusImage from "./../../assets/Korus.png";
+import { MdOutlineMessage } from "react-icons/md";
 
 const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
   const { logout } = useAuth();
@@ -162,6 +163,21 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           >
             <FaKey className="mr-3 text-lg" />
             <span>Change Password</span>
+          </NavLink>
+
+          <NavLink
+            to="/employee-dashboard/messages"
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-md transition-colors ${
+                isActive
+                  ? "bg-gray-700 text-white"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              }`
+            }
+            onClick={toggleSidebar}
+          >
+            <MdOutlineMessage className="mr-3 text-xl" />
+            <span>Messages</span>
           </NavLink>
           <NavLink
             to="/employee-dashboard/helpdesk"

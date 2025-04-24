@@ -132,7 +132,7 @@ const ViewEmployeeLeave = () => {
           </div>
           <div className="h-8 w-px bg-gray-300"></div>
           <div className="text-md font-semibold text-gray-700">
-            Others: {employee.leaveBalance?.others || 0} {/* Corrected */}
+            Others/ Late Hours Deduction: {employee.leaveBalance?.others || 0} {/* Corrected */}
           </div>
         </div>
       </div>

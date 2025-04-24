@@ -60,6 +60,10 @@ import EditAppraisalForm from "./components/appraisal/EditAppraisalForm";
 import ViewAppraisal from "./components/appraisal/ViewAppraisal";
 import ViewMyAppraisal from "./components/appraisal/ViewMyAppraisal";
 import ExitedEmployeeList from "./components/employee/ExitedEmployeeList";
+import GetAllMessages from "./components/messages/GetAllMessages";
+import EditMessage from "./components/messages/EditMessage";
+import AddMessage from "./components/messages/AddMessage";
+import GetMyMessages from "./components/messages/GetMyMessages";
 
 const App = () => {
   return (
@@ -425,6 +429,19 @@ const App = () => {
             path="/hr-dashboard/change-password"
             element={<HrChangePassword />}
           />
+
+<Route
+            path="/hr-dashboard/messages"
+            element={<GetAllMessages />}
+          />
+          <Route
+            path="/hr-dashboard/messages/add-message"
+            element={<AddMessage />}
+          />
+          <Route
+            path="/hr-dashboard/messages/edit-message/:messageId"
+            element={<EditMessage />}
+          />
         </Route>
 
         {/* Employee Dashboard Routes */}
@@ -505,6 +522,10 @@ const App = () => {
           <Route
             path="/employee-dashboard/change-password"
             element={<Password />}
+          />
+          <Route
+            path="/employee-dashboard/messages"
+            element={<GetMyMessages />}
           />
         </Route>
         {/* <Route path="/appraisal" element={<AnnualAppraisalForm />} /> */}

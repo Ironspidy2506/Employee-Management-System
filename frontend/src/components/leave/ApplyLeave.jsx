@@ -262,7 +262,7 @@ const ApplyLeave = () => {
             <option value="cl">Casual Leave (CL)</option>
             <option value="od">On Duty (OD)</option>
             <option value="lwp">Leave without pay (LWP)</option>
-            <option value="others">Others</option>
+            <option value="others">Others/Late Hours Deduction</option>
           </select>
         </div>
 

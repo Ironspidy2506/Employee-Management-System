@@ -145,7 +145,9 @@ const ViewAppliedLeavesTeamLead = () => {
                     {leave.employeeId.name}
                   </td>
                   <td className="border px-4 py-2 text-center">
-                    {leave.type.toUpperCase()}
+                    {leave.type.toLowerCase() === "others"
+                      ? "Others/Late Hours Deduction"
+                      : leave.type.toUpperCase()}
                   </td>
                   <td className="border px-4 py-2 text-center">
                     {formatDate(leave.startDate)}

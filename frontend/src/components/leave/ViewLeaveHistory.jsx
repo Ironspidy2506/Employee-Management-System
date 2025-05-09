@@ -17,6 +17,7 @@ const ViewLeaveHistory = () => {
     sl: 0,
     od: 0,
     lwp: 0,
+    lhd: 0,
     others: 0,
   });
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
@@ -136,7 +137,11 @@ const ViewLeaveHistory = () => {
             </div>
             <div className="h-8 w-px bg-gray-300"></div>
             <div className="text-md font-semibold text-gray-700">
-              Others/ Late Hours Deduction: {leaveCounts.others}
+              Late Hours Deduction (LHD): {leaveCounts.lhd}
+            </div>
+            <div className="h-8 w-px bg-gray-300"></div>
+            <div className="text-md font-semibold text-gray-700">
+              Others: {leaveCounts.others}
             </div>
           </div>
 

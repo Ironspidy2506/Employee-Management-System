@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-
 const ViewEmployeeLeave = () => {
   const { _id } = useParams(); // Extract employee ID from the URL
   const [employee, setEmployee] = useState({});
@@ -128,11 +127,17 @@ const ViewEmployeeLeave = () => {
           </div>
           <div className="h-8 w-px bg-gray-300"></div>
           <div className="text-md font-semibold text-gray-700">
-            Leave without pay (LWP): {employee.leaveBalance?.lwp || 0} {/* Corrected */}
+            Leave without pay (LWP): {employee.leaveBalance?.lwp || 0}{" "}
+            {/* Corrected */}
           </div>
           <div className="h-8 w-px bg-gray-300"></div>
           <div className="text-md font-semibold text-gray-700">
-            Others/ Late Hours Deduction: {employee.leaveBalance?.others || 0} {/* Corrected */}
+            Late Hours Deduction (LHD): {employee.leaveBalance?.lhd || 0}{" "}
+            {/* Corrected */}
+          </div>
+          <div className="h-8 w-px bg-gray-300"></div>
+          <div className="text-md font-semibold text-gray-700">
+            Others: {employee.leaveBalance?.others || 0} {/* Corrected */}
           </div>
         </div>
       </div>
@@ -170,10 +175,16 @@ const ViewEmployeeLeave = () => {
               className="border-b hover:bg-gray-50 text-base text-gray-800"
             >
               <td className="px-4 py-3 text-center">{index + 1}</td>
-              <td className="px-4 py-3 text-center">{leave.type.toUpperCase()}</td>
-              <td className="px-4 py-3 text-center">{formatDate(leave.startDate)}</td>
+              <td className="px-4 py-3 text-center">
+                {leave.type.toUpperCase()}
+              </td>
+              <td className="px-4 py-3 text-center">
+                {formatDate(leave.startDate)}
+              </td>
               <td className="px-4 py-3 text-center">{leave.startTime}</td>
-              <td className="px-4 py-3 text-center">{formatDate(leave.endDate)}</td>
+              <td className="px-4 py-3 text-center">
+                {formatDate(leave.endDate)}
+              </td>
               <td className="px-4 py-3 text-center">{leave.endTime}</td>
               <td className="px-4 py-3 text-center">{leave.days}</td>
               <td

@@ -199,7 +199,21 @@ const EditLeaveBalances = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-600">
-                  Others/ Late Hours Deduction
+                  Late Hours Deduction (LHD)
+                </label>
+                <input
+                  type="number"
+                  name="lhd"
+                  value={employeeData.leaveBalance?.lhd || 0}
+                  onWheel={(e) => e.target.blur()}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600">
+                  Others
                 </label>
                 <input
                   type="number"

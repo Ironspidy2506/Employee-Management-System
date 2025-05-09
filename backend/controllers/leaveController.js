@@ -50,7 +50,7 @@ const applyForLeave = async (req, res) => {
     const leaveTypeLower = leaveType.toLowerCase();
 
     // Skip leave balance check for "od", "others", and "lwp"
-    if (!["od", "others", "lwp"].includes(leaveTypeLower)) {
+    if (!["od", "others", "lwp", "lhd"].includes(leaveTypeLower)) {
       const leaveBalance = employee.leaveBalance[leaveTypeLower];
       if (leaveBalance < days) {
         return res.status(400).json({ message: "Not enough leave balance" });
@@ -159,7 +159,7 @@ const updateLeaveById = async (req, res) => {
     const leaveTypeLower = leaveType.toLowerCase();
 
     // Check leave balance if leaveType is NOT "od", "others", or "lwp"
-    if (!["od", "others", "lwp"].includes(leaveTypeLower)) {
+    if (!["od", "others", "lwp", "lhd"].includes(leaveTypeLower)) {
       const leaveBalance = employee.leaveBalance[leaveTypeLower];
       if (leaveBalance < days) {
         return res.status(400).json({ message: "Not enough leave balance" });
@@ -301,7 +301,7 @@ const approveOrReject = async (req, res) => {
     const leaveType = leave.type.toLowerCase();
 
     if (action === "approved") {
-      if (["od", "lwp", "others"].includes(leaveType)) {
+      if (["od", "lwp", "others", "lhd"].includes(leaveType)) {
         // Add leave days for OD or Other leave types
         employee.leaveBalance[leaveType] += leave.days;
       } else {

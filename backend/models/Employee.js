@@ -170,6 +170,7 @@ const employeeSchema = new mongoose.Schema({
     cl: { type: Number, default: 6 },
     od: { type: Number, default: 0 },
     lwp: { type: Number, default: 0 },
+    lhd: { type: Number, default: 0 },
     others: { type: Number, default: 0 },
   },
   lastUpdated: {

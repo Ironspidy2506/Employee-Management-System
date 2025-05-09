@@ -16,6 +16,38 @@ const HrLeaveView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [visibleRecords, setVisibleRecords] = useState(10);
   const [loading, setLoading] = useState(true); // Loading state
+  const [selectedMonth, setSelectedMonth] = useState(""); // for month
+  const [selectedEmpId, setSelectedEmpId] = useState(""); // for emp ID
+  useEffect(() => {
+    const applyFilters = () => {
+      let filtered = [...leaveHistory];
+
+      if (selectedMonth) {
+        filtered = filtered.filter((leave) => {
+          const leaveMonth = new Date(leave.startDate).getMonth() + 1;
+          return leaveMonth === parseInt(selectedMonth);
+        });
+      }
+
+      if (selectedEmpId) {
+        filtered = filtered.filter((leave) =>
+          leave.employeeId.employeeId.toString().includes(selectedEmpId)
+        );
+      }
+
+      if (searchQuery) {
+        filtered = filtered.filter(
+          (leave) =>
+            leave.employeeId.name.toLowerCase().includes(searchQuery) ||
+            leave.employeeId.employeeId.toString().includes(searchQuery)
+        );
+      }
+
+      setFilteredHistory(filtered);
+    };
+
+    applyFilters();
+  }, [selectedMonth, selectedEmpId, searchQuery, leaveHistory]);
 
   const navigate = useNavigate();
   const userId = user._id;
@@ -40,20 +72,6 @@ const HrLeaveView = () => {
 
     fetchLeaveHistory();
   }, [userId]);
-
-  const handleApproveReject = async (leaveId, action) => {
-    try {
-      await approveRejectLeave(leaveId, action);
-      toast.success("Leave status updated successfully");
-      const updatedHistory = leaveHistory.map((leave) =>
-        leave._id === leaveId ? { ...leave, status: action } : leave
-      );
-      setLeaveHistory(updatedHistory);
-      setFilteredHistory(updatedHistory);
-    } catch (error) {
-      console.error(`Error ${action} leave:`, error);
-    }
-  };
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -127,16 +145,51 @@ const HrLeaveView = () => {
             Leave History
           </h2>
 
-          {/* Search and Buttons */}
-          <div className="mb-4 flex justify-between items-center rounded-sm p-1">
+          <div className="mb-4 flex flex-wrap gap-4 items-center">
+            {/* Month Filter */}
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="">All Months</option>
+              {Array.from({ length: 12 }, (_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {new Date(0, i).toLocaleString("default", { month: "long" })}
+                </option>
+              ))}
+            </select>
+
+            {/* Employee ID Filter */}
+            <input
+              type="text"
+              value={selectedEmpId}
+              onChange={(e) => setSelectedEmpId(e.target.value)}
+              placeholder="Filter by Employee ID"
+              className="p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+
+            {/* Existing Search Input */}
             <input
               type="text"
               value={searchQuery}
-              onChange={handleSearch}
-              placeholder="Search by Employee ID or Name"
-              className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
+              placeholder="Search by Name or ID"
+              className="p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 flex-grow"
             />
           </div>
+
+          <button
+            onClick={() => {
+              setSelectedMonth("");
+              setSelectedEmpId("");
+              setSearchQuery("");
+            }}
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400  mb-2"
+          >
+            Clear Filters
+          </button>
+
           <div className="flex justify-start gap-2 mb-4">
             <button
               onClick={() =>

@@ -186,7 +186,7 @@ const EditLeave = () => {
 
       // Append approvers as array
       payload.append(
-        "appliedTo", 
+        "appliedTo",
         JSON.stringify(formData.appliedTo.map((approver) => approver.value))
       );
 
@@ -300,7 +300,8 @@ const EditLeave = () => {
               <option value="cl">Casual Leave (CL)</option>
               <option value="od">On Duty (OD)</option>
               <option value="lwp">Leave without pay (LWP)</option>
-              <option value="others">Others/Late Hours Deduction</option>
+              <option value="lhd">Late Hours Deduction (LHD)</option>
+              <option value="others">Others</option>
             </select>
           </div>
 

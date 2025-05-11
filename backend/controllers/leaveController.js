@@ -267,12 +267,10 @@ const getAllLeaves = async (req, res) => {
       })
       .sort({ lastUpdated: -1 });
 
-    res.status(200).json(leaves);
+    res.json(leaves);
   } catch (error) {
     console.error("Error fetching all leaves:", error);
-    res
-      .status(500)
-      .json({ message: "An error occurred while fetching leaves" });
+    res.json({ message: "An error occurred while fetching leaves" });
   }
 };
 
@@ -400,5 +398,5 @@ export {
   approveOrReject,
   getSummary,
   getLeaveAttachment,
-  updateReasonOfRejection
+  updateReasonOfRejection,
 };

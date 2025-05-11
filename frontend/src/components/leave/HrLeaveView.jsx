@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext.jsx";
-import {
-  getLeaveRecords,
-  approveRejectLeave,
-} from "../../utils/AdminLeaveHelper.jsx";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const HrLeaveView = () => {
@@ -15,9 +12,36 @@ const HrLeaveView = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [searchQuery, setSearchQuery] = useState("");
   const [visibleRecords, setVisibleRecords] = useState(10);
-  const [loading, setLoading] = useState(true); // Loading state
-  const [selectedMonth, setSelectedMonth] = useState(""); // for month
-  const [selectedEmpId, setSelectedEmpId] = useState(""); // for emp ID
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedEmpId, setSelectedEmpId] = useState("");
+  const [loading, setLoading] = useState(true); // Loader state
+  const navigate = useNavigate();
+  const userId = user._id;
+
+  useEffect(() => {
+    const fetchLeaveHistory = async () => {
+      try {
+        setLoading(true); // Start loading
+        const response = await axios.get(
+          `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/admin/getLeaves`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setLeaveHistory(response.data);
+        setFilteredHistory(response.data);
+        setLoading(false); // End loading
+      } catch (error) {
+        console.error("Error fetching leave history:", error);
+        setLoading(false); // End loading even on error
+      }
+    };
+
+    fetchLeaveHistory();
+  }, [userId]);
+
   useEffect(() => {
     const applyFilters = () => {
       let filtered = [...leaveHistory];
@@ -49,29 +73,9 @@ const HrLeaveView = () => {
     applyFilters();
   }, [selectedMonth, selectedEmpId, searchQuery, leaveHistory]);
 
-  const navigate = useNavigate();
-  const userId = user._id;
-
   const handleShowMore = () => {
     setVisibleRecords((prev) => prev + 10);
   };
-
-  useEffect(() => {
-    const fetchLeaveHistory = async () => {
-      try {
-        setLoading(true); // Start loading
-        const data = await getLeaveRecords();
-        setLeaveHistory(data);
-        setFilteredHistory(data);
-      } catch (error) {
-        console.error("Error fetching leave history:", error);
-      } finally {
-        setLoading(false); // End loading
-      }
-    };
-
-    fetchLeaveHistory();
-  }, [userId]);
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -116,37 +120,25 @@ const HrLeaveView = () => {
     return `${day}-${month}-${year}`;
   };
 
-  const handleSearch = (event) => {
-    const query = event.target.value.toLowerCase();
-    setSearchQuery(query);
-
-    const filtered = leaveHistory.filter((leave) => {
-      return (
-        leave.employeeId.employeeId.toString().includes(query) ||
-        leave.employeeId.name.toLowerCase().includes(query)
-      );
-    });
-
-    setFilteredHistory(filtered);
-  };
-
   return (
     <div className="p-6 bg-white min-h-screen">
       <ToastContainer />
+
       {loading ? (
-        // Loading spinner
-        <div className="flex justify-center items-center h-[60vh]">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+        <div className="flex justify-center items-center h-96">
+          <div className="flex space-x-2">
+            <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+            <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+            <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce"></div>
+          </div>
         </div>
       ) : (
-        // Main Content
         <div className="overflow-x-auto">
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
             Leave History
           </h2>
 
           <div className="mb-4 flex flex-wrap gap-4 items-center">
-            {/* Month Filter */}
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
@@ -160,7 +152,6 @@ const HrLeaveView = () => {
               ))}
             </select>
 
-            {/* Employee ID Filter */}
             <input
               type="text"
               value={selectedEmpId}
@@ -169,7 +160,6 @@ const HrLeaveView = () => {
               className="p-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
 
-            {/* Existing Search Input */}
             <input
               type="text"
               value={searchQuery}
@@ -185,7 +175,7 @@ const HrLeaveView = () => {
               setSelectedEmpId("");
               setSearchQuery("");
             }}
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400  mb-2"
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 mb-2"
           >
             Clear Filters
           </button>
@@ -209,146 +199,151 @@ const HrLeaveView = () => {
             </button>
           </div>
 
-          {/* Table */}
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-            <thead className="bg-gray-200 border">
-              <tr>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  S. No.
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  EmpID
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  Emp Name
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  Department
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  Leave Type
-                </th>
-                <th
-                  className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer"
-                  onClick={() => handleSort("startDate")}
-                >
-                  Start Date
-                  {sortConfig.key === "startDate" &&
-                    (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
-                </th>
-                <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                  Start Time
-                </th>
-                <th
-                  className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer"
-                  onClick={() => handleSort("endDate")}
-                >
-                  End Date
-                  {sortConfig.key === "endDate" &&
-                    (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
-                </th>
-                <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                  End Time
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  No. of Days
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  Reason
-                </th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  Attachment
-                </th>
-                <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredHistory.slice(0, visibleRecords).map((leave, index) => (
-                <tr key={leave._id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-2 text-center text-sm">{index + 1}</td>
-                  <td className="px-4 py-2 text-center text-sm">
-                    {leave.employeeId?.employeeId}
-                  </td>
-                  <td className="px-4 py-2 text-sm">
-                    {leave.employeeId?.name}
-                  </td>
-                  <td className="px-4 py-2 text-center text-sm">
-                    {leave.employeeId?.department?.departmentName}
-                  </td>
-                  <td className="px-4 py-2 text-center text-sm">
-                    {leave.type.toLowerCase() === "others"
-                      ? "Others/Late Hours Deduction"
-                      : leave.type.toUpperCase()}
-                  </td>
-                  <td className="px-4 py-2 text-sm">
-                    {formatDate(leave.startDate)}
-                  </td>
-                  <td className="px-4 py-2 text-center text-sm">
-                    {new Date(
-                      `1970-01-01T${leave.startTime}`
-                    ).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}
-                  </td>
-                  <td className="px-4 py-2 text-sm">
-                    {formatDate(leave.endDate)}
-                  </td>
-                  <td className="px-4 py-2 text-center text-sm">
-                    {new Date(`1970-01-01T${leave.endTime}`).toLocaleTimeString(
-                      "en-US",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      }
-                    )}
-                  </td>
-                  <td className="px-4 py-2 text-center text-sm">
-                    {leave.days}
-                  </td>
-                  <td className="px-4 py-2 text-sm">{leave.reason}</td>
-                  <td className="px-4 py-2 text-center text-sm">
-                    {leave.attachment ? (
-                      <button
-                        onClick={() =>
-                          window.open(
-                            `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/attachment/${leave._id}`,
-                            "_blank"
-                          )
-                        }
-                        className="px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
-                      >
-                        View
-                      </button>
-                    ) : (
-                      <span className="text-gray-500 text-sm">
-                        No Attachment
-                      </span>
-                    )}
-                  </td>
-                  <td
-                    className={`px-4 py-2 text-center text-sm font-semibold ${getStatusColor(
-                      leave.status
-                    )}`}
+          {filteredHistory.length === 0 ? (
+            <p className="text-gray-500">No leave records found.</p>
+          ) : (
+            <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+              <thead className="bg-gray-200 border">
+                <tr>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    S. No.
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    EmpID
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    Emp Name
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    Department
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    Leave Type
+                  </th>
+                  <th
+                    className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer"
+                    onClick={() => handleSort("startDate")}
                   >
-                    {leave.status.charAt(0).toUpperCase() +
-                      leave.status.slice(1)}
-                    {leave?.approvedBy || leave?.rejectedBy
-                      ? leave.status === "approved"
-                        ? ` by ${leave.approvedBy}`
-                        : leave.status === "rejected"
-                        ? ` by ${leave.rejectedBy}`
-                        : ""
-                      : null}
-                  </td>
+                    Start Date{" "}
+                    {sortConfig.key === "startDate" &&
+                      (sortConfig.direction === "ascending" ? "▲" : "▼")}
+                  </th>
+                  <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                    Start Time
+                  </th>
+                  <th
+                    className="px-4 py-2 text-center text-sm font-medium text-gray-700 cursor-pointer"
+                    onClick={() => handleSort("endDate")}
+                  >
+                    End Date{" "}
+                    {sortConfig.key === "endDate" &&
+                      (sortConfig.direction === "ascending" ? "▲" : "▼")}
+                  </th>
+                  <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                    End Time
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    No. of Days
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    Reason
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    Attachment
+                  </th>
+                  <th className="px-4 py-2 text-center text-sm font-medium text-gray-700">
+                    Status
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredHistory
+                  .slice(0, visibleRecords)
+                  .map((leave, index) => (
+                    <tr key={leave._id} className="border-b hover:bg-gray-50">
+                      <td className="px-4 py-2 text-center text-sm">
+                        {index + 1}
+                      </td>
+                      <td className="px-4 py-2 text-center text-sm">
+                        {leave.employeeId?.employeeId}
+                      </td>
+                      <td className="px-4 py-2 text-sm">
+                        {leave.employeeId?.name}
+                      </td>
+                      <td className="px-4 py-2 text-center text-sm">
+                        {leave.employeeId?.department?.departmentName}
+                      </td>
+                      <td className="px-4 py-2 text-center text-sm">
+                        {leave.type.toLowerCase() === "others"
+                          ? "Others/Late Hours Deduction"
+                          : leave.type.toUpperCase()}
+                      </td>
+                      <td className="px-4 py-2 text-sm">
+                        {formatDate(leave.startDate)}
+                      </td>
+                      <td className="px-4 py-2 text-center text-sm">
+                        {new Date(
+                          `1970-01-01T${leave.startTime}`
+                        ).toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </td>
+                      <td className="px-4 py-2 text-sm">
+                        {formatDate(leave.endDate)}
+                      </td>
+                      <td className="px-4 py-2 text-center text-sm">
+                        {new Date(
+                          `1970-01-01T${leave.endTime}`
+                        ).toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </td>
+                      <td className="px-4 py-2 text-center text-sm">
+                        {leave.days}
+                      </td>
+                      <td className="px-4 py-2 text-sm">{leave.reason}</td>
+                      <td className="px-4 py-2 text-center text-sm">
+                        {leave.attachment ? (
+                          <button
+                            onClick={() =>
+                              window.open(
+                                `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/attachment/${leave._id}`,
+                                "_blank"
+                              )
+                            }
+                            className="px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                          >
+                            View
+                          </button>
+                        ) : (
+                          <span className="text-gray-500 text-sm">
+                            No Attachment
+                          </span>
+                        )}
+                      </td>
+                      <td
+                        className={`px-4 py-2 text-center text-sm font-semibold ${getStatusColor(
+                          leave.status
+                        )}`}
+                      >
+                        {leave.status.charAt(0).toUpperCase() +
+                          leave.status.slice(1)}
+                        {leave.approvedBy &&
+                          leave.status === "approved" &&
+                          ` by ${leave.approvedBy}`}
+                        {leave.rejectedBy &&
+                          leave.status === "rejected" &&
+                          ` by ${leave.rejectedBy}`}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          )}
 
           {visibleRecords < filteredHistory.length && (
             <div className="mt-4 flex justify-center">

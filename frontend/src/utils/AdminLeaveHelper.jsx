@@ -10,7 +10,6 @@ export const getLeaveRecords = async () => {
         },
       }
     );
-
     return response.data;
   } catch (error) {
     console.error("Error fetching leave history:", error);

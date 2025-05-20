@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext.jsx";
 import {
@@ -14,77 +14,26 @@ const ViewAllLeaves = () => {
   const navigate = useNavigate();
 
   const [allLeaves, setAllLeaves] = useState([]);
-  const [displayedLeaves, setDisplayedLeaves] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(10);
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
-
-  const [loadingMore, setLoadingMore] = useState(false);
   const [showTextArea, setShowTextArea] = useState(null);
   const [responseData, setResponseData] = useState({});
 
   useEffect(() => {
-    fetchLeaves();
+    const fetchLeaveHistory = async () => {
+      try {
+        const response = await axios.get("https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/admin-hr/get-all-leaves", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        setAllLeaves(response.data);
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
+
+    fetchLeaveHistory();
   }, []);
-
-  const fetchLeaves = async () => {
-    try {
-      const data = await getLeaveRecords();
-      setAllLeaves(data);
-      setDisplayedLeaves(data.slice(0, 10));
-    } catch (error) {
-      console.error("Error fetching leave history:", error);
-    }
-  };
-
-  const handleShowMore = () => {
-    setLoadingMore(true);
-    setTimeout(() => {
-      const newCount = visibleCount + 10;
-      setVisibleCount(newCount);
-      setDisplayedLeaves(allLeaves.slice(0, newCount));
-      setLoadingMore(false);
-    }, 300); // small delay for better UX
-  };
-
-  const handleSearch = useCallback(
-    debounce((query) => {
-      setSearchQuery(query.toLowerCase());
-    }, 300),
-    []
-  );
-
-  const filteredHistory = useMemo(() => {
-    let filtered = displayedLeaves;
-    if (searchQuery) {
-      filtered = displayedLeaves.filter(
-        (leave) =>
-          leave.employeeId?.employeeId.toString().includes(searchQuery) ||
-          leave.employeeId?.name.toLowerCase().includes(searchQuery)
-      );
-    }
-    if (sortConfig.key) {
-      filtered = [...filtered].sort((a, b) => {
-        const aValue = new Date(a[sortConfig.key]);
-        const bValue = new Date(b[sortConfig.key]);
-        return sortConfig.direction === "ascending"
-          ? aValue - bValue
-          : bValue - aValue;
-      });
-    }
-    return filtered.sort((a, b) =>
-      a.status === "pending" ? -1 : b.status === "pending" ? 1 : 0
-    );
-  }, [displayedLeaves, searchQuery, sortConfig]);
-
-  const handleSort = (key) => {
-    const direction =
-      sortConfig.key === key && sortConfig.direction === "ascending"
-        ? "descending"
-        : "ascending";
-    setSortConfig({ key, direction });
-  };
 
   const handleApproveReject = async (leaveId, action) => {
     try {
@@ -94,7 +43,6 @@ const ViewAllLeaves = () => {
         leave._id === leaveId ? { ...leave, status: action } : leave
       );
       setAllLeaves(updatedLeaves);
-      setDisplayedLeaves(updatedLeaves.slice(0, visibleCount));
     } catch (error) {
       console.error(`Error ${action} leave:`, error);
       toast.error(`Failed to ${action} leave`);
@@ -156,7 +104,7 @@ const ViewAllLeaves = () => {
           onClick={() =>
             navigate("/admin-dashboard/leave/employeesLeaveBalances")
           }
-          className="px-5 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="px-5 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
         >
           View Remaining Leaves
         </button>
@@ -185,26 +133,16 @@ const ViewAllLeaves = () => {
               ].map((title, idx) => (
                 <th
                   key={idx}
-                  onClick={() =>
-                    (title === "Start Date" || title === "End Date") &&
-                    handleSort(title.toLowerCase().replace(" ", ""))
-                  }
-                  className={`px-4 py-2 text-sm font-medium text-gray-700 ${
-                    title === "Start Date" || title === "End Date"
-                      ? "cursor-pointer"
-                      : ""
-                  }`}
+                  className="px-4 py-2 text-sm font-medium text-gray-700"
                 >
                   {title}
-                  {sortConfig.key === title.toLowerCase().replace(" ", "") &&
-                    (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
               ))}
             </tr>
           </thead>
 
           <tbody>
-            {filteredHistory.map((leave, index) => (
+            {allLeaves.map((leave, index) => (
               <tr key={leave._id} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-2 text-center">{index + 1}</td>
                 <td className="px-4 py-2 text-center">
@@ -215,31 +153,23 @@ const ViewAllLeaves = () => {
                   {leave.employeeId?.department?.departmentName}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {leave.type.toLowerCase() === "others"
-                    ? "Others/Late Hours Deduction"
-                    : leave.type.toUpperCase()}
+                  {leave.type.toLowerCase()}
                 </td>
                 <td className="px-4 py-2">{formatDate(leave.startDate)}</td>
                 <td className="px-4 py-2 text-center">
-                  {new Date(`1970-01-01T${leave.startTime}`).toLocaleTimeString(
-                    [],
-                    {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    }
-                  )}
+                  {new Date(`1970-01-01T${leave.startTime}`).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
                 </td>
                 <td className="px-4 py-2">{formatDate(leave.endDate)}</td>
                 <td className="px-4 py-2 text-center">
-                  {new Date(`1970-01-01T${leave.endTime}`).toLocaleTimeString(
-                    [],
-                    {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    }
-                  )}
+                  {new Date(`1970-01-01T${leave.endTime}`).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
                 </td>
                 <td className="px-4 py-2 text-center">{leave.days}</td>
                 <td className="px-4 py-2">{leave.reason}</td>
@@ -266,12 +196,8 @@ const ViewAllLeaves = () => {
                   )}`}
                 >
                   {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
-                  {leave.approvedBy &&
-                    leave.status === "approved" &&
-                    ` by ${leave.approvedBy}`}
-                  {leave.rejectedBy &&
-                    leave.status === "rejected" &&
-                    ` by ${leave.rejectedBy}`}
+                  {leave.approvedBy && leave.status === "approved" && ` by ${leave.approvedBy}`}
+                  {leave.rejectedBy && leave.status === "rejected" && ` by ${leave.rejectedBy}`}
                 </td>
                 <td className="px-4 py-2 text-center">
                   {leave.status === "rejected" ? (
@@ -320,17 +246,13 @@ const ViewAllLeaves = () => {
                   {leave.status === "pending" && (
                     <div className="flex gap-2 justify-center">
                       <button
-                        onClick={() =>
-                          handleApproveReject(leave._id, "approved")
-                        }
+                        onClick={() => handleApproveReject(leave._id, "approved")}
                         className="bg-green-600 px-3 py-1 text-white rounded hover:bg-green-700"
                       >
                         Approve
                       </button>
                       <button
-                        onClick={() =>
-                          handleApproveReject(leave._id, "rejected")
-                        }
+                        onClick={() => handleApproveReject(leave._id, "rejected")}
                         className="bg-red-600 px-3 py-1 text-white rounded hover:bg-red-700"
                       >
                         Reject
@@ -342,31 +264,9 @@ const ViewAllLeaves = () => {
             ))}
           </tbody>
         </table>
-
-        {loadingMore && <p className="text-center my-4">Loading more...</p>}
-
-        {!loadingMore && displayedLeaves.length < allLeaves.length && (
-          <div className="mt-4 flex justify-center">
-            <button
-              onClick={handleShowMore}
-              className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Show More
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
 };
-
-// Debounce function
-function debounce(func, wait) {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
-}
 
 export default ViewAllLeaves;

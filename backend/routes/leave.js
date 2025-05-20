@@ -44,4 +44,6 @@ router.post(
   updateReasonOfRejection
 );
 
+router.get('/admin-hr/get-all-leaves', authMiddleware, getAllLeaves)
+
 export default router;

@@ -2,6 +2,25 @@ import Employee from "../models/Employee.js";
 import Leave from "../models/Leave.js";
 import transporter from "../config/nodemailer.js";
 
+const getAllLeaves = async (req, res) => {
+  try {
+    const leaves = await Leave.find()
+      .populate({
+        path: "employeeId",
+        populate: {
+          path: "department", // 🔁 the correct field name in Employee schema
+          model: "department", // ✅ should match your Department model name
+        },
+      })
+      .sort({ lastUpdated: -1 });
+
+    res.json(leaves);
+  } catch (error) {
+    console.error("Error fetching all leaves:", error);
+    res.json({ message: "An error occurred while fetching leaves" });
+  }
+};
+
 const getLeaveHistory = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -255,24 +274,6 @@ const getLeaveBalance = async (req, res) => {
   }
 };
 
-const getAllLeaves = async (req, res) => {
-  try {
-    const leaves = await Leave.find()
-      .populate({
-        path: "employeeId",
-        populate: {
-          path: "department", // 🔁 the correct field name in Employee schema
-          model: "department", // ✅ should match your Department model name
-        },
-      })
-      .sort({ lastUpdated: -1 });
-
-    res.json(leaves);
-  } catch (error) {
-    console.error("Error fetching all leaves:", error);
-    res.json({ message: "An error occurred while fetching leaves" });
-  }
-};
 
 const approveOrReject = async (req, res) => {
   try {

@@ -8,6 +8,8 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const ViewAllLeaves = () => {
   const { user } = useAuth();
@@ -25,6 +27,9 @@ const ViewAllLeaves = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+
+        console.log(response);
+        
 
         setAllLeaves(response.data);
       } catch (error) {
@@ -94,6 +99,42 @@ const ViewAllLeaves = () => {
     }
   };
 
+  const downloadExcel = () => {
+    const excelData = allLeaves.map((leave, index) => ({
+      "S. No.": index + 1,
+      "EmpID": leave.employeeId?.employeeId || "",
+      "Emp Name": leave.employeeId?.name || "",
+      "Department": leave.employeeId?.department?.departmentName || "",
+      "Leave Type": leave.type,
+      "Start Date": formatDate(leave.startDate),
+      "Start Time": new Date(`1970-01-01T${leave.startTime}`).toLocaleTimeString([], {
+        hour: "2-digit", minute: "2-digit", hour12: true
+      }),
+      "End Date": formatDate(leave.endDate),
+      "End Time": new Date(`1970-01-01T${leave.endTime}`).toLocaleTimeString([], {
+        hour: "2-digit", minute: "2-digit", hour12: true
+      }),
+      "No. of Days": leave.days,
+      "Reason": leave.reason,
+      "Status": leave.status,
+      "Approved/Rejected By": leave.approvedBy || leave.rejectedBy || "-",
+      "Reason of Rejection": leave.ror || "-"
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Leave History");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "Leave_History.xlsx");
+  };
+
+
   return (
     <div className="p-6 bg-white min-h-screen">
       <ToastContainer />
@@ -108,6 +149,14 @@ const ViewAllLeaves = () => {
         >
           View Remaining Leaves
         </button>
+
+        <button
+          onClick={downloadExcel}
+          className="px-5 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
+        >
+          Download Excel
+        </button>
+
       </div>
 
       <div className="overflow-x-auto">

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -16,9 +18,6 @@ const HrLeaveView = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
-        console.log(response);
-        
         setLeaveHistory(response.data);
       } catch (error) {
         toast.error("Failed to fetch leave history.");
@@ -31,17 +30,38 @@ const HrLeaveView = () => {
     fetchLeaveHistory();
   }, []);
 
-  const formatDate = (date) => {
-    const d = new Date(date);
-    return d.toLocaleDateString("en-GB");
-  };
+  const formatDate = (date) => new Date(date).toLocaleDateString("en-GB");
 
-  const formatTime = (timeStr) => {
-    return new Date(`1970-01-01T${timeStr}`).toLocaleTimeString("en-US", {
+  const formatTime = (timeStr) =>
+    new Date(`1970-01-01T${timeStr}`).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
     });
+
+  const downloadExcel = () => {
+    const formattedData = leaveHistory.map((leave, index) => ({
+      "S. No.": index + 1,
+      "Emp ID": leave.employeeId?.employeeId || "",
+      "Emp Name": leave.employeeId?.name || "",
+      "Department": leave.employeeId?.department?.departmentName || "",
+      "Leave Type": leave.type?.toUpperCase() || "",
+      "Start Date": formatDate(leave.startDate),
+      "Start Time": formatTime(leave.startTime),
+      "End Date": formatDate(leave.endDate),
+      "End Time": formatTime(leave.endTime),
+      "Days": leave.days,
+      "Reason": leave.reason,
+      "Status": leave.status,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Leave History");
+
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const file = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(file, "leave-history.xlsx");
   };
 
   return (
@@ -58,7 +78,15 @@ const HrLeaveView = () => {
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Leave History</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-gray-800">Leave History</h2>
+            <button
+              onClick={downloadExcel}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            >
+              Download Excel
+            </button>
+          </div>
 
           {leaveHistory.length === 0 ? (
             <p className="text-gray-500">No leave records found.</p>

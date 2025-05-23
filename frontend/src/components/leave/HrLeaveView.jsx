@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../context/authContext";
 
 const HrLeaveView = () => {
+  const navigate = useNavigate();
+  const user = useAuth();
   const [leaveHistory, setLeaveHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -80,12 +84,26 @@ const HrLeaveView = () => {
         <div className="overflow-x-auto">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-800">Leave History</h2>
-            <button
-              onClick={downloadExcel}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              Download Excel
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => navigate(`/${user.user.role}-dashboard/leave/view-employeesLeaveBalances`)}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                View Remaining Leaves
+              </button>
+              <button
+                onClick={() => navigate(`/${user.user.role}-dashboard/leave/employeesLeaveBalances`)}
+                className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700"
+              >
+                Edit Leave Balance
+              </button>
+              <button
+                onClick={downloadExcel}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              >
+                Download Excel
+              </button>
+            </div>
           </div>
 
           {leaveHistory.length === 0 ? (

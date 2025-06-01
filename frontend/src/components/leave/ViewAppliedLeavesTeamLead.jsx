@@ -128,6 +128,7 @@ const ViewAppliedLeavesTeamLead = () => {
                 <th className="border px-4 py-2 text-gray-700">End Time</th>
                 <th className="border px-4 py-2 text-gray-700">Days</th>
                 <th className="border px-4 py-2 text-gray-700">Reason</th>
+                <th className="border px-4 py-2 text-gray-700">Attachment</th>
                 <th className="border px-4 py-2 text-gray-700">Status</th>
                 <th className="border px-4 py-2 text-gray-700">Actions</th>
               </tr>
@@ -177,6 +178,23 @@ const ViewAppliedLeavesTeamLead = () => {
                   <td className="border px-4 py-2 text-center">{leave.days}</td>
                   <td className="border px-4 py-2 text-center">
                     {leave.reason}
+                  </td>
+                  <td className="px-4 py-2">
+                    {leave.attachment ? (
+                      <button
+                        onClick={() =>
+                          window.open(
+                            `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/attachment/${leave._id}`,
+                            "_blank"
+                          )
+                        }
+                        className="text-blue-600 underline"
+                      >
+                        View
+                      </button>
+                    ) : (
+                      <span className="text-gray-500">No Attachment</span>
+                    )}
                   </td>
                   <td
                     className={`border px-4 py-2 text-center text-sm font-semibold ${getStatusColor(

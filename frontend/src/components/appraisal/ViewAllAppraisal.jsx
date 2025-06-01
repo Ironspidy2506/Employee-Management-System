@@ -5,12 +5,32 @@ import { FaEye, FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../context/authContext";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const ViewAllAppraisal = () => {
   const { user } = useAuth();
   const [appraisals, setAppraisals] = useState([]);
   const [selectedYear, setSelectedYear] = useState("All");
   const navigate = useNavigate();
+
+  const handleDownloadExcel = () => {
+    const worksheetData = filteredAppraisals.map((item) => ({
+      "Employee ID": item.employeeId?.employeeId || "",
+      "Employee Name": item.employeeId?.name || "",
+      Department: item.department?.departmentName || "",
+      Supervisor: Array.isArray(item.supervisor)
+        ? item.supervisor.map((s) => s.name).join(", ")
+        : "N/A",
+      "Total Rating": `${item.totalRating}/100`,
+      "Added Date": formatDate(item.createdAt),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Appraisals");
+    XLSX.writeFile(workbook, "All_Appraisals.xlsx");
+  };
 
   useEffect(() => {
     const fetchAppraisals = async () => {
@@ -76,8 +96,8 @@ const ViewAllAppraisal = () => {
   const latestYear =
     appraisals.length > 0
       ? Math.max(
-          ...appraisals.map((item) => new Date(item.createdAt).getFullYear())
-        )
+        ...appraisals.map((item) => new Date(item.createdAt).getFullYear())
+      )
       : new Date().getFullYear();
 
   const years = Array.from({ length: 5 }, (_, i) => latestYear + i);
@@ -86,9 +106,9 @@ const ViewAllAppraisal = () => {
     selectedYear === "All"
       ? appraisals
       : appraisals.filter(
-          (item) =>
-            new Date(item.createdAt).getFullYear().toString() === selectedYear
-        );
+        (item) =>
+          new Date(item.createdAt).getFullYear().toString() === selectedYear
+      );
 
   return (
     <>
@@ -96,14 +116,22 @@ const ViewAllAppraisal = () => {
       <div className="mx-auto p-6 bg-white shadow-lg rounded-lg">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-gray-800">All Appraisals</h2>
-          <button
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            onClick={() =>
-              navigate(`/${user.role}-dashboard/appraisal/add-appraisal`)
-            }
-          >
-            <FaPlus /> Add Appraisal
-          </button>
+          <div className="flex gap-1">
+            <button
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              onClick={() =>
+                navigate(`/${user.role}-dashboard/appraisal/add-appraisal`)
+              }
+            >
+              <FaPlus /> Add Appraisal
+            </button>
+            <button
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+              onClick={handleDownloadExcel}
+            >
+              Download Excel
+            </button>
+          </div>
         </div>
 
         <div className="flex justify-end mb-4">
@@ -166,10 +194,10 @@ const ViewAllAppraisal = () => {
                     </td>
                     <td className="px-6 py-4 text-sm text-center text-gray-700">
                       {Array.isArray(appraisal.supervisor) &&
-                      appraisal.supervisor.length > 0
+                        appraisal.supervisor.length > 0
                         ? appraisal.supervisor.map((sup, index) => (
-                            <div key={sup._id || index}>{sup.name}</div>
-                          ))
+                          <div key={sup._id || index}>{sup.name}</div>
+                        ))
                         : "N/A"}
                     </td>
 

@@ -68,6 +68,19 @@ const HrLeaveView = () => {
     saveAs(file, "leave-history.xlsx");
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "approved":
+        return "text-green-600";
+      case "rejected":
+        return "text-red-600";
+      case "pending":
+        return "text-yellow-600";
+      default:
+        return "text-gray-600";
+    }
+  };
+
   return (
     <div className="p-6 bg-white min-h-screen">
       <ToastContainer />
@@ -93,7 +106,7 @@ const HrLeaveView = () => {
               </button>
               <button
                 onClick={() => navigate(`/${user.user.role}-dashboard/leave/employeesLeaveBalances`)}
-                className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700"
+                className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
               >
                 Edit Leave Balance
               </button>
@@ -145,7 +158,7 @@ const HrLeaveView = () => {
                     <td className="px-4 py-2">{formatTime(leave.endTime)}</td>
                     <td className="px-4 py-2">{leave.days}</td>
                     <td className="px-4 py-2">{leave.reason}</td>
-                    <td className="px-4 py-2">
+                    <td className="px-4 py-2 text-center">
                       {leave.attachment ? (
                         <button
                           onClick={() =>
@@ -154,7 +167,7 @@ const HrLeaveView = () => {
                               "_blank"
                             )
                           }
-                          className="text-blue-600 underline"
+                          className="bg-blue-600 text-white px-4 py-2 rounded-md"
                         >
                           View
                         </button>
@@ -162,8 +175,14 @@ const HrLeaveView = () => {
                         <span className="text-gray-500">No Attachment</span>
                       )}
                     </td>
-                    <td className="px-4 py-2 capitalize font-semibold text-center">
-                      {leave.status}
+                    <td
+                      className={`px-4 py-2 text-center font-semibold ${getStatusColor(
+                        leave.status
+                      )}`}
+                    >
+                      {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
+                      {leave.approvedBy && leave.status === "approved" && ` by ${leave.approvedBy}`}
+                      {leave.rejectedBy && leave.status === "rejected" && ` by ${leave.rejectedBy}`}
                     </td>
                   </tr>
                 ))}

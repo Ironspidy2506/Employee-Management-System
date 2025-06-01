@@ -28,9 +28,6 @@ const ViewAllLeaves = () => {
           },
         });
 
-        console.log(response);
-        
-
         setAllLeaves(response.data);
       } catch (error) {
         toast.error(error.message);

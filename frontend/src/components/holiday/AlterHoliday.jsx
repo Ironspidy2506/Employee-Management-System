@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,6 +12,7 @@ const formatDate = (dateString) => {
 };
 
 const AlterHoliday = () => {
+  const printRef = useRef();
   const [showForm, setShowForm] = useState(false);
   const [holidayName, setHolidayName] = useState("");
   const [holidayDate, setHolidayDate] = useState("");
@@ -94,10 +95,10 @@ const AlterHoliday = () => {
           holidays.map((holiday) =>
             holiday._id === _id
               ? {
-                  ...holiday,
-                  ...updatedHoliday,
-                  date: formatDate(updatedHoliday.date),
-                }
+                ...holiday,
+                ...updatedHoliday,
+                date: formatDate(updatedHoliday.date),
+              }
               : holiday
           )
         );
@@ -130,6 +131,15 @@ const AlterHoliday = () => {
     } catch (error) {
       toast.error("Failed to delete holiday.");
     }
+  };
+
+  const handlePrint = () => {
+    const originalContents = document.body.innerHTML;
+    const printContents = printRef.current.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    window.location.reload(); // Reload to restore interactivity
   };
 
   return (
@@ -170,8 +180,14 @@ const AlterHoliday = () => {
           </div>
         )}
 
-        <div className="mt-8">
+        <div className="mt-8" ref={printRef}>
           <h3 className="text-xl text-gray-800 font-bold mb-4">Holiday List</h3>
+          <button
+            onClick={handlePrint}
+            className="px-4 py-2 bg-green-500 text-lg text-white rounded-md hover:bg-green-600 transition duration-300"
+          >
+            Print Holidays
+          </button>
           <div className="bg-white rounded-lg shadow-lg p-6">
             {holidays.length > 0 ? (
               holidays.map((holiday) => (

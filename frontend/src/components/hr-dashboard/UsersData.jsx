@@ -1,9 +1,36 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 
 const UsersData = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
+
+  const exportToExcel = () => {
+    const data = filteredUsers.map((user) => ({
+      Name: user.name,
+      Email: user.email,
+      Role: capitalizeFirstLetter(user.role),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const dataBlob = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    saveAs(dataBlob, "users_data.xlsx");
+  };
+
 
   // Fetch users from the backend
   useEffect(() => {
@@ -52,8 +79,9 @@ const UsersData = () => {
         Users List
       </h1>
 
+
       {/* Search Bar */}
-      <div className="mb-4">
+      <div className=" flex gap-2 mb-4">
         <input
           type="text"
           placeholder="Search by name..."
@@ -61,6 +89,12 @@ const UsersData = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        <button
+          onClick={exportToExcel}
+          className="bg-green-600 hover:bg-green-700 text-white px-2 rounded-md"
+        >
+          Download as Excel
+        </button>
       </div>
 
       <div className="overflow-x-auto shadow-md rounded-lg">

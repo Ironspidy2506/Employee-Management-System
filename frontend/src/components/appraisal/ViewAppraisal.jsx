@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Header from "../HeaderFooter/Header";
@@ -136,6 +136,7 @@ const ratingFields = [
 
 const ViewAppraisal = () => {
   const { id } = useParams();
+  const printRef = useRef();
   const [appraisal, setAppraisal] = useState(null);
 
   useEffect(() => {
@@ -169,77 +170,98 @@ const ViewAppraisal = () => {
     );
   }
 
+  const handlePrint = () => {
+    const originalContents = document.body.innerHTML;
+    const printContents = printRef.current.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    window.location.reload(); // Reload to restore interactivity
+  };
+
   return (
     <>
-      <Header />
-      <ToastContainer />
-      <div className="mx-auto p-6 bg-white shadow-lg rounded-xl my-8 border">
-        <h1 className="text-3xl font-bold text-indigo-700 mb-6 border-b pb-3">
-          Appraisal Summary
-        </h1>
+      <div ref={printRef}>
 
-        {/* Basic Info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-base mb-8">
-          <Info
-            label="Employee Name"
-            value={appraisal?.employeeId?.name || "N/A"}
-          />
-          <Info
-            label="Department"
-            value={appraisal?.department?.departmentName || "N/A"}
-          />
-        </div>
+        <Header />
+        <button
+          onClick={handlePrint}
+          className="px-4 py-2 bg-green-500 text-lg text-white rounded-md hover:bg-green-600 transition duration-300"
+        >
+          Print Appraisal
+        </button>
+        <ToastContainer />
+        <div className="mx-auto p-6 bg-white shadow-lg rounded-xl my-8 border">
 
-        <SectionTitle title="Supervisor" />
-        <div className="bg-gray-100 p-4 rounded-lg mb-8 text-gray-700 whitespace-pre-line">
-          {Array.isArray(appraisal.supervisor) &&
-          appraisal.supervisor.length > 0
-            ? appraisal.supervisor.map((sup, index) => (
+          <h1 className="text-3xl font-bold text-indigo-700 mb-6 border-b pb-3">
+            Appraisal Summary
+          </h1>
+
+
+
+          {/* Basic Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-base mb-8">
+            <Info
+              label="Employee Name"
+              value={appraisal?.employeeId?.name || "N/A"}
+            />
+            <Info
+              label="Department"
+              value={appraisal?.department?.departmentName || "N/A"}
+            />
+          </div>
+
+          <SectionTitle title="Supervisor" />
+          <div className="bg-gray-100 p-4 rounded-lg mb-8 text-gray-700 whitespace-pre-line">
+            {Array.isArray(appraisal.supervisor) &&
+              appraisal.supervisor.length > 0
+              ? appraisal.supervisor.map((sup, index) => (
                 <div key={sup._id || index}>{sup.name}</div>
               ))
-            : "No Supervisor Added."}
-        </div>
+              : "No Supervisor Added."}
+          </div>
 
-        <SectionTitle title="Supervisor Comments" />
-        <div className="bg-gray-100 p-4 rounded-lg text-gray-700 whitespace-pre-line">
-          {appraisal.supervisorComments || "No comments provided."}
-        </div>
+          <SectionTitle title="Supervisor Comments" />
+          <div className="bg-gray-100 p-4 rounded-lg text-gray-700 whitespace-pre-line">
+            {appraisal.supervisorComments || "No comments provided."}
+          </div>
 
-        <SectionTitle title="Accomplishments" />
-        <div className="bg-gray-100 p-4 rounded-lg mb-8 text-gray-700 whitespace-pre-line">
-          {appraisal.accomplishments || "No accomplishments provided."}
-        </div>
+          <SectionTitle title="Accomplishments" />
+          <div className="bg-gray-100 p-4 rounded-lg mb-8 text-gray-700 whitespace-pre-line">
+            {appraisal.accomplishments || "No accomplishments provided."}
+          </div>
 
-        {/* Ratings Section */}
-        <SectionTitle title="Ratings" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          {ratingFields.map((field) => (
-            <div
-              key={field.key}
-              className="border rounded-lg p-4 bg-gray-50 shadow-sm hover:shadow-md transition duration-200"
-            >
-              <div className="font-medium text-gray-800">{field.label}</div>
-              <div className="text-sm text-gray-500 mb-2">
-                {field.description}
+          {/* Ratings Section */}
+          <SectionTitle title="Ratings" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            {ratingFields.map((field) => (
+              <div
+                key={field.key}
+                className="border rounded-lg p-4 bg-gray-50 shadow-sm hover:shadow-md transition duration-200"
+              >
+                <div className="font-medium text-gray-800">{field.label}</div>
+                <div className="text-sm text-gray-500 mb-2">
+                  {field.description}
+                </div>
+                <div className="inline-block px-3 py-1 text-md font-semibold bg-indigo-100 text-indigo-700 rounded-full">
+                  {appraisal.ratings?.[field.key] ?? "N/A"}
+                </div>
+                <div className="mt-2 text-gray-600">
+                  {/* Display the description for the rating */}
+                  {field.descriptions[appraisal.ratings?.[field.key]] ?? "N/A"}
+                </div>
               </div>
-              <div className="inline-block px-3 py-1 text-md font-semibold bg-indigo-100 text-indigo-700 rounded-full">
-                {appraisal.ratings?.[field.key] ?? "N/A"}
-              </div>
-              <div className="mt-2 text-gray-600">
-                {/* Display the description for the rating */}
-                {field.descriptions[appraisal.ratings?.[field.key]] ?? "N/A"}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Total Rating */}
-        <SectionTitle title="Total Rating" />
-        <div className="bg-indigo-100 text-indigo-800 font-bold px-5 py-2 inline-block rounded-lg text-lg mb-8">
-          {appraisal.totalRating}
+          {/* Total Rating */}
+          <SectionTitle title="Total Rating" />
+          <div className="bg-indigo-100 text-indigo-800 font-bold px-5 py-2 inline-block rounded-lg text-lg mb-8">
+            {appraisal.totalRating}
+          </div>
         </div>
+        <Footer />
       </div>
-      <Footer />
     </>
   );
 };

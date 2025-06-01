@@ -5,6 +5,9 @@ import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../context/authContext";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 
 const GetAllMessages = () => {
   const { user } = useAuth();
@@ -13,6 +16,29 @@ const GetAllMessages = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
+
+  const handleDownloadExcel = () => {
+    const exportData = filteredMessages.map((msg) => ({
+      "Employee ID": msg.employeeId?.employeeId || "",
+      "Employee Name": msg.employeeId?.name || "",
+      Department: msg.department?.departmentName || "",
+      Message: msg.message || "",
+      Reply: msg.reply || "",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Messages");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "messages.xlsx");
+  };
+
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -96,17 +122,26 @@ const GetAllMessages = () => {
     <>
       <ToastContainer />
       <div className="mx-auto p-6 bg-white shadow-lg rounded-lg">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
           <h2 className="text-2xl font-bold text-gray-800">Messages</h2>
-          <button
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            onClick={() =>
-              navigate(`/${user.role}-dashboard/messages/add-message`)
-            }
-          >
-            <FaPlus /> Send Message
-          </button>
+          <div className="flex gap-2">
+            <button
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+              onClick={handleDownloadExcel}
+            >
+              Download Excel
+            </button>
+            <button
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              onClick={() =>
+                navigate(`/${user.role}-dashboard/messages/add-message`)
+              }
+            >
+              <FaPlus /> Send Message
+            </button>
+          </div>
         </div>
+
 
         <div className="mb-4">
           <input

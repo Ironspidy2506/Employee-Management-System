@@ -19,6 +19,36 @@ const ViewAllLeaves = () => {
   const [showTextArea, setShowTextArea] = useState(null);
   const [responseData, setResponseData] = useState({});
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+
+  const filteredLeaves = allLeaves.filter((leave) => {
+    const empName = leave.employeeId?.name?.toLowerCase() || "";
+    const empId = leave.employeeId?.employeeId?.toString() || "";
+    const type = leave.type?.toLowerCase() || "";
+    const status = leave.status?.toLowerCase() || "";
+
+    const leaveMonth = new Date(leave.startDate).getMonth() + 1; // Jan = 1
+
+    const matchesSearch =
+      empName.includes(searchTerm.toLowerCase()) ||
+      empId.includes(searchTerm.toLowerCase());
+
+    const matchesMonth = selectedMonth
+      ? leaveMonth === parseInt(selectedMonth)
+      : true;
+
+    const matchesType = selectedType ? type === selectedType : true;
+
+    const matchesStatus = selectedStatus ? status === selectedStatus : true;
+
+    return matchesSearch && matchesMonth && matchesType && matchesStatus;
+  });
+
+
+
   useEffect(() => {
     const fetchLeaveHistory = async () => {
       try {
@@ -153,8 +183,61 @@ const ViewAllLeaves = () => {
         >
           Download Excel
         </button>
-
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Search by name or ID"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border p-2 rounded-md"
+        />
+
+        <select
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+          className="border p-2 rounded-md"
+        >
+          <option value="">Filter by Month</option>
+          {[
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December",
+          ].map((month, idx) => (
+            <option key={idx} value={idx + 1}>
+              {month}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={selectedType}
+          onChange={(e) => setSelectedType(e.target.value)}
+          className="border p-2 rounded-md"
+        >
+          <option value="">Filter by Type</option>
+          <option value="el">Earned Leave (EL)</option>
+          <option value="sl">Sick Leave (SL)</option>
+          <option value="cl">Casual Leave (CL)</option>
+          <option value="od">On Duty (OD)</option>
+          <option value="lwp">Leave without pay (LWP)</option>
+          <option value="lhd">Late Hours Deduction (LHD)</option>
+          <option value="others">Others</option>
+          {/* Add more leave types if needed */}
+        </select>
+
+        <select
+          value={selectedStatus}
+          onChange={(e) => setSelectedStatus(e.target.value)}
+          className="border p-2 rounded-md"
+        >
+          <option value="">Filter by Status</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
@@ -188,7 +271,7 @@ const ViewAllLeaves = () => {
           </thead>
 
           <tbody>
-            {allLeaves.map((leave, index) => (
+            {filteredLeaves.map((leave, index) => (
               <tr key={leave._id} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-2 text-center">{index + 1}</td>
                 <td className="px-4 py-2 text-center">
@@ -199,7 +282,7 @@ const ViewAllLeaves = () => {
                   {leave.employeeId?.department?.departmentName}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {leave.type.toLowerCase()}
+                  {leave.type.toUpperCase()}
                 </td>
                 <td className="px-4 py-2">{formatDate(leave.startDate)}</td>
                 <td className="px-4 py-2 text-center">

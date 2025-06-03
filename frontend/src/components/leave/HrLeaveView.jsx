@@ -12,6 +12,12 @@ const HrLeaveView = () => {
   const user = useAuth();
   const [leaveHistory, setLeaveHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+
+
 
   useEffect(() => {
     const fetchLeaveHistory = async () => {
@@ -44,7 +50,7 @@ const HrLeaveView = () => {
     });
 
   const downloadExcel = () => {
-    const formattedData = leaveHistory.map((leave, index) => ({
+    const formattedData = filteredLeaves.map((leave, index) => ({
       "S. No.": index + 1,
       "Emp ID": leave.employeeId?.employeeId || "",
       "Emp Name": leave.employeeId?.name || "",
@@ -70,16 +76,37 @@ const HrLeaveView = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "approved":
-        return "text-green-600";
-      case "rejected":
-        return "text-red-600";
-      case "pending":
-        return "text-yellow-600";
-      default:
-        return "text-gray-600";
+      case "approved": return "text-green-600";
+      case "rejected": return "text-red-600";
+      case "pending": return "text-yellow-600";
+      default: return "text-gray-600";
     }
   };
+
+  // Filtered data
+  const filteredLeaves = leaveHistory.filter((leave) => {
+    const empName = leave.employeeId?.name?.toLowerCase() || "";
+    const empId = leave.employeeId?.employeeId?.toString() || "";
+    const type = leave.type?.toLowerCase() || "";
+    const status = leave.status?.toLowerCase() || "";
+
+    const leaveMonth = new Date(leave.startDate).getMonth() + 1; // Jan = 1
+
+    const matchesSearch =
+      empName.includes(searchTerm.toLowerCase()) ||
+      empId.includes(searchTerm.toLowerCase());
+
+    const matchesMonth = selectedMonth
+      ? leaveMonth === parseInt(selectedMonth)
+      : true;
+
+    const matchesType = selectedType ? type === selectedType : true;
+
+    const matchesStatus = selectedStatus ? status === selectedStatus : true;
+
+    return matchesSearch && matchesMonth && matchesType && matchesStatus;
+  });
+
 
   return (
     <div className="p-6 bg-white min-h-screen">
@@ -94,7 +121,7 @@ const HrLeaveView = () => {
           </div>
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-800">Leave History</h2>
             <div className="flex gap-2">
@@ -119,77 +146,127 @@ const HrLeaveView = () => {
             </div>
           </div>
 
-          {leaveHistory.length === 0 ? (
+          {/* Search and Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="Search by name or ID"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="border p-2 rounded-md"
+            />
+
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="border p-2 rounded-md"
+            >
+              <option value="">Filter by Month</option>
+              {[
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December",
+              ].map((month, idx) => (
+                <option key={idx} value={idx + 1}>
+                  {month}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="border p-2 rounded-md"
+            >
+              <option value="">Filter by Type</option>
+              <option value="el">Earned Leave (EL)</option>
+              <option value="sl">Sick Leave (SL)</option>
+              <option value="cl">Casual Leave (CL)</option>
+              <option value="od">On Duty (OD)</option>
+              <option value="lwp">Leave without pay (LWP)</option>
+              <option value="lhd">Late Hours Deduction (LHD)</option>
+              <option value="others">Others</option>
+              {/* Add more leave types if needed */}
+            </select>
+
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="border p-2 rounded-md"
+            >
+              <option value="">Filter by Status</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+
+
+
+          {filteredLeaves.length === 0 ? (
             <p className="text-gray-500">No leave records found.</p>
           ) : (
-            <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="px-4 py-2 text-left">S. No.</th>
-                  <th className="px-4 py-2 text-left">Emp ID</th>
-                  <th className="px-4 py-2 text-left">Emp Name</th>
-                  <th className="px-4 py-2 text-left">Department</th>
-                  <th className="px-4 py-2 text-left">Leave Type</th>
-                  <th className="px-4 py-2 text-left">Start Date</th>
-                  <th className="px-4 py-2 text-left">Start Time</th>
-                  <th className="px-4 py-2 text-left">End Date</th>
-                  <th className="px-4 py-2 text-left">End Time</th>
-                  <th className="px-4 py-2 text-left">Days</th>
-                  <th className="px-4 py-2 text-left">Reason</th>
-                  <th className="px-4 py-2 text-left">Attachment</th>
-                  <th className="px-4 py-2 text-left">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaveHistory.map((leave, index) => (
-                  <tr key={leave._id} className="border-b">
-                    <td className="px-4 py-2">{index + 1}</td>
-                    <td className="px-4 py-2">{leave.employeeId?.employeeId}</td>
-                    <td className="px-4 py-2">{leave.employeeId?.name}</td>
-                    <td className="px-4 py-2">
-                      {leave.employeeId?.department?.departmentName}
-                    </td>
-                    <td className="px-4 py-2">
-                      {leave.type.toUpperCase()}
-                    </td>
-                    <td className="px-4 py-2">{formatDate(leave.startDate)}</td>
-                    <td className="px-4 py-2">{formatTime(leave.startTime)}</td>
-                    <td className="px-4 py-2">{formatDate(leave.endDate)}</td>
-                    <td className="px-4 py-2">{formatTime(leave.endTime)}</td>
-                    <td className="px-4 py-2">{leave.days}</td>
-                    <td className="px-4 py-2">{leave.reason}</td>
-                    <td className="px-4 py-2 text-center">
-                      {leave.attachment ? (
-                        <button
-                          onClick={() =>
-                            window.open(
-                              `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/attachment/${leave._id}`,
-                              "_blank"
-                            )
-                          }
-                          className="bg-blue-600 text-white px-4 py-2 rounded-md"
-                        >
-                          View
-                        </button>
-                      ) : (
-                        <span className="text-gray-500">No Attachment</span>
-                      )}
-                    </td>
-                    <td
-                      className={`px-4 py-2 text-center font-semibold ${getStatusColor(
-                        leave.status
-                      )}`}
-                    >
-                      {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
-                      {leave.approvedBy && leave.status === "approved" && ` by ${leave.approvedBy}`}
-                      {leave.rejectedBy && leave.status === "rejected" && ` by ${leave.rejectedBy}`}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                <thead className="bg-gray-200">
+                  <tr>
+                    <th className="px-4 py-2 text-left">S. No.</th>
+                    <th className="px-4 py-2 text-left">Emp ID</th>
+                    <th className="px-4 py-2 text-left">Emp Name</th>
+                    <th className="px-4 py-2 text-left">Department</th>
+                    <th className="px-4 py-2 text-left">Leave Type</th>
+                    <th className="px-4 py-2 text-left">Start Date</th>
+                    <th className="px-4 py-2 text-left">Start Time</th>
+                    <th className="px-4 py-2 text-left">End Date</th>
+                    <th className="px-4 py-2 text-left">End Time</th>
+                    <th className="px-4 py-2 text-left">Days</th>
+                    <th className="px-4 py-2 text-left">Reason</th>
+                    <th className="px-4 py-2 text-left">Attachment</th>
+                    <th className="px-4 py-2 text-left">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredLeaves.map((leave, index) => (
+                    <tr key={leave._id} className="border-b">
+                      <td className="px-4 py-2">{index + 1}</td>
+                      <td className="px-4 py-2">{leave.employeeId?.employeeId}</td>
+                      <td className="px-4 py-2">{leave.employeeId?.name}</td>
+                      <td className="px-4 py-2">{leave.employeeId?.department?.departmentName}</td>
+                      <td className="px-4 py-2">{leave.type.toUpperCase()}</td>
+                      <td className="px-4 py-2">{formatDate(leave.startDate)}</td>
+                      <td className="px-4 py-2">{formatTime(leave.startTime)}</td>
+                      <td className="px-4 py-2">{formatDate(leave.endDate)}</td>
+                      <td className="px-4 py-2">{formatTime(leave.endTime)}</td>
+                      <td className="px-4 py-2">{leave.days}</td>
+                      <td className="px-4 py-2">{leave.reason}</td>
+                      <td className="px-4 py-2 text-center">
+                        {leave.attachment ? (
+                          <button
+                            onClick={() =>
+                              window.open(
+                                `https://korus-employee-management-system-mern-stack.vercel.app/api/leaves/attachment/${leave._id}`,
+                                "_blank"
+                              )
+                            }
+                            className="bg-blue-600 text-white px-4 py-2 rounded-md"
+                          >
+                            View
+                          </button>
+                        ) : (
+                          <span className="text-gray-500">No Attachment</span>
+                        )}
+                      </td>
+                      <td className={`px-4 py-2 text-center font-semibold ${getStatusColor(leave.status)}`}>
+                        {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
+                        {leave.approvedBy && leave.status === "approved" && ` by ${leave.approvedBy}`}
+                        {leave.rejectedBy && leave.status === "rejected" && ` by ${leave.rejectedBy}`}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );

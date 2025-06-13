@@ -58,7 +58,7 @@ const ViewAllAppraisal = () => {
   }, []);
 
   const handleEdit = (id) => {
-    navigate(`/${user.role}-dashboard/appraisal/edit-appraisal/${id}`);
+    navigate(`/${user.role === "Lead" ? 'employee' : user.role}-dashboard/appraisal/edit-appraisal/${id}`);
   };
 
   const handleDelete = async (id) => {
@@ -120,7 +120,7 @@ const ViewAllAppraisal = () => {
             <button
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               onClick={() =>
-                navigate(`/${user.role}-dashboard/appraisal/add-appraisal`)
+                navigate(`/${user.role === "Lead" ? 'employee' : user.role}-dashboard/appraisal/add-appraisal`)
               }
             >
               <FaPlus /> Add Appraisal
@@ -213,7 +213,7 @@ const ViewAllAppraisal = () => {
                           className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition"
                           onClick={() =>
                             navigate(
-                              `/${user.role}-dashboard/appraisal/view-appraisal/${appraisal._id}`
+                              `/${user.role === "Lead" ? 'employee' : user.role}-dashboard/appraisal/view-appraisal/${appraisal._id}`
                             )
                           }
                         >

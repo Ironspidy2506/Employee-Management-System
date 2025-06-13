@@ -58,7 +58,6 @@ import AnnualAppraisalForm from "./components/appraisal/AnnualAppraisalForm";
 import ViewAllAppraisal from "./components/appraisal/ViewAllAppraisal";
 import EditAppraisalForm from "./components/appraisal/EditAppraisalForm";
 import ViewAppraisal from "./components/appraisal/ViewAppraisal";
-import ViewMyAppraisal from "./components/appraisal/ViewMyAppraisal";
 import ExitedEmployeeList from "./components/employee/ExitedEmployeeList";
 import GetAllMessages from "./components/messages/GetAllMessages";
 import EditMessage from "./components/messages/EditMessage";
@@ -465,11 +464,6 @@ const App = () => {
             element={<ViewEmployeeAllowance />}
           />
 
-          {/* <Route
-            path="/employee-dashboard/appraisal"
-            element={<ViewMyAppraisal />}
-          /> */}
-
           <Route
             path="/employee-dashboard/appraisal"
             element={<ViewAllAppraisal />}
@@ -548,7 +542,6 @@ const App = () => {
             element={<GetMyMessages />}
           />
         </Route>
-        {/* <Route path="/appraisal" element={<AnnualAppraisalForm />} /> */}
       </Routes>
     </BrowserRouter>
   );

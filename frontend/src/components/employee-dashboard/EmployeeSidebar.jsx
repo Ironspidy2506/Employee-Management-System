@@ -17,16 +17,15 @@ import KorusImage from "./../../assets/Korus.png";
 import { MdOutlineMessage } from "react-icons/md";
 
 const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <div className="relative">
       {/* Sidebar */}
       <div
         ref={sidebarRef} // Attach the ref here
-        className={`fixed top-0 left-0 h-full bg-gray-800 text-white shadow-lg transform ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 transition-transform duration-300 z-50 w-64 flex flex-col justify-between`}
+        className={`fixed top-0 left-0 h-full bg-gray-800 text-white shadow-lg transform ${isOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0 transition-transform duration-300 z-50 w-64 flex flex-col justify-between`}
         onClick={(e) => e.stopPropagation()} // Prevent click inside the sidebar from closing it
       >
         {/* Sidebar Header */}
@@ -46,10 +45,9 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           <NavLink
             to="/employee-dashboard"
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
+                ? "bg-gray-700 text-white"
+                : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             end
@@ -62,10 +60,9 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           <NavLink
             to="/employee-dashboard/holiday"
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
+                ? "bg-gray-700 text-white"
+                : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             onClick={toggleSidebar} // Close the sidebar when this link is clicked
@@ -77,10 +74,9 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           <NavLink
             to="/employee-dashboard/leave"
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
+                ? "bg-gray-700 text-white"
+                : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             onClick={toggleSidebar}
@@ -92,10 +88,9 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           <NavLink
             to="/employee-dashboard/salary"
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
+                ? "bg-gray-700 text-white"
+                : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             onClick={toggleSidebar}
@@ -107,10 +102,9 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           <NavLink
             to="/employee-dashboard/allowances"
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
+                ? "bg-gray-700 text-white"
+                : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             onClick={toggleSidebar}
@@ -119,29 +113,27 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
             <span>Allowances</span>
           </NavLink>
 
-          <NavLink
+          {user.role === "Lead" ? <NavLink
             to="/employee-dashboard/appraisal"
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
+                ? "bg-gray-700 text-white"
+                : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             onClick={toggleSidebar} // Close the sidebar when this link is clicked
           >
             <FaChartLine className="mr-3 text-xl" />
             <span>Appraisal</span>
-          </NavLink>
+          </NavLink> : <></>}
 
           <NavLink
             to="http://korus.icewarpcloud.in/webmail/"
             target="_blank"
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
+                ? "bg-gray-700 text-white"
+                : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             onClick={toggleSidebar} // Close the sidebar when this link is clicked
@@ -153,10 +145,9 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           <NavLink
             to="/employee-dashboard/change-password"
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
+                ? "bg-gray-700 text-white"
+                : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             onClick={toggleSidebar}
@@ -168,10 +159,9 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           <NavLink
             to="/employee-dashboard/messages"
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
+                ? "bg-gray-700 text-white"
+                : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             onClick={toggleSidebar}
@@ -182,10 +172,9 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           <NavLink
             to="/employee-dashboard/helpdesk"
             className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-md transition-colors ${
-                isActive
-                  ? "bg-gray-700 text-white"
-                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+              `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
+                ? "bg-gray-700 text-white"
+                : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`
             }
             onClick={toggleSidebar}

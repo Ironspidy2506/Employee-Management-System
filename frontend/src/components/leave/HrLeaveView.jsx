@@ -6,6 +6,9 @@ import { saveAs } from "file-saver";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../context/authContext";
+import {
+  approveRejectLeave,
+} from "../../utils/AdminLeaveHelper.jsx";
 
 const HrLeaveView = () => {
   const navigate = useNavigate();
@@ -16,8 +19,6 @@ const HrLeaveView = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
-
-
 
   useEffect(() => {
     const fetchLeaveHistory = async () => {
@@ -107,6 +108,19 @@ const HrLeaveView = () => {
     return matchesSearch && matchesMonth && matchesType && matchesStatus;
   });
 
+  const handleApproveReject = async (leaveId, action) => {
+    try {
+      await approveRejectLeave(leaveId, action);
+      toast.success(`Leave ${action} successfully`);
+      const updatedLeaves = leaveHistory.map((leave) =>
+        leave._id === leaveId ? { ...leave, status: action } : leave
+      );
+      setLeaveHistory(updatedLeaves);
+    } catch (error) {
+      console.error(`Error ${action} leave:`, error);
+      toast.error(`Failed to ${action} leave`);
+    }
+  };
 
   return (
     <div className="p-6 bg-white min-h-screen">
@@ -222,6 +236,7 @@ const HrLeaveView = () => {
                     <th className="px-4 py-2 text-left">Reason</th>
                     <th className="px-4 py-2 text-left">Attachment</th>
                     <th className="px-4 py-2 text-left">Status</th>
+                    <th className="px-4 py-2 text-left">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -259,6 +274,18 @@ const HrLeaveView = () => {
                         {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
                         {leave.approvedBy && leave.status === "approved" && ` by ${leave.approvedBy}`}
                         {leave.rejectedBy && leave.status === "rejected" && ` by ${leave.rejectedBy}`}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        {leave.status === "pending" && (
+                          <div className="flex gap-2 justify-center">
+                            <button
+                              onClick={() => handleApproveReject(leave._id, "rejected")}
+                              className="bg-red-600 px-3 py-1 text-white rounded hover:bg-red-700"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}

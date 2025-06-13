@@ -465,9 +465,29 @@ const App = () => {
             element={<ViewEmployeeAllowance />}
           />
 
-          <Route
+          {/* <Route
             path="/employee-dashboard/appraisal"
             element={<ViewMyAppraisal />}
+          /> */}
+
+          <Route
+            path="/employee-dashboard/appraisal"
+            element={<ViewAllAppraisal />}
+          />
+
+          <Route
+            path="/employee-dashboard/appraisal/add-appraisal"
+            element={<AnnualAppraisalForm />}
+          />
+
+          <Route
+            path="/employee-dashboard/appraisal/edit-appraisal/:id"
+            element={<EditAppraisalForm />}
+          />
+
+          <Route
+            path="/employee-dashboard/appraisal/view-appraisal/:id"
+            element={<ViewAppraisal />}
           />
           <Route
             path="/employee-dashboard/allowances/add"

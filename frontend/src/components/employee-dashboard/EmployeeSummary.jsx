@@ -8,8 +8,6 @@ import userImg from "../../assets/user.jpg";
 const EmployeeSummary = () => {
   const { user } = useAuth();
   const [employee, setEmployee] = useState(null);
-  const [allemployees, setAllEmployees] = useState([]);
-  const [todayBirthdays, setTodayBirthdays] = useState([]);
 
   useEffect(() => {
     // Fetch employee details
@@ -30,44 +28,7 @@ const EmployeeSummary = () => {
       }
     };
 
-    // Fetch all employees
-    const fetchAllEmployees = async () => {
-      try {
-        const response = await axios.get(
-          "https://korus-employee-management-system-mern-stack.vercel.app/api/employees",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        const employees = response.data.employees;
-        setAllEmployees(employees);
-
-        // Get today's date
-        const today = new Date();
-        const todayDay = today.getDate();
-        const todayMonth = today.getMonth() + 1; // Months are 0-based
-
-        // Filter employees with today's birthday
-        const birthdayList = employees.filter((emp) => {
-          if (!emp.dob) return false;
-          const empDob = new Date(emp.dob);
-          return (
-            empDob.getDate() === todayDay &&
-            empDob.getMonth() + 1 === todayMonth
-          );
-        });
-
-        setTodayBirthdays(birthdayList);
-      } catch (error) {
-        console.error("Error fetching all employees:", error);
-      }
-    };
-
     fetchEmployeeData();
-    fetchAllEmployees();
   }, [user]);
 
   const capitalizeFirstLetter = (str) => {
@@ -81,19 +42,6 @@ const EmployeeSummary = () => {
   return (
     <>
       <Header />
-
-      {/* Marquee for Today's Birthdays */}
-      {todayBirthdays.length > 0 && (
-        <div className="w-full text-xl text-green-600 py-2">
-          <marquee>
-            🎂 Happy Birthday to{" "}
-            {todayBirthdays
-              .map((emp) => `${emp.employeeId} - ${emp.name}`)
-              .join(", ")}
-            ! 🎉
-          </marquee>
-        </div>
-      )}
 
       <div className="w-full mx-auto bg-white shadow-lg rounded-2xl p-8">
         <div className="flex flex-col md:flex-row items-start gap-10">

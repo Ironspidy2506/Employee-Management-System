@@ -6,6 +6,7 @@ import {
   editAppraisal,
   getAppraisalById,
   getAppraisals,
+  getAppraisalsTeamLead,
   getUserAppraisals,
 } from "../controllers/appraisalController.js";
 const router = express.Router();
@@ -21,5 +22,7 @@ router.post("/edit-appraisal/:id", authMiddleware, editAppraisal);
 router.delete("/delete-appraisal/:id", authMiddleware, deleteAppraisal);
 
 router.get("/get-user-appraisal/:userId", authMiddleware, getUserAppraisals);
+
+router.get('/view-teamlead-appraisals/:userId', authMiddleware, getAppraisalsTeamLead)
 
 export default router;

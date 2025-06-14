@@ -95,7 +95,7 @@ const editAppraisal = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    
+
     res.json({ success: false, message: error.message });
   }
 };
@@ -182,6 +182,35 @@ const getUserAppraisals = async (req, res) => {
   }
 };
 
+
+const getAppraisalsTeamLead = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const employee = await Employee.findOne({ userId });
+    const empId = employee._id;
+
+    const appraisals = await Appraisal.find({ supervisor: { $in: [empId] } })
+      .populate("supervisor")
+      .populate("employeeId")
+      .populate("department");
+
+    if (appraisals.length === 0) {
+      return res.json({
+        success: false,
+        message: "No Appraisal Data Found!",
+      });
+    }
+
+    res.json({
+      success: true,
+      appraisals,
+    });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 export {
   addAppraisal,
   editAppraisal,
@@ -189,4 +218,5 @@ export {
   getAppraisals,
   getAppraisalById,
   getUserAppraisals,
+  getAppraisalsTeamLead
 };

@@ -276,7 +276,7 @@ const AnnualAppraisalForm = () => {
       if (response.data.success) {
         toast.success(response.data.message);
         setTimeout(() => {
-          navigate(`/${user.role}-dashboard/appraisal`);
+          navigate(`/${user.role === "Lead" ? 'employee' : user.role}-dashboard/appraisal`);
         }, 500);
         setFormData({
           employeeName: "",

@@ -305,7 +305,7 @@ const EditAppraisalForm = () => {
       if (response.data.success) {
         toast.success(response.data.message);
         setTimeout(() => {
-          navigate(`/${user.role}-dashboard/appraisal`);
+          navigate(`/${user.role === "Lead" ? 'employee' : user.role}-dashboard/appraisal`);
         }, 500);
       } else {
         toast.error(response.data.message);

@@ -63,6 +63,7 @@ import GetAllMessages from "./components/messages/GetAllMessages";
 import EditMessage from "./components/messages/EditMessage";
 import AddMessage from "./components/messages/AddMessage";
 import GetMyMessages from "./components/messages/GetMyMessages";
+import ViewAppraisalsTeamLead from "./components/appraisal/ViewAppraisalsTeamLead";
 
 const App = () => {
   return (
@@ -429,7 +430,7 @@ const App = () => {
             element={<HrChangePassword />}
           />
 
-<Route
+          <Route
             path="/hr-dashboard/messages"
             element={<GetAllMessages />}
           />
@@ -466,7 +467,7 @@ const App = () => {
 
           <Route
             path="/employee-dashboard/appraisal"
-            element={<ViewAllAppraisal />}
+            element={<ViewAppraisalsTeamLead />}
           />
 
           <Route

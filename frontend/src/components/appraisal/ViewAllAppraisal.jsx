@@ -12,6 +12,7 @@ const ViewAllAppraisal = () => {
   const { user } = useAuth();
   const [appraisals, setAppraisals] = useState([]);
   const [selectedYear, setSelectedYear] = useState("All");
+  const [searchEmployeeId, setSearchEmployeeId] = useState("");
   const navigate = useNavigate();
 
   const handleDownloadExcel = () => {
@@ -88,7 +89,7 @@ const ViewAllAppraisal = () => {
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     const year = date.getFullYear();
-    return `${year-1}-${year}`;
+    return `${year - 1}-${year}`;
   };
 
   const latestYear =
@@ -100,13 +101,18 @@ const ViewAllAppraisal = () => {
 
   const years = Array.from({ length: 5 }, (_, i) => latestYear + i);
 
-  const filteredAppraisals =
-    selectedYear === "All"
-      ? appraisals
-      : appraisals.filter(
-        (item) =>
-          new Date(item.createdAt).getFullYear().toString() === selectedYear
-      );
+  const filteredAppraisals = appraisals.filter((item) => {
+    const yearMatch =
+      selectedYear === "All" ||
+      new Date(item.createdAt).getFullYear().toString() === selectedYear;
+
+    const idMatch = item.employeeId?.employeeId
+      ?.toString()
+      .includes(searchEmployeeId);
+
+    return yearMatch && idMatch;
+  });
+
 
   return (
     <>
@@ -132,7 +138,7 @@ const ViewAllAppraisal = () => {
           </div>
         </div>
 
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end mb-4 gap-2">
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
@@ -145,12 +151,24 @@ const ViewAllAppraisal = () => {
               </option>
             ))}
           </select>
+
+          <input
+            type="text"
+            placeholder="Search by Employee ID"
+            value={searchEmployeeId}
+            onChange={(e) => setSearchEmployeeId(e.target.value)}
+            className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
         </div>
+
 
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden">
             <thead className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
               <tr>
+                <th className="px-6 py-3 text-center text-sm font-semibold tracking-wider">
+                  S. No.
+                </th>
                 <th className="px-6 py-3 text-center text-sm font-semibold tracking-wider">
                   Employee ID
                 </th>
@@ -176,11 +194,14 @@ const ViewAllAppraisal = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {filteredAppraisals.length > 0 ? (
-                filteredAppraisals.map((appraisal) => (
+                filteredAppraisals.map((appraisal, index) => (
                   <tr
                     key={appraisal._id}
                     className="hover:bg-gray-50 transition"
                   >
+                    <td className="px-6 py-4 text-sm text-center text-gray-800 font-medium">
+                      {index + 1}
+                    </td>
                     <td className="px-6 py-4 text-sm text-center text-gray-800 font-medium">
                       {appraisal.employeeId?.employeeId}
                     </td>

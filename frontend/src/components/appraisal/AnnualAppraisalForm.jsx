@@ -112,8 +112,8 @@ const ratingFields = [
     descriptions: {
       1: "Frequently unproductive.",
       2: "Easily distracted, inefficient.",
-      3: "Adequately productive.",
-      4: "Occasionally needs redirection.",
+      3: "Occasionally needs redirection.",
+      4: "Adequately productive.",
       5: "Fully productive; minimal idle time.",
     },
   },

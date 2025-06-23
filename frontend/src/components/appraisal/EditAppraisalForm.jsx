@@ -112,8 +112,8 @@ const ratingFields = [
     descriptions: {
       1: "Frequently unproductive.",
       2: "Easily distracted, inefficient.",
-      3: "Adequately productive.",
-      4: "Occasionally needs redirection.",
+      3: "Occasionally needs redirection.",
+      4: "Adequately productive.",
       5: "Fully productive; minimal idle time.",
     },
   },
@@ -340,17 +340,15 @@ const EditAppraisalForm = () => {
                 value={
                   employees.find((emp) => emp._id === formData.employeeId)
                     ? {
-                        value: formData.employeeId,
-                        label: `${
-                          employees.find(
-                            (emp) => emp._id === formData.employeeId
-                          ).employeeId
-                        } - ${
-                          employees.find(
-                            (emp) => emp._id === formData.employeeId
-                          ).name
+                      value: formData.employeeId,
+                      label: `${employees.find(
+                        (emp) => emp._id === formData.employeeId
+                      ).employeeId
+                        } - ${employees.find(
+                          (emp) => emp._id === formData.employeeId
+                        ).name
                         }`,
-                      }
+                    }
                     : null
                 }
                 onChange={handleEmployeeChange}
@@ -369,11 +367,11 @@ const EditAppraisalForm = () => {
                 value={
                   departments.find((dep) => dep._id === formData.department)
                     ? {
-                        value: formData.department,
-                        label: departments.find(
-                          (dep) => dep._id === formData.department
-                        )?.departmentName,
-                      }
+                      value: formData.department,
+                      label: departments.find(
+                        (dep) => dep._id === formData.department
+                      )?.departmentName,
+                    }
                     : null
                 }
                 isDisabled={true}

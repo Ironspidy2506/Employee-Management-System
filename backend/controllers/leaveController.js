@@ -316,8 +316,10 @@ const approveOrReject = async (req, res) => {
 
       await employee.save();
     } else if (action === "rejected") {
-      leave.status = "rejected";
-      leave.rejectedBy = "Admin";
+      if (leave.status) {
+        leave.rejectedBy = leave.status === "approved" ? "HR" : "Admin";
+        leave.status = "rejected";
+      }
     }
 
     await leave.save();

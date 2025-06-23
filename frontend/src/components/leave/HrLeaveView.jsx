@@ -276,16 +276,14 @@ const HrLeaveView = () => {
                         {leave.rejectedBy && leave.status === "rejected" && ` by ${leave.rejectedBy}`}
                       </td>
                       <td className="px-4 py-2 text-center">
-                        {leave.status === "pending" && (
-                          <div className="flex gap-2 justify-center">
-                            <button
-                              onClick={() => handleApproveReject(leave._id, "rejected")}
-                              className="bg-red-600 px-3 py-1 text-white rounded hover:bg-red-700"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        )}
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={() => handleApproveReject(leave._id, "rejected")}
+                            className="bg-red-600 px-3 py-1 text-white rounded hover:bg-red-700"
+                          >
+                            Reject
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

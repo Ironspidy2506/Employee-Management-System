@@ -21,15 +21,19 @@ const userSchema = new mongoose.Schema({
   profileImage: {
     type: String,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  resetOtp: {
+    type: String,
+    default: "",
   },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
+  resetOtpExpireAt: {
+    type: Number,
+    default: 0,
   },
-});
+},
+  {
+    timestamps: true,
+  }
+);
 
 const User = mongoose.model("user", userSchema);
 export default User;

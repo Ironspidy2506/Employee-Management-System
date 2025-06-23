@@ -179,30 +179,5 @@ const employeeSchema = new mongoose.Schema({
   },
 });
 
-employeeSchema.pre(
-  "deleteOne",
-  { document: true, query: false },
-  async function (next) {
-    try {
-      const employee = await Employee.findOne({ _id: this._id });
-
-      if (!employee) throw new Error("Employee not found");
-      const userId = employee.userId;
-
-      await Leave.deleteMany({ employeeId: this._id });
-      await Salary.deleteMany({ employeeId: this._id });
-      await Allowance.deleteMany({ employeeId: this._id });
-      await Helpdesk.deleteMany({ employeeId: this._id });
-      await Performance.deleteMany({ employeeId: this._id });
-
-      await User.deleteOne({ _id: userId });
-
-      next();
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
 const Employee = mongoose.model("employee", employeeSchema);
 export default Employee;

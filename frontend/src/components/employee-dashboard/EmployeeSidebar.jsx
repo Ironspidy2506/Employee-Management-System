@@ -142,7 +142,7 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
             <span>Webmail</span>
           </NavLink>
 
-          <NavLink
+          {/* <NavLink
             to="/employee-dashboard/change-password"
             className={({ isActive }) =>
               `flex items-center px-4 py-3 rounded-md transition-colors ${isActive
@@ -154,7 +154,7 @@ const EmployeeSidebar = ({ isOpen, toggleSidebar, sidebarRef }) => {
           >
             <FaKey className="mr-3 text-lg" />
             <span>Change Password</span>
-          </NavLink>
+          </NavLink> */}
 
           <NavLink
             to="/employee-dashboard/messages"

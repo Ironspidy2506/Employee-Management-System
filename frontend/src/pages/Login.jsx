@@ -83,29 +83,40 @@ const Login = () => {
               />
             </div>
 
-            <div className="mb-6 relative">
+            <div>
               <label
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-600"
               >
                 Password
               </label>
-              <input
-                type={showPassword ? "text" : "password"} // Toggle between text and password
-                id="password"
-                name="password"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-500 transition-all sm:text-sm"
-                placeholder="Enter your password"
-                required
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {/* Eye Icon */}
+              <div className="flex flex-row gap-2">
+                <input
+                  type={showPassword ? "text" : "password"} // Toggle between text and password
+                  id="password"
+                  name="password"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-500 transition-all sm:text-sm"
+                  placeholder="Enter your password"
+                  required
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                </button>
+              </div>
+            </div>
+
+            <div className="text-right mb-4">
               <button
                 type="button"
-                className="absolute inset-y-0 top-6 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => navigate("/forgot-password")}
+                className="text-sm text-blue-600 hover:underline focus:outline-none"
               >
-                {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                Forgot your password?
               </button>
             </div>
 

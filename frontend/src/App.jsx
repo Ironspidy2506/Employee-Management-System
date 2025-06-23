@@ -48,7 +48,7 @@ import ViewHoliday from "./components/holiday/ViewHoliday";
 import ViewAllFixedAllowance from "./components/fixed-allowances/ViewAllFixedAllowance";
 import AddFixedAllowanceAdmin from "./components/fixed-allowances/AddFixedAllowancesAdmin";
 import OnboardingOffboarding from "./components/hr-dashboard/OnboardingOffboarding";
-import Password from "./components/employee-dashboard/Password";
+import Password from "./pages/Password";
 import EditFixedAllowancesAdmin from "./components/fixed-allowances/EditFixedAllowancesAdmin";
 import ViewEmployeeCTC from "./components/employee-dashboard/ViewEmployeeCTC";
 import ViewAppliedLeavesTeamLead from "./components/leave/ViewAppliedLeavesTeamLead";
@@ -71,6 +71,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Navigate to="/admin-dashboard" />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<Password />} />
+
 
         {/* Admin Dashboard Routes */}
         <Route

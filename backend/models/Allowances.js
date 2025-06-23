@@ -27,6 +27,11 @@ const allowanceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  attachment: {
+    fileName: String,
+    fileType: String,
+    fileData: Buffer,
+  },
   allowanceAmount: {
     type: Number,
     required: true,

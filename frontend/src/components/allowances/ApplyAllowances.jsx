@@ -264,6 +264,19 @@ const ApplyAllowances = () => {
                 <option value="others">Other Allowances</option>
               </select>
             </div>
+
+            {/* <div>
+              <label className="block font-semibold text-gray-700 mb-2">
+                Attachments (If any) (Single File to be uploaded)
+              </label>
+              <input
+                type="file"
+                name="attachment"
+                accept=".pdf,.doc,.docx,.jpg,.png" // Specify allowed file types if needed
+                onChange={handleFileChange}
+                className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div> */}
             <div>
               <label className="block font-semibold text-gray-700 mb-2">
                 Amount

@@ -110,7 +110,7 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="text-right mb-4">
+            <div className="flex justify-center items-center m-4">
               <button
                 type="button"
                 onClick={() => navigate("/forgot-password")}

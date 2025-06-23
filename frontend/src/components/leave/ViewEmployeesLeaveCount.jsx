@@ -76,19 +76,20 @@ const ViewEmployeesLeaveCount = () => {
 
   // Handle search functionality
   const handleSearch = (event) => {
-    const query = event.target.value.trim(); // Trim to remove extra spaces
+    const query = event.target.value.trim().toLowerCase(); // Normalize case
     setSearchQuery(query);
 
-    // If the query is not empty, filter employees by employeeId
     const filteredData = query
       ? employees.filter((employee) =>
-          employee.employeeId.toString().includes(query)
-        )
-      : employees; // Show all employees if query is empty
+        employee.employeeId.toString().toLowerCase().includes(query) ||
+        employee.name.toLowerCase().includes(query)
+      )
+      : employees; // Show all if query is empty
 
     const updatedData = updateSerialNumbers(filteredData);
     setFilteredEmployees(updatedData);
   };
+
 
   return (
     <div className="p-6 space-y-6 bg-white">
@@ -105,7 +106,7 @@ const ViewEmployeesLeaveCount = () => {
             type="text"
             value={searchQuery}
             onChange={handleSearch}
-            placeholder="Search by Employee ID"
+            placeholder="Search by Employee ID or Employee Name"
             className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>

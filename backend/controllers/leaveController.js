@@ -290,21 +290,14 @@ const approveOrReject = async (req, res) => {
       return res.status(404).json({ error: "Leave request not found." });
     }
 
-    if (leave.status !== "pending") {
-      return res
-        .status(400)
-        .json({ error: "Only pending leave requests can be updated." });
-    }
-
     const employee = leave.employeeId;
     const leaveType = leave.type.toLowerCase();
 
+
     if (action === "approved") {
       if (["od", "lwp", "others", "lhd"].includes(leaveType)) {
-        // Add leave days for OD or Other leave types
         employee.leaveBalance[leaveType] += leave.days;
       } else {
-        // Deduct leave balance for normal leave types
         if (employee.leaveBalance[leaveType] < leave.days) {
           return res.status(400).json({ error: "Insufficient leave balance." });
         }

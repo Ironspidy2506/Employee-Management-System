@@ -133,7 +133,7 @@ const ViewLeaveHistory = () => {
             </div>
             <div className="h-8 w-px bg-gray-300"></div>
             <div className="text-md font-semibold text-gray-700">
-              Leave without pay (LWP): {leaveCounts.od}
+              Leave without pay (LWP): {leaveCounts.lwp}
             </div>
             <div className="h-8 w-px bg-gray-300"></div>
             <div className="text-md font-semibold text-gray-700">

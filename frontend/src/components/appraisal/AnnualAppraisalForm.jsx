@@ -12,7 +12,7 @@ const ratingScale = {
   1: 25,
   2: 50,
   3: 75,
-  4: 90,
+  4: 85,
   5: 100,
 };
 
@@ -341,11 +341,11 @@ const AnnualAppraisalForm = () => {
                 value={
                   departments.find((dep) => dep._id === formData.department)
                     ? {
-                        value: formData.department,
-                        label: departments.find(
-                          (dep) => dep._id === formData.department
-                        )?.departmentName,
-                      }
+                      value: formData.department,
+                      label: departments.find(
+                        (dep) => dep._id === formData.department
+                      )?.departmentName,
+                    }
                     : null
                 }
                 className="basic-multi-select"

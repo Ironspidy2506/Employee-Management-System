@@ -109,12 +109,28 @@ const ViewAppraisalsTeamLead = () => {
             selectedYear === "All" ||
             new Date(item.createdAt).getFullYear().toString() === selectedYear;
 
-        const idMatch = item.employeeId?.employeeId
-            ?.toString()
-            .includes(searchEmployeeId);
+        const query = searchEmployeeId.toLowerCase();
 
-        return yearMatch && idMatch;
+        const idOrNameMatch =
+            item.employeeId?.employeeId?.toString().toLowerCase().includes(query) ||
+            item.employeeId?.name?.toLowerCase().includes(query);
+
+        return yearMatch && idOrNameMatch;
     });
+
+    const getPerformanceMessage = (rating) => {
+        if (rating < 65) {
+            return { text: "Unsatisfactory", color: "text-red-500" };
+        } else if (rating < 70) {
+            return { text: "Needs Improvement", color: "text-orange-500" };
+        } else if (rating < 85) {
+            return { text: "Average", color: "text-yellow-500" };
+        } else if (rating < 95) {
+            return { text: "Very Good", color: "text-blue-500" };
+        } else {
+            return { text: "Excellent", color: "text-green-500" };
+        }
+    };
 
     return (
         <>
@@ -156,12 +172,38 @@ const ViewAppraisalsTeamLead = () => {
 
                     <input
                         type="text"
-                        placeholder="Search by Employee ID"
+                        placeholder="Search by Employee ID or Name"
                         value={searchEmployeeId}
                         onChange={(e) => setSearchEmployeeId(e.target.value)}
-                        className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                 </div>
+
+
+                {/* Performance Scale Legend */}
+                <div className="mb-4 flex flex-wrap gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                        <span>Unsatisfactory (&lt; 65)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-orange-500"></span>
+                        <span>Needs Improvement (65 - 69)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
+                        <span>Average (70 - 84)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+                        <span>Very Good (85 - 94)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full bg-green-500"></span>
+                        <span>Excellent (95 - 100)</span>
+                    </div>
+                </div>
+
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden">
@@ -184,6 +226,9 @@ const ViewAppraisalsTeamLead = () => {
                                 </th>
                                 <th className="px-6 py-3 text-center text-sm font-semibold tracking-wider">
                                     Total Rating
+                                </th>
+                                <th className="px-6 py-3 text-center text-sm font-semibold tracking-wider">
+                                    Performance
                                 </th>
                                 <th className="px-6 py-3 text-center text-sm font-semibold tracking-wider">
                                     Appraisal Year
@@ -224,7 +269,10 @@ const ViewAppraisalsTeamLead = () => {
                                         <td className="px-6 py-4 font-semibold text-center text-blue-600 text-sm">
                                             {appraisal.totalRating}/100
                                         </td>
-                                        <td className="px-6 py-4 font-semibold text-center text-blue-600 text-sm">
+                                        <td className={`px-6 py-4 font-semibold text-center text-sm ${getPerformanceMessage(appraisal.totalRating).color}`}>
+                                            {getPerformanceMessage(appraisal.totalRating).text}
+                                        </td>
+                                        <td className="px-6 py-4 font-semibold text-center text-sm">
                                             {formatDate(appraisal.createdAt)}
                                         </td>
                                         <td className="px-6 py-4">
@@ -258,7 +306,7 @@ const ViewAppraisalsTeamLead = () => {
                             ) : (
                                 <tr>
                                     <td
-                                        colSpan="7"
+                                        colSpan="9"
                                         className="text-center px-6 py-4 text-gray-500"
                                     >
                                         No appraisals found.

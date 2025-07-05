@@ -63,7 +63,6 @@ import GetAllMessages from "./components/messages/GetAllMessages";
 import EditMessage from "./components/messages/EditMessage";
 import AddMessage from "./components/messages/AddMessage";
 import GetMyMessages from "./components/messages/GetMyMessages";
-import ViewAppraisalsTeamLead from "./components/appraisal/ViewAppraisalsTeamLead";
 
 const App = () => {
   return (
@@ -465,11 +464,6 @@ const App = () => {
           <Route
             path="/employee-dashboard/allowances"
             element={<ViewEmployeeAllowance />}
-          />
-
-          <Route
-            path="/employee-dashboard/appraisal"
-            element={<ViewAppraisalsTeamlead />}
           />
 
           <Route

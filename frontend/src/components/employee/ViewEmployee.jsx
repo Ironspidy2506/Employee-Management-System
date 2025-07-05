@@ -238,10 +238,10 @@ const ViewEmployee = () => {
                   <p className="text-xl font-semibold text-gray-700">
                     {employee.passportdoi
                       ? new Intl.DateTimeFormat("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        }).format(new Date(employee.passportdoi))
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }).format(new Date(employee.passportdoi))
                       : "NA"}
                   </p>
                 </div>
@@ -253,10 +253,10 @@ const ViewEmployee = () => {
                   <p className="text-xl font-semibold text-gray-700">
                     {employee.passportdoe
                       ? new Intl.DateTimeFormat("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        }).format(new Date(employee.passportdoe))
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }).format(new Date(employee.passportdoe))
                       : "NA"}
                   </p>
                 </div>

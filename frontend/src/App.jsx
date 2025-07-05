@@ -51,7 +51,7 @@ import OnboardingOffboarding from "./components/hr-dashboard/OnboardingOffboardi
 import Password from "./pages/Password";
 import EditFixedAllowancesAdmin from "./components/fixed-allowances/EditFixedAllowancesAdmin";
 import ViewEmployeeCTC from "./components/employee-dashboard/ViewEmployeeCTC";
-import ViewAppliedLeavesTeamlead from "./components/leave/ViewAppliedLeavesTeamlead";
+import ViewAppliedLeavesTeamLead from "./components/leave/ViewAppliedLeavesTeamLead";
 import HrChangePassword from "./components/hr-dashboard/HrChangePassword";
 import HrLeaveView from "./components/leave/HrLeaveView";
 import AnnualAppraisalForm from "./components/appraisal/AnnualAppraisalForm";
@@ -495,14 +495,6 @@ const App = () => {
           <Route
             path="/employee-dashboard/leave/apply"
             element={<ApplyLeave />}
-          />
-          <Route
-            path="/employee-dashboard/leave/approve-leaves/:userId"
-            element={
-              <RoleBaseRoutes requiredRole={["lead"]}>
-                <ViewAppliedLeavesTeamlead />
-              </RoleBaseRoutes>
-            }
           />
           <Route
             path="/employee-dashboard/leave/edit/:_id"

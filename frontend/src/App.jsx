@@ -51,7 +51,7 @@ import OnboardingOffboarding from "./components/hr-dashboard/OnboardingOffboardi
 import Password from "./pages/Password";
 import EditFixedAllowancesAdmin from "./components/fixed-allowances/EditFixedAllowancesAdmin";
 import ViewEmployeeCTC from "./components/employee-dashboard/ViewEmployeeCTC";
-import ViewAppliedLeavesTeamLead from "./components/leave/ViewAppliedLeavesTeamLead";
+import ViewAppliedLeavesTeamlead from "./components/leave/ViewAppliedLeavesTeamlead";
 import HrChangePassword from "./components/hr-dashboard/HrChangePassword";
 import HrLeaveView from "./components/leave/HrLeaveView";
 import AnnualAppraisalForm from "./components/appraisal/AnnualAppraisalForm";
@@ -63,7 +63,7 @@ import GetAllMessages from "./components/messages/GetAllMessages";
 import EditMessage from "./components/messages/EditMessage";
 import AddMessage from "./components/messages/AddMessage";
 import GetMyMessages from "./components/messages/GetMyMessages";
-import ViewAppraisalsTeamLead from "./components/appraisal/ViewAppraisalsTeamLead";
+import ViewAppraisalsTeamlead from "./components/appraisal/ViewAppraisalsTeamLead";
 
 const App = () => {
   return (
@@ -451,7 +451,7 @@ const App = () => {
           path="/employee-dashboard"
           element={
             <PrivateRoutes>
-              <RoleBaseRoutes requiredRole={["employee", "Lead"]}>
+              <RoleBaseRoutes requiredRole={["employee", "lead"]}>
                 <EmployeeDashboard />
               </RoleBaseRoutes>
             </PrivateRoutes>
@@ -469,7 +469,7 @@ const App = () => {
 
           <Route
             path="/employee-dashboard/appraisal"
-            element={<ViewAppraisalsTeamLead />}
+            element={<ViewAppraisalsTeamlead />}
           />
 
           <Route
@@ -505,8 +505,8 @@ const App = () => {
           <Route
             path="/employee-dashboard/leave/approve-leaves/:userId"
             element={
-              <RoleBaseRoutes requiredRole={["Lead"]}>
-                <ViewAppliedLeavesTeamLead />
+              <RoleBaseRoutes requiredRole={["lead"]}>
+                <ViewAppliedLeavesTeamlead />
               </RoleBaseRoutes>
             }
           />

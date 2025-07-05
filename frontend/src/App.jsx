@@ -63,7 +63,7 @@ import GetAllMessages from "./components/messages/GetAllMessages";
 import EditMessage from "./components/messages/EditMessage";
 import AddMessage from "./components/messages/AddMessage";
 import GetMyMessages from "./components/messages/GetMyMessages";
-import ViewAppraisalsTeamlead from "./components/appraisal/ViewAppraisalsTeamLead";
+import ViewAppraisalsTeamLead from "./components/appraisal/ViewAppraisalsTeamLead";
 
 const App = () => {
   return (

@@ -63,6 +63,7 @@ import GetAllMessages from "./components/messages/GetAllMessages";
 import EditMessage from "./components/messages/EditMessage";
 import AddMessage from "./components/messages/AddMessage";
 import GetMyMessages from "./components/messages/GetMyMessages";
+import EndingPage from "./pages/EndingPage";
 
 const App = () => {
   return (
@@ -79,7 +80,7 @@ const App = () => {
           element={
             <PrivateRoutes>
               <RoleBaseRoutes requiredRole={["admin"]}>
-                <AdminDashboard />
+                <EndingPage />
               </RoleBaseRoutes>
             </PrivateRoutes>
           }
@@ -204,7 +205,7 @@ const App = () => {
           element={
             <PrivateRoutes>
               <RoleBaseRoutes requiredRole={["accounts"]}>
-                <AccountsDashboard />
+                <EndingPage />
               </RoleBaseRoutes>
             </PrivateRoutes>
           }
@@ -345,7 +346,7 @@ const App = () => {
           element={
             <PrivateRoutes>
               <RoleBaseRoutes requiredRole={["hr"]}>
-                <HrDashboard />
+                <EndingPage />
               </RoleBaseRoutes>
             </PrivateRoutes>
           }
@@ -451,7 +452,7 @@ const App = () => {
           element={
             <PrivateRoutes>
               <RoleBaseRoutes requiredRole={["employee", "lead"]}>
-                <EmployeeDashboard />
+                <EndingPage />
               </RoleBaseRoutes>
             </PrivateRoutes>
           }

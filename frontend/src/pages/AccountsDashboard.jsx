@@ -6,7 +6,7 @@ import AccountSidebar from "../components/accounts-dashboard/AccountSidebar.jsx"
 
 const AccountsDashboard = () => {
   const { user } = useAuth();
-  
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Create a ref for the sidebar to detect clicks outside it
@@ -39,31 +39,7 @@ const AccountsDashboard = () => {
   }, []);
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar with ref */}
-      <AccountSidebar
-        isOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-        sidebarRef={sidebarRef}
-      />
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-0 lg:ml-64">
-        {/* Navbar */}
-        <Navbar toggleSidebar={toggleSidebar} />
-
-        {/* Dashboard Content */}
-        <div className="flex-1 p-6">
-          {/* Adjust content area margin to make room for sidebar on large screens */}
-          <h1 className="text-2xl font-bold text-gray-800">
-            Welcome to the Accounts Dashboard, {user?.name || "User"}!
-          </h1>
-
-          {/* Render nested route content */}
-          <Outlet />
-        </div>
-      </div>
-    </div>
+    <Outlet />
   );
 };
 
